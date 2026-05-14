@@ -1,0 +1,24 @@
+{
+  "name": "abdullahalmaksudserver",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "bun src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@better-auth/mongo-adapter": "^1.6.11",
+    "better-auth": "^1.6.11",
+    "dotenv": "^17.4.2",
+    "hono": "^4.12.18",
+    "mongodb": "^7.2.0",
+    "mongoose": "^9.6.2",
+    "zod": "^4.4.3"
+  }
+}
