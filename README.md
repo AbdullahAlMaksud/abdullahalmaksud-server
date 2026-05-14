@@ -1,0 +1,106 @@
+# Abdullah Al Maksud Server
+
+To install dependencies:
+
+```bash
+bun install
+```
+
+To run in development:
+
+```bash
+bun run dev
+```
+
+To run normally:
+
+```bash
+bun run start
+```
+
+## Environment
+
+`.env` is already created for local development.
+
+```env
+HOST=0.0.0.0
+PORT=4000
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/abdullahalmaksud
+MONGODB_DB_NAME=abdullahalmaksud
+BETTER_AUTH_URL=http://localhost:4000
+CORS_ORIGIN=http://localhost:3000
+```
+
+Use your MongoDB Atlas URI in `MONGODB_URI`. Keep the real URI only in `.env` or Render environment variables.
+
+## Render Deploy
+
+Render settings:
+
+- Runtime: `Node`
+- Build Command: `bun install --frozen-lockfile`
+- Start Command: `bun run start`
+- Health Check Path: `/health`
+
+Environment variables on Render:
+
+```env
+NODE_ENV=production
+HOST=0.0.0.0
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/abdullahalmaksud
+MONGODB_DB_NAME=abdullahalmaksud
+BETTER_AUTH_SECRET=generate-a-long-random-secret
+BETTER_AUTH_URL=https://your-render-service.onrender.com
+CORS_ORIGIN=https://your-frontend-domain.com,http://localhost:3000
+```
+
+This repo also includes `render.yaml`, so you can create the Render service from a Blueprint and fill the secret values in the Render dashboard.
+
+If you have Docker installed, you can start a local MongoDB with:
+
+```bash
+docker compose up -d
+```
+
+## Main Endpoints
+
+- `GET /` - API status
+- `GET /health` - server and MongoDB/Mongoose connection status
+- `GET /api/health` - same health endpoint under the API prefix
+- `GET /api/me` - current logged-in user/session
+- `POST /api/auth/sign-up/email` - Better Auth email signup
+- `POST /api/auth/sign-in/email` - Better Auth email signin
+- `GET /api/auth/get-session` - Better Auth session check
+- `POST /api/auth/sign-out` - Better Auth signout
+
+## Test With Curl
+
+Sign up:
+
+```bash
+curl -i -X POST http://localhost:4000/api/auth/sign-up/email \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Abdullah","email":"abdullah@example.com","password":"password123"}'
+```
+
+Sign in:
+
+```bash
+curl -i -X POST http://localhost:4000/api/auth/sign-in/email \
+  -H "Content-Type: application/json" \
+  -d '{"email":"abdullah@example.com","password":"password123"}'
+```
+
+## Frontend Better Auth Client
+
+Install Better Auth in your frontend, then point the client to this server:
+
+```ts
+import { createAuthClient } from "better-auth/react";
+
+export const authClient = createAuthClient({
+  baseURL: "http://localhost:4000",
+});
+```
+
+When calling from the browser, keep credentials/cookies enabled. The server currently allows `http://localhost:3000` through `CORS_ORIGIN`.
