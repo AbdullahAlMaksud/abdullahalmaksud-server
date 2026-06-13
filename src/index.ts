@@ -1,10 +1,22 @@
 import { app } from "./app";
-import { connectAuthDatabase, connectDatabase, disconnectDatabase } from "./lib/database";
-import { env } from "./lib/env";
+import {
+  connectDatabases,
+  disconnectDatabase,
+  getDatabaseConnectionHelp,
+} from "./lib/database";
+import { env, requireDatabaseConnection } from "./lib/env";
 
 const startServer = async () => {
-  await connectDatabase();
-  await connectAuthDatabase();
+  try {
+    await connectDatabases();
+    console.log("MongoDB connected");
+  } catch (error) {
+    if (requireDatabaseConnection) {
+      throw error;
+    }
+
+    console.warn(`MongoDB connection skipped: ${getDatabaseConnectionHelp(error)}`);
+  }
 
   const server = Bun.serve({
     hostname: env.HOST,

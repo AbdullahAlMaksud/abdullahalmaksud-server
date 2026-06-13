@@ -1,0 +1,61 @@
+{
+  "dashboardStats": [
+    { "label": "Projects", "value": "12", "delta": "+2 this month", "tone": "violet" },
+    { "label": "Blog Posts", "value": "24", "delta": "+5 this month", "tone": "amber" },
+    { "label": "Books", "value": "3", "delta": "+1 this month", "tone": "emerald" },
+    { "label": "Messages", "value": "8", "delta": "+2 this week", "tone": "rose" }
+  ],
+  "analyticsData": [
+    { "name": "Apr 20", "views": 520, "reads": 260 },
+    { "name": "Apr 24", "views": 860, "reads": 410 },
+    { "name": "Apr 28", "views": 680, "reads": 340 },
+    { "name": "May 2", "views": 1260, "reads": 620 },
+    { "name": "May 6", "views": 940, "reads": 510 },
+    { "name": "May 10", "views": 1210, "reads": 710 },
+    { "name": "May 14", "views": 760, "reads": 390 },
+    { "name": "May 18", "views": 1120, "reads": 650 }
+  ],
+  "activities": [
+    { "id": "a1", "title": "New project DevBoard added", "date": "May 18, 2026", "tone": "rose" },
+    { "id": "a2", "title": "Blog post Understanding Server Components published", "date": "May 17, 2026", "tone": "violet" },
+    { "id": "a3", "title": "Book Code Diary moved to editing", "date": "May 16, 2026", "tone": "amber" },
+    { "id": "a4", "title": "Portfolio analytics crossed 10k views", "date": "May 15, 2026", "tone": "emerald" }
+  ],
+  "messages": [
+    { "id": "m1", "name": "Mohammad Al Amin", "subject": "Loved the React Server Components article", "time": "2h", "unread": true },
+    { "id": "m2", "name": "Sadia Afrin", "subject": "Can we discuss a writing dashboard?", "time": "1d", "unread": true },
+    { "id": "m3", "name": "Tanvir Hasan", "subject": "Collaboration idea for a motion system", "time": "2d" }
+  ],
+  "notifications": [
+    {
+      "id": "n1",
+      "title": "Weekly digest is ready",
+      "description": "Portfolio visits rose 18% compared with last week.",
+      "time": "15m"
+    },
+    {
+      "id": "n2",
+      "title": "New message",
+      "description": "Sadia asked about a dashboard collaboration.",
+      "time": "1h"
+    },
+    {
+      "id": "n3",
+      "title": "Draft reminder",
+      "description": "Interface Essays has 3 sections ready for review.",
+      "time": "1d"
+    }
+  ],
+  "topReferrers": [
+    { "source": "GitHub", "value": "1,240" },
+    { "source": "Google", "value": "980" },
+    { "source": "Twitter", "value": "460" },
+    { "source": "LinkedIn", "value": "320" },
+    { "source": "YouTube", "value": "210" }
+  ],
+  "metrics": [
+    { "label": "Avg. read depth", "value": "68%" },
+    { "label": "Newsletter clicks", "value": "412" },
+    { "label": "Project demo views", "value": "1.8k" }
+  ]
+}

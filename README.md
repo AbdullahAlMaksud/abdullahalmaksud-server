@@ -27,11 +27,20 @@ HOST=0.0.0.0
 PORT=4000
 MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/abdullahalmaksud
 MONGODB_DB_NAME=abdullahalmaksud
+REQUIRE_DATABASE_CONNECTION=false
+BETTER_AUTH_SECRET=replace-with-at-least-32-random-characters
 BETTER_AUTH_URL=http://localhost:4000
 CORS_ORIGIN=http://localhost:3000
+ADMIN_EMAILS=abdullah@example.com
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
 ```
 
 Use your MongoDB Atlas URI in `MONGODB_URI`. Keep the real URI only in `.env` or Render environment variables.
+
+In development, `REQUIRE_DATABASE_CONNECTION=false` lets the API start even if
+Atlas is not reachable. Auth and session-backed routes still need MongoDB. In
+production, the server requires MongoDB by default.
 
 ## Render Deploy
 
@@ -52,6 +61,9 @@ MONGODB_DB_NAME=abdullahalmaksud
 BETTER_AUTH_SECRET=generate-a-long-random-secret
 BETTER_AUTH_URL=https://your-render-service.onrender.com
 CORS_ORIGIN=https://your-frontend-domain.com,http://localhost:3000
+ADMIN_EMAILS=your-admin-email@example.com
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
 ```
 
 This repo also includes `render.yaml`, so you can create the Render service from a Blueprint and fill the secret values in the Render dashboard.
@@ -62,16 +74,29 @@ If you have Docker installed, you can start a local MongoDB with:
 docker compose up -d
 ```
 
+Then use this local URI in `.env`:
+
+```env
+MONGODB_URI=mongodb://127.0.0.1:27017/abdullahalmaksud
+```
+
 ## Main Endpoints
 
 - `GET /` - API status
 - `GET /health` - server and MongoDB/Mongoose connection status
 - `GET /api/health` - same health endpoint under the API prefix
 - `GET /api/me` - current logged-in user/session
+- `GET /api/v1/site?locale=en` - localized site configuration
+- `GET /api/v1/content?locale=en` - localized projects, blog posts, and books
+- `GET /api/v1/dashboard?locale=en` - admin-only dashboard data
 - `POST /api/auth/sign-up/email` - Better Auth email signup
 - `POST /api/auth/sign-in/email` - Better Auth email signin
 - `GET /api/auth/get-session` - Better Auth session check
 - `POST /api/auth/sign-out` - Better Auth signout
+
+Users are created with the `user` role by default. Any email listed in
+`ADMIN_EMAILS` is promoted to `admin` when the account is created or when that
+user has an active session.
 
 ## Test With Curl
 

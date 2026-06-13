@@ -1,14 +1,60 @@
 import { createMiddleware } from "hono/factory";
 
 import { auth } from "../lib/auth";
+import {
+  authDb,
+  isAuthDatabaseConnected,
+  isDatabaseConnectionError,
+  markAuthDatabaseDisconnected,
+} from "../lib/database";
+import { defaultRole, resolveRoleForEmail } from "../lib/roles";
 import type { AppEnv } from "../lib/types";
 
 export const sessionMiddleware = createMiddleware<AppEnv>(async (c, next) => {
-  const session = await auth.api.getSession({
-    headers: c.req.raw.headers,
-  });
+  if (!isAuthDatabaseConnected()) {
+    c.set("user", null);
+    c.set("session", null);
+    await next();
+    return;
+  }
 
-  c.set("user", session?.user ?? null);
+  const session = await auth.api
+    .getSession({
+      headers: c.req.raw.headers,
+    })
+    .catch((error) => {
+      if (isDatabaseConnectionError(error)) {
+        markAuthDatabaseDisconnected();
+        return null;
+      }
+
+      throw error;
+    });
+
+  let user = session?.user ?? null;
+
+  if (user) {
+    const resolvedRole = resolveRoleForEmail(user.email);
+    const currentRole = typeof user.role === "string" ? user.role : defaultRole;
+    const role = resolvedRole === "admin" ? resolvedRole : currentRole;
+
+    if (role !== user.role) {
+      await authDb
+        .collection("user")
+        .updateOne({ id: user.id }, { $set: { role } })
+        .catch((error) => {
+          if (isDatabaseConnectionError(error)) {
+            markAuthDatabaseDisconnected();
+            return null;
+          }
+
+          throw error;
+        });
+      user = { ...user, role };
+    }
+  }
+
+  c.set("user", user);
   c.set("session", session?.session ?? null);
 
   await next();

@@ -1,0 +1,61 @@
+{
+  "dashboardStats": [
+    { "label": "প্রজেক্ট", "value": "১২", "delta": "+২ এই মাসে", "tone": "violet" },
+    { "label": "ব্লগ পোস্ট", "value": "২৪", "delta": "+৫ এই মাসে", "tone": "amber" },
+    { "label": "বই", "value": "৩", "delta": "+১ এই মাসে", "tone": "emerald" },
+    { "label": "মেসেজ", "value": "৮", "delta": "+২ এই সপ্তাহে", "tone": "rose" }
+  ],
+  "analyticsData": [
+    { "name": "২০ এপ্রি", "views": 520, "reads": 260 },
+    { "name": "২৪ এপ্রি", "views": 860, "reads": 410 },
+    { "name": "২৮ এপ্রি", "views": 680, "reads": 340 },
+    { "name": "২ মে", "views": 1260, "reads": 620 },
+    { "name": "৬ মে", "views": 940, "reads": 510 },
+    { "name": "১০ মে", "views": 1210, "reads": 710 },
+    { "name": "১৪ মে", "views": 760, "reads": 390 },
+    { "name": "১৮ মে", "views": 1120, "reads": 650 }
+  ],
+  "activities": [
+    { "id": "a1", "title": "নতুন প্রজেক্ট DevBoard যোগ হয়েছে", "date": "১৮ মে, ২০২৬", "tone": "rose" },
+    { "id": "a2", "title": "Server Components নিয়ে ব্লগ পোস্ট প্রকাশিত", "date": "১৭ মে, ২০২৬", "tone": "violet" },
+    { "id": "a3", "title": "Code Diary বইটি editing পর্যায়ে গেছে", "date": "১৬ মে, ২০২৬", "tone": "amber" },
+    { "id": "a4", "title": "পোর্টফোলিও অ্যানালিটিক্স ১০k views ছাড়িয়েছে", "date": "১৫ মে, ২০২৬", "tone": "emerald" }
+  ],
+  "messages": [
+    { "id": "m1", "name": "মোহাম্মদ আল আমিন", "subject": "React Server Components লেখাটি ভালো লেগেছে", "time": "২ ঘ", "unread": true },
+    { "id": "m2", "name": "সাদিয়া আফরিন", "subject": "একটি writing dashboard নিয়ে কথা বলা যাবে?", "time": "১ দি", "unread": true },
+    { "id": "m3", "name": "তানভীর হাসান", "subject": "motion system নিয়ে collaboration idea", "time": "২ দি" }
+  ],
+  "notifications": [
+    {
+      "id": "n1",
+      "title": "সাপ্তাহিক digest প্রস্তুত",
+      "description": "গত সপ্তাহের তুলনায় portfolio visit ১৮% বেড়েছে।",
+      "time": "১৫ মি"
+    },
+    {
+      "id": "n2",
+      "title": "নতুন মেসেজ",
+      "description": "সাদিয়া dashboard collaboration নিয়ে জানতে চেয়েছে।",
+      "time": "১ ঘ"
+    },
+    {
+      "id": "n3",
+      "title": "Draft reminder",
+      "description": "Interface Essays-এর ৩টি section review-এর জন্য প্রস্তুত।",
+      "time": "১ দি"
+    }
+  ],
+  "topReferrers": [
+    { "source": "GitHub", "value": "১,২৪০" },
+    { "source": "Google", "value": "৯৮০" },
+    { "source": "Twitter", "value": "৪৬০" },
+    { "source": "LinkedIn", "value": "৩২০" },
+    { "source": "YouTube", "value": "২১০" }
+  ],
+  "metrics": [
+    { "label": "গড় read depth", "value": "৬৮%" },
+    { "label": "Newsletter click", "value": "৪১২" },
+    { "label": "Project demo view", "value": "১.৮k" }
+  ]
+}

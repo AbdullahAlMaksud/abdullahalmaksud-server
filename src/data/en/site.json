@@ -1,0 +1,74 @@
+{
+  "siteConfig": {
+    "name": "Abdullah Al Maksud",
+    "owner": "Abdullah Al Maksud",
+    "title": "Developer, writer, and product-minded storyteller",
+    "description": "A frontend-focused portfolio for building digital products, publishing technical essays, and shaping useful systems.",
+    "email": "hello@devwriter.studio",
+    "resumeUrl": "/resume.pdf",
+    "socials": [
+      { "label": "GitHub", "href": "https://github.com" },
+      { "label": "LinkedIn", "href": "https://linkedin.com" },
+      { "label": "Twitter", "href": "https://x.com" }
+    ]
+  },
+  "marketingNav": [
+    { "label": "Home", "href": "/" },
+    { "label": "Projects", "href": "/projects" },
+    { "label": "Blog", "href": "/blog" },
+    { "label": "Books", "href": "/books" },
+    { "label": "About", "href": "/about" }
+  ],
+  "techStack": ["React", "TypeScript", "Next.js", "Tailwind CSS", "Framer Motion", "Zustand", "TanStack Query"],
+  "skillGroups": [
+    {
+      "title": "Frontend Systems",
+      "items": ["React architecture", "Design systems", "Motion UI", "Accessibility"]
+    },
+    {
+      "title": "Writing Practice",
+      "items": ["Technical essays", "Editorial systems", "Developer education"]
+    },
+    {
+      "title": "Product Craft",
+      "items": ["Dashboard UX", "Content workflows", "Analytics storytelling"]
+    }
+  ],
+  "experience": [
+    {
+      "year": "2026",
+      "role": "Senior Frontend Engineer",
+      "company": "Independent Studio",
+      "description": "Designing premium interfaces for founders, writers, and technical teams."
+    },
+    {
+      "year": "2024",
+      "role": "Product Engineer",
+      "company": "SaaS Lab",
+      "description": "Built dashboards, content tooling, and reusable product UI foundations."
+    },
+    {
+      "year": "2022",
+      "role": "Technical Writer",
+      "company": "Open Web Notes",
+      "description": "Published practical guides on React, interface design, and developer workflows."
+    }
+  ],
+  "testimonials": [
+    {
+      "quote": "Abdullah brings rare clarity to messy product ideas and turns them into interfaces people actually want to use.",
+      "name": "Nadia Karim",
+      "role": "Founder, Flowbase"
+    },
+    {
+      "quote": "His writing feels like a senior engineer sitting beside you and explaining the tradeoffs without ego.",
+      "name": "Tanvir Hasan",
+      "role": "Engineering Lead"
+    },
+    {
+      "quote": "The dashboard system he built gave our team a language for shipping polished work faster.",
+      "name": "Maya Chen",
+      "role": "Product Designer"
+    }
+  ]
+}

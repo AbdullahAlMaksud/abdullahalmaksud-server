@@ -1,7 +1,12 @@
 import type { auth } from "./auth";
+import type { AppRole } from "./roles";
+
+export type AppUser = typeof auth.$Infer.Session.user & {
+  role?: AppRole | string | null;
+};
 
 export type AppVariables = {
-  user: typeof auth.$Infer.Session.user | null;
+  user: AppUser | null;
   session: typeof auth.$Infer.Session.session | null;
 };
 
