@@ -16,6 +16,7 @@ const googleProvider =
         google: {
           clientId: env.GOOGLE_CLIENT_ID,
           clientSecret: env.GOOGLE_CLIENT_SECRET,
+          redirectURI: env.GOOGLE_REDIRECT_URI,
         },
       }
     : {};
@@ -35,6 +36,12 @@ export const auth = betterAuth({
   advanced: {
     useSecureCookies: env.NODE_ENV === "production",
     cookiePrefix: "auth",
+    crossSubDomainCookies: env.COOKIE_DOMAIN
+      ? {
+          enabled: true,
+          domain: env.COOKIE_DOMAIN,
+        }
+      : undefined,
   },
   databaseHooks: {
     user: {

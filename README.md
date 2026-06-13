@@ -64,9 +64,34 @@ CORS_ORIGIN=https://your-frontend-domain.com,http://localhost:3000
 ADMIN_EMAILS=your-admin-email@example.com
 GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_REDIRECT_URI=https://api.your-backend-domain.com/api/auth/callback/google
+COOKIE_DOMAIN=.your-root-domain.com
 ```
 
 This repo also includes `render.yaml`, so you can create the Render service from a Blueprint and fill the secret values in the Render dashboard.
+
+For Google login, add this exact Authorized redirect URI in Google Cloud Console:
+
+```text
+https://api.abdullahalmaksud.com/api/auth/callback/google
+```
+
+If you want the Google callback URL to use the frontend domain instead, set:
+
+```env
+GOOGLE_REDIRECT_URI=https://abdullahalmaksud.com/api/auth/callback/google
+COOKIE_DOMAIN=.abdullahalmaksud.com
+```
+
+Then add this exact URI to Google Cloud Console:
+
+```text
+https://abdullahalmaksud.com/api/auth/callback/google
+```
+
+Your frontend must proxy or rewrite `/api/auth/*` to this backend API, otherwise
+Google will redirect to the frontend but Better Auth will not receive the
+callback.
 
 If you have Docker installed, you can start a local MongoDB with:
 
