@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 
 import { healthController } from "./controllers/health.controller";
-import { corsOrigins, env } from "./lib/env";
+import { allowedCorsOrigins, corsOrigins, env } from "./lib/env";
 import type { AppEnv } from "./lib/types";
 import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
 import { sessionMiddleware } from "./middlewares/session.middleware";
@@ -22,9 +22,8 @@ app.use(
         return origin;
       }
 
-      return corsOrigins.includes(origin) ? origin : null;
+      return allowedCorsOrigins.has(origin) ? origin : null;
     },
-    allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     exposeHeaders: ["Content-Length"],
     maxAge: 600,

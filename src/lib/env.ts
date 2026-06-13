@@ -39,9 +39,49 @@ export const env = parsedEnv.data;
 export const requireDatabaseConnection =
   env.REQUIRE_DATABASE_CONNECTION ?? env.NODE_ENV === "production";
 
+const normalizeOrigin = (origin: string) => {
+  if (origin === "*") {
+    return origin;
+  }
+
+  try {
+    const url = new URL(origin);
+    return url.origin;
+  } catch {
+    return origin.replace(/\/+$/, "");
+  }
+};
+
+const withCommonOriginVariants = (origin: string) => {
+  const normalizedOrigin = normalizeOrigin(origin);
+
+  if (normalizedOrigin === "*") {
+    return [normalizedOrigin];
+  }
+
+  try {
+    const url = new URL(normalizedOrigin);
+    const variants = [url.origin];
+
+    if (url.hostname.startsWith("www.")) {
+      url.hostname = url.hostname.slice(4);
+      variants.push(url.origin);
+    } else {
+      url.hostname = `www.${url.hostname}`;
+      variants.push(url.origin);
+    }
+
+    return variants;
+  } catch {
+    return [normalizedOrigin];
+  }
+};
+
 export const corsOrigins = env.CORS_ORIGIN.split(",")
-  .map((origin) => origin.trim())
+  .flatMap((origin) => withCommonOriginVariants(origin.trim()))
   .filter(Boolean);
+
+export const allowedCorsOrigins = new Set(corsOrigins);
 
 export const adminEmails = new Set(
   env.ADMIN_EMAILS.split(",")
