@@ -24,6 +24,9 @@ const envSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   GOOGLE_REDIRECT_URI: z.string().url().optional(),
   COOKIE_DOMAIN: z.string().optional(),
+  BLOB_READ_WRITE_TOKEN: z.string().optional(),
+  BLOB_STORE_ID: z.string().optional(),
+  BLOB_WEBHOOK_PUBLIC_KEY: z.string().optional(),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
