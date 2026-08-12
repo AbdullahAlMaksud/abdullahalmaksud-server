@@ -4,7 +4,6 @@ import mongoose from "mongoose";
 import { env } from "./env";
 import { ProjectModel } from "../models/project.model";
 
-
 const connectionStates: Record<number, string> = {
   0: "disconnected",
   1: "connected",
@@ -12,31 +11,39 @@ const connectionStates: Record<number, string> = {
   3: "disconnecting",
 };
 
-let mongooseConnectionPromise: Promise<typeof mongoose> | null = null;
-let authConnectionPromise: Promise<MongoClient> | null = null;
+interface MongooseCache {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
+}
+
+interface AuthCache {
+  conn: MongoClient | null;
+  promise: Promise<MongoClient> | null;
+}
+
+declare global {
+  // eslint-disable-next-line no-var
+  var mongooseCache: MongooseCache | undefined;
+  // eslint-disable-next-line no-var
+  var authCache: AuthCache | undefined;
+}
+
+let cachedMongoose: MongooseCache = globalThis.mongooseCache || { conn: null, promise: null };
+if (!globalThis.mongooseCache) {
+  globalThis.mongooseCache = cachedMongoose;
+}
+
+let cachedAuth: AuthCache = globalThis.authCache || { conn: null, promise: null };
+if (!globalThis.authCache) {
+  globalThis.authCache = cachedAuth;
+}
+
 let authDatabaseConnected = false;
 
 export const authMongoClient = new MongoClient(env.MONGODB_URI);
 export const authDb = authMongoClient.db(env.MONGODB_DB_NAME);
 
-export const connectDatabase = async () => {
-  if (mongoose.connection.readyState === 1) {
-    return mongoose.connection;
-  }
-
-  mongooseConnectionPromise ??= mongoose
-    .connect(env.MONGODB_URI, {
-      dbName: env.MONGODB_DB_NAME,
-      serverSelectionTimeoutMS: 5000,
-    })
-    .catch((error) => {
-      mongooseConnectionPromise = null;
-      throw error;
-    });
-
-  await mongooseConnectionPromise;
-
-  // Seed projects if database is empty
+const seedInitialProjects = async () => {
   try {
     const count = await ProjectModel.countDocuments();
     if (count === 0) {
@@ -146,25 +153,73 @@ export const connectDatabase = async () => {
   } catch (error) {
     console.error("Seeding failed:", error);
   }
+};
+
+export const connectDatabase = async () => {
+  if (mongoose.connection.readyState === 1) {
+    return mongoose.connection;
+  }
+
+  if (!cachedMongoose.promise) {
+    mongoose.set("strictQuery", true);
+    const opts: mongoose.ConnectOptions = {
+      dbName: env.MONGODB_DB_NAME,
+      bufferCommands: false,
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000,
+      socketTimeoutMS: 30000,
+      maxPoolSize: 5,
+      minPoolSize: 0,
+      maxIdleTimeMS: 10000,
+    };
+
+    cachedMongoose.promise = mongoose
+      .connect(env.MONGODB_URI, opts)
+      .then((m) => {
+        seedInitialProjects().catch((err) => console.error("Seeding error:", err));
+        return m;
+      })
+      .catch((error) => {
+        cachedMongoose.promise = null;
+        throw error;
+      });
+  }
+
+  try {
+    cachedMongoose.conn = await cachedMongoose.promise;
+  } catch (error) {
+    cachedMongoose.promise = null;
+    throw error;
+  }
 
   return mongoose.connection;
-
 };
 
 export const connectAuthDatabase = async () => {
-  authConnectionPromise ??= authMongoClient
-    .connect()
-    .then((client) => {
-      authDatabaseConnected = true;
-      return client;
-    })
-    .catch((error) => {
-      authDatabaseConnected = false;
-      authConnectionPromise = null;
-      throw error;
-    });
+  if (!cachedAuth.promise) {
+    cachedAuth.promise = authMongoClient
+      .connect()
+      .then((client) => {
+        authDatabaseConnected = true;
+        return client;
+      })
+      .catch((error) => {
+        authDatabaseConnected = false;
+        cachedAuth.promise = null;
+        throw error;
+      });
+  }
 
-  return authConnectionPromise;
+  try {
+    cachedAuth.conn = await cachedAuth.promise;
+    authDatabaseConnected = true;
+  } catch (error) {
+    authDatabaseConnected = false;
+    cachedAuth.promise = null;
+    throw error;
+  }
+
+  return cachedAuth.promise;
 };
 
 export const connectDatabases = async () => {
@@ -191,7 +246,8 @@ export const isAuthDatabaseConnected = () => authDatabaseConnected;
 
 export const markAuthDatabaseDisconnected = () => {
   authDatabaseConnected = false;
-  authConnectionPromise = null;
+  cachedAuth.promise = null;
+  cachedAuth.conn = null;
 };
 
 export const getDatabaseConnectionHelp = (error: unknown) => {
@@ -220,6 +276,8 @@ export const getDatabaseStatus = () => ({
 export const disconnectDatabase = async () => {
   await Promise.allSettled([mongoose.disconnect(), authMongoClient.close()]);
   authDatabaseConnected = false;
-  mongooseConnectionPromise = null;
-  authConnectionPromise = null;
+  cachedMongoose.promise = null;
+  cachedMongoose.conn = null;
+  cachedAuth.promise = null;
+  cachedAuth.conn = null;
 };

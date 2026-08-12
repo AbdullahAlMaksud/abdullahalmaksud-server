@@ -33,6 +33,9 @@ app.use(
 
 app.use("*", sessionMiddleware);
 
+app.get("/favicon.ico", (c) => c.body(null, 204));
+app.get("/public/favicon.svg", (c) => c.body(null, 204));
+
 app.get("/", (c) => {
   return c.json({
     success: true,
@@ -49,4 +52,5 @@ app.route("/api", routes);
 app.notFound(notFoundHandler);
 app.onError(errorHandler);
 
+export default app;
 export type AppType = typeof app;

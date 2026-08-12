@@ -18,6 +18,8 @@ const startServer = async () => {
     console.warn(`MongoDB connection skipped: ${getDatabaseConnectionHelp(error)}`);
   }
 
+  // This file is only run under Bun (local dev). Vercel uses api/index.ts instead.
+  // @ts-ignore — Bun global is available at runtime when running under Bun
   const server = Bun.serve({
     hostname: env.HOST,
     port: env.PORT,
@@ -40,3 +42,4 @@ startServer().catch((error) => {
   console.error("Failed to start server:", error);
   process.exit(1);
 });
+
