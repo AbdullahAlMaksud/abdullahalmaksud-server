@@ -10,16 +10,22 @@ const trustedOrigins = corsOrigins.includes("*")
   ? [env.BETTER_AUTH_URL]
   : Array.from(new Set([env.BETTER_AUTH_URL, ...corsOrigins]));
 
-const googleProvider =
-  env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
-    ? {
-        google: {
-          clientId: env.GOOGLE_CLIENT_ID,
-          clientSecret: env.GOOGLE_CLIENT_SECRET,
-          redirectURI: env.GOOGLE_REDIRECT_URI,
-        },
-      }
-    : {};
+const socialProviders: Record<string, any> = {};
+
+if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
+  socialProviders.google = {
+    clientId: env.GOOGLE_CLIENT_ID,
+    clientSecret: env.GOOGLE_CLIENT_SECRET,
+    redirectURI: env.GOOGLE_REDIRECT_URI,
+  };
+}
+
+if (env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET) {
+  socialProviders.github = {
+    clientId: env.GITHUB_CLIENT_ID,
+    clientSecret: env.GITHUB_CLIENT_SECRET,
+  };
+}
 
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
@@ -32,7 +38,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  socialProviders: googleProvider,
+  socialProviders,
   advanced: {
     useSecureCookies: env.NODE_ENV === "production",
     cookiePrefix: "auth",

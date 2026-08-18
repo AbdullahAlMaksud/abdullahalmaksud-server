@@ -22,6 +22,8 @@ const envSchema = z.object({
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   GOOGLE_REDIRECT_URI: z.string().url().optional(),
+  GITHUB_CLIENT_ID: z.string().optional(),
+  GITHUB_CLIENT_SECRET: z.string().optional(),
   COOKIE_DOMAIN: z.string().optional(),
   BLOB_READ_WRITE_TOKEN: z.string().optional(),
   BLOB_STORE_ID: z.string().optional(),
