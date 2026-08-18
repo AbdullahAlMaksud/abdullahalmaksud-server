@@ -1,3 +1,5 @@
+import { serve } from "@hono/node-server";
+
 import { app } from "./app";
 import {
   connectDatabases,
@@ -18,15 +20,14 @@ const startServer = async () => {
     console.warn(`MongoDB connection skipped: ${getDatabaseConnectionHelp(error)}`);
   }
 
-  // This file is only run under Bun (local dev). Vercel uses api/index.ts instead.
-  // @ts-ignore — Bun global is available at runtime when running under Bun
-  const server = Bun.serve({
+  // Local dev server (tsx/Node.js). Vercel uses api/index.ts instead.
+  const server = serve({
+    fetch: app.fetch,
     hostname: env.HOST,
     port: env.PORT,
-    fetch: app.fetch,
   });
 
-  console.log(`Server is running at http://${env.HOST}:${server.port}`);
+  console.log(`Server is running at http://${env.HOST}:${env.PORT}`);
   console.log(`Better Auth is mounted at ${env.BETTER_AUTH_URL}/api/auth`);
 };
 

@@ -18,5 +18,5 @@ authRoutes.on(["GET", "POST"], "/*", (c) => {
     );
   }
 
-  return auth.handler(c.req.raw);
+  return auth.handler(c.req.raw as unknown as Request);
 });

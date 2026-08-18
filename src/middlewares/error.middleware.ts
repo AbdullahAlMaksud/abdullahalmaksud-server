@@ -1,6 +1,6 @@
 import type { ErrorHandler, NotFoundHandler } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { ZodError } from "zod";
+import { z } from "zod";
 
 export const notFoundHandler: NotFoundHandler = (c) => {
   return c.json(
@@ -25,7 +25,7 @@ export const errorHandler: ErrorHandler = (error, c) => {
     );
   }
 
-  if (error instanceof ZodError) {
+  if (error instanceof z.ZodError) {
     return c.json(
       {
         success: false,

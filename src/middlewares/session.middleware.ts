@@ -20,7 +20,7 @@ export const sessionMiddleware = createMiddleware<AppEnv>(async (c, next) => {
 
   const session = await auth.api
     .getSession({
-      headers: c.req.raw.headers,
+      headers: (c.req.raw as any).headers as Headers,
     })
     .catch((error) => {
       if (isDatabaseConnectionError(error)) {
