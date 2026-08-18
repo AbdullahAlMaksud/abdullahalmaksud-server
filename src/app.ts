@@ -8,6 +8,8 @@ import { errorHandler, notFoundHandler } from "./middlewares/error.middleware.js
 import { sessionMiddleware } from "./middlewares/session.middleware.js";
 import { routes } from "./modules/index.js";
 
+import { renderRootHtml } from "./modules/home/home.view.js";
+
 export const app = new Hono<AppEnv>();
 
 app.use(
@@ -37,13 +39,22 @@ app.get("/favicon.ico", (c) => c.body(null, 204));
 app.get("/public/favicon.svg", (c) => c.body(null, 204));
 
 app.get("/", (c) => {
-  return c.json({
-    success: true,
-    message: "Abdullah Al Maksud API is running",
-    authBasePath: "/api/auth",
-    healthPath: "/health",
-    frontendOrigin: env.CORS_ORIGIN,
-  });
+  const format = c.req.query("format");
+  const acceptHeader = c.req.header("accept") || "";
+
+  if (format === "json" || (acceptHeader.includes("application/json") && !acceptHeader.includes("text/html"))) {
+    return c.json({
+      success: true,
+      message: "Abdullah Al Maksud API is running",
+      authBasePath: "/api/auth",
+      healthPath: "/health",
+      frontendOrigin: env.CORS_ORIGIN,
+    });
+  }
+
+  const host = c.req.header("host") || "localhost:4000";
+  const protocol = host.includes("localhost") ? "http" : "https";
+  return c.html(renderRootHtml(`${protocol}://${host}`));
 });
 
 app.get("/health", healthController);
