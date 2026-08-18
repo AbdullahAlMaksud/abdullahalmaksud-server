@@ -1,12 +1,12 @@
 import { serve } from "@hono/node-server";
 
-import { app } from "./app";
+import { app } from "./app.js";
 import {
   connectDatabases,
   disconnectDatabase,
   getDatabaseConnectionHelp,
-} from "./lib/database";
-import { env, requireDatabaseConnection } from "./lib/env";
+} from "./lib/database.js";
+import { env, requireDatabaseConnection } from "./lib/env.js";
 
 const startServer = async () => {
   try {

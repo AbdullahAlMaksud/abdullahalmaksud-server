@@ -16,9 +16,9 @@ import {
   siteController,
   updateProjectController,
   uploadController,
-} from "../controllers/data.controller";
-import type { AppEnv } from "../lib/types";
-import { requireAdmin } from "../middlewares/role.middleware";
+} from "../controllers/data.controller.js";
+import type { AppEnv } from "../lib/types.js";
+import { requireAdmin } from "../middlewares/role.middleware.js";
 
 export const dataRoutes = new Hono<AppEnv>();
 

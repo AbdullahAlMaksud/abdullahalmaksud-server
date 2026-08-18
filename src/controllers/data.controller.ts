@@ -5,11 +5,11 @@ import {
   getDashboardData,
   getSiteData,
   toLocale,
-} from "../lib/data";
-import type { AppEnv } from "../lib/types";
-import { ProjectModel } from "../models/project.model";
+} from "../lib/data.js";
+import type { AppEnv } from "../lib/types.js";
+import { ProjectModel } from "../models/project.model.js";
 import { put } from "@vercel/blob";
-import { env } from "../lib/env";
+import { env } from "../lib/env.js";
 
 const localeFrom = (c: Context<AppEnv>) => toLocale(c.req.query("locale"));
 

@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 
-import { auth } from "../lib/auth";
-import { getDatabaseConnectionHelp, isAuthDatabaseConnected } from "../lib/database";
-import type { AppEnv } from "../lib/types";
+import { auth } from "../lib/auth.js";
+import { getDatabaseConnectionHelp, isAuthDatabaseConnected } from "../lib/database.js";
+import type { AppEnv } from "../lib/types.js";
 
 export const authRoutes = new Hono<AppEnv>();
 

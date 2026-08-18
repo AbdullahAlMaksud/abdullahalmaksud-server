@@ -1,8 +1,8 @@
 import { getRequestListener } from "@hono/node-server";
 import type { IncomingMessage, ServerResponse } from "node:http";
 
-import { app } from "../src/app";
-import { connectDatabases } from "../src/lib/database";
+import { app } from "../src/app.js";
+import { connectDatabases } from "../src/lib/database.js";
 
 // Create a Node.js-compatible request listener from the Hono app.
 // Vercel's Node.js runtime passes Node IncomingMessage/ServerResponse objects,

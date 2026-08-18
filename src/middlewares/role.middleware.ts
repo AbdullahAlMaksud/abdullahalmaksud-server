@@ -1,7 +1,7 @@
 import { createMiddleware } from "hono/factory";
 
-import { isAdminRole } from "../lib/roles";
-import type { AppEnv } from "../lib/types";
+import { isAdminRole } from "../lib/roles.js";
+import type { AppEnv } from "../lib/types.js";
 
 export const requireAuth = createMiddleware<AppEnv>(async (c, next) => {
   if (!c.get("user") || !c.get("session")) {

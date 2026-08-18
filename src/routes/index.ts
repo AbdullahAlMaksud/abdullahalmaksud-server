@@ -1,10 +1,10 @@
 import { Hono } from "hono";
 
-import { currentSessionController } from "../controllers/auth.controller";
-import type { AppEnv } from "../lib/types";
-import { authRoutes } from "./auth.routes";
-import { dataRoutes } from "./data.routes";
-import { healthRoutes } from "./health.routes";
+import { currentSessionController } from "../controllers/auth.controller.js";
+import type { AppEnv } from "../lib/types.js";
+import { authRoutes } from "./auth.routes.js";
+import { dataRoutes } from "./data.routes.js";
+import { healthRoutes } from "./health.routes.js";
 
 export const routes = new Hono<AppEnv>();
 

@@ -2,9 +2,9 @@ import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { admin } from "better-auth/plugins";
 
-import { authDb, authMongoClient } from "./database";
-import { corsOrigins, env } from "./env";
-import { adminRole, defaultRole, resolveRoleForEmail } from "./roles";
+import { authDb, authMongoClient } from "./database.js";
+import { corsOrigins, env } from "./env.js";
+import { adminRole, defaultRole, resolveRoleForEmail } from "./roles.js";
 
 const trustedOrigins = corsOrigins.includes("*")
   ? [env.BETTER_AUTH_URL]

@@ -1,14 +1,14 @@
 import { createMiddleware } from "hono/factory";
 
-import { auth } from "../lib/auth";
+import { auth } from "../lib/auth.js";
 import {
   authDb,
   isAuthDatabaseConnected,
   isDatabaseConnectionError,
   markAuthDatabaseDisconnected,
-} from "../lib/database";
-import { defaultRole, resolveRoleForEmail } from "../lib/roles";
-import type { AppEnv } from "../lib/types";
+} from "../lib/database.js";
+import { defaultRole, resolveRoleForEmail } from "../lib/roles.js";
+import type { AppEnv } from "../lib/types.js";
 
 export const sessionMiddleware = createMiddleware<AppEnv>(async (c, next) => {
   if (!isAuthDatabaseConnected()) {

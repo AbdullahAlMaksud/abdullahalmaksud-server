@@ -1,6 +1,6 @@
 import type { Context } from "hono";
 
-import type { AppEnv } from "../lib/types";
+import type { AppEnv } from "../lib/types.js";
 
 export const currentSessionController = (c: Context<AppEnv>) => {
   const user = c.get("user");

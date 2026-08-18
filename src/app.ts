@@ -1,12 +1,12 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 
-import { healthController } from "./controllers/health.controller";
-import { allowedCorsOrigins, corsOrigins, env } from "./lib/env";
-import type { AppEnv } from "./lib/types";
-import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
-import { sessionMiddleware } from "./middlewares/session.middleware";
-import { routes } from "./routes";
+import { healthController } from "./controllers/health.controller.js";
+import { allowedCorsOrigins, corsOrigins, env } from "./lib/env.js";
+import type { AppEnv } from "./lib/types.js";
+import { errorHandler, notFoundHandler } from "./middlewares/error.middleware.js";
+import { sessionMiddleware } from "./middlewares/session.middleware.js";
+import { routes } from "./routes/index.js";
 
 export const app = new Hono<AppEnv>();
 

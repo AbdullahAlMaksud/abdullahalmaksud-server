@@ -1,8 +1,8 @@
 import { MongoClient } from "mongodb";
 import mongoose from "mongoose";
 
-import { env } from "./env";
-import { ProjectModel } from "../models/project.model";
+import { env } from "./env.js";
+import { ProjectModel } from "../models/project.model.js";
 
 const connectionStates: Record<number, string> = {
   0: "disconnected",

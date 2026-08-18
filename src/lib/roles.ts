@@ -1,4 +1,4 @@
-import { adminEmails } from "./env";
+import { adminEmails } from "./env.js";
 
 export const appRoles = ["admin", "user"] as const;
 
