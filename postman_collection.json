@@ -1,0 +1,471 @@
+{
+  "info": {
+    "_postman_id": "abdullahalmaksud-api-collection-v1",
+    "name": "Abdullah Al Maksud API Collection",
+    "description": "Complete Postman API collection for Abdullah Al Maksud Portfolio Server. Easily test Health, Better Auth, Portfolio Data, and Admin Operations.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api-abdullahalmaksud.vercel.app",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. System & Health",
+      "item": [
+        {
+          "name": "Root Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [""]
+            },
+            "description": "Returns basic API information, health path, auth base path, and configured frontend origin."
+          }
+        },
+        {
+          "name": "Health Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            },
+            "description": "Checks system health, uptime, MongoDB connection state, and server timestamp."
+          }
+        },
+        {
+          "name": "Health Status (/api/health)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            },
+            "description": "Alternative health endpoint mounted under /api route."
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Authentication (Better Auth)",
+      "item": [
+        {
+          "name": "Sign Up (Email & Password)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Abdullah Al Maksud\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"YourStrongPassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/sign-up/email",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "sign-up", "email"]
+            },
+            "description": "Registers a new user using Better Auth. If email matches ADMIN_EMAILS, user automatically gets admin role."
+          }
+        },
+        {
+          "name": "Sign In (Email & Password)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"YourStrongPassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/sign-in/email",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "sign-in", "email"]
+            },
+            "description": "Authenticates user and returns session cookie (auth_session)."
+          }
+        },
+        {
+          "name": "Get Session (/api/auth/get-session)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/get-session",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "get-session"]
+            },
+            "description": "Fetches current active Better Auth session using session cookies."
+          }
+        },
+        {
+          "name": "Get Current User Profile (/api/me)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "me"]
+            },
+            "description": "Returns current logged in user details, role (admin/user), and session info."
+          }
+        },
+        {
+          "name": "Sign Out",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/sign-out",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "sign-out"]
+            },
+            "description": "Invalidates current session and clears cookies."
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Portfolio Public Data (v1)",
+      "item": [
+        {
+          "name": "Get Site Data (en/bn)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/site?locale=en",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "site"],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "en",
+                  "description": "Locale: en or bn"
+                }
+              ]
+            },
+            "description": "Retrieves site metadata, navigation structure, social links, and profile information."
+          }
+        },
+        {
+          "name": "Get All Content Data (en/bn)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/content?locale=en",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "content"],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "en",
+                  "description": "Locale: en or bn"
+                }
+              ]
+            },
+            "description": "Retrieves all bundle content including static projects, blog posts, and books."
+          }
+        },
+        {
+          "name": "Get All Projects (MongoDB)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/projects",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "projects"]
+            },
+            "description": "Retrieves dynamic list of all projects stored in MongoDB (sorted by newest)."
+          }
+        },
+        {
+          "name": "Get Project by Slug (MongoDB)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/projects/bonton",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "projects", "bonton"]
+            },
+            "description": "Retrieves single project details by its unique slug (e.g. bonton, prishtha, okkhor, ghorial)."
+          }
+        },
+        {
+          "name": "Get All Blog Posts (en/bn)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/blog-posts?locale=en",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "blog-posts"],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "en"
+                }
+              ]
+            },
+            "description": "Retrieves list of blog articles for the specified locale."
+          }
+        },
+        {
+          "name": "Get Blog Post by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/blog-posts/:slug?locale=en",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "blog-posts", ":slug"],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "en"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "slug",
+                  "value": "sample-post-slug"
+                }
+              ]
+            },
+            "description": "Retrieves specific blog article content by its slug."
+          }
+        },
+        {
+          "name": "Get All Books (en/bn)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books?locale=en",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books"],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "en"
+                }
+              ]
+            },
+            "description": "Retrieves reading list / book list."
+          }
+        },
+        {
+          "name": "Get Book by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/:id?locale=en",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", ":id"],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "en"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "sample-book-id"
+                }
+              ]
+            },
+            "description": "Retrieves specific book details by ID."
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Admin Operations (Protected)",
+      "item": [
+        {
+          "name": "Create Project (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"New Portfolio Project\",\n  \"slug\": \"new-portfolio-project\",\n  \"description\": \"A modern web application built with TypeScript and React.\",\n  \"coverImage\": \"/images/project/new-project.png\",\n  \"logo\": \"/images/project/logo/new-project.png\",\n  \"stack\": [\"React\", \"TypeScript\", \"Tailwind CSS\", \"Hono\"],\n  \"coreFeatures\": [\n    {\n      \"icon\": \"zap\",\n      \"text\": \"Fast Performance\",\n      \"desc\": \"Optimized for speed and efficiency\"\n    },\n    {\n      \"icon\": \"shield\",\n      \"text\": \"Secure Authentication\",\n      \"desc\": \"Role-based access control\"\n    }\n  ],\n  \"gitRepo\": \"https://github.com/abdullahmaksud/new-project\",\n  \"liveLink\": \"https://new-project.abdullahalmaksud.com\",\n  \"categories\": [\"web\", \"saas\", \"tool\"],\n  \"tag\": \"Full-stack Application\",\n  \"status\": \"live\",\n  \"isFeatured\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/projects",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "projects"]
+            },
+            "description": "Creates a new project in MongoDB. Requires active Admin session."
+          }
+        },
+        {
+          "name": "Update Project (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Project Title\",\n  \"description\": \"Updated description of the project.\",\n  \"isFeatured\": true,\n  \"status\": \"live\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/projects/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "projects", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "PROJECT_MONGO_ID_HERE"
+                }
+              ]
+            },
+            "description": "Updates an existing project by its MongoDB _id. Requires active Admin session."
+          }
+        },
+        {
+          "name": "Delete Project (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/projects/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "projects", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "PROJECT_MONGO_ID_HERE"
+                }
+              ]
+            },
+            "description": "Deletes a project by its MongoDB _id. Requires active Admin session."
+          }
+        },
+        {
+          "name": "Upload File (Vercel Blob / Admin)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/upload",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "upload"]
+            },
+            "description": "Uploads an asset file to Vercel Blob storage. Requires active Admin session and configured BLOB_READ_WRITE_TOKEN."
+          }
+        },
+        {
+          "name": "Get Dashboard Data (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/dashboard?locale=en",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "dashboard"],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "en"
+                }
+              ]
+            },
+            "description": "Fetches admin dashboard metrics, messages, and notification counts. Requires active Admin session."
+          }
+        },
+        {
+          "name": "Get Contact Messages (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/messages?locale=en",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "messages"],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "en"
+                }
+              ]
+            },
+            "description": "Fetches contact inquiries submitted by users. Requires active Admin session."
+          }
+        },
+        {
+          "name": "Get Notifications (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/notifications?locale=en",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "notifications"],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "en"
+                }
+              ]
+            },
+            "description": "Fetches admin notifications list. Requires active Admin session."
+          }
+        }
+      ]
+    }
+  ]
+}
