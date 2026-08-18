@@ -1,4 +1,4 @@
-import { getDatabaseStatus } from "../lib/database.js";
+import { getDatabaseStatus } from "../../lib/database.js";
 
 export const getHealth = () => ({
   status: "ok",

@@ -2,7 +2,9 @@ import { MongoClient } from "mongodb";
 import mongoose from "mongoose";
 
 import { env } from "./env.js";
-import { ProjectModel } from "../models/project.model.js";
+import { BlogModel } from "../modules/blog/blog.model.js";
+import { BookModel } from "../modules/book/book.model.js";
+import { ProjectModel } from "../modules/project/project.model.js";
 
 const connectionStates: Record<number, string> = {
   0: "disconnected",
@@ -155,6 +157,116 @@ const seedInitialProjects = async () => {
   }
 };
 
+const seedInitialBlogs = async () => {
+  try {
+    const count = await BlogModel.countDocuments();
+    if (count === 0) {
+      console.log("Seeding initial blog posts into MongoDB...");
+      const initialBlogs = [
+        {
+          title: "কেন আমি Local-first অ্যাপ বানাই",
+          slug: "why-i-build-local-first-apps",
+          content: "# Local-first কেন?\n\nআধুনিক ওয়েব অ্যাপ্লিকেশনে ইউজার ডাটা সার্ভারে পাঠানো একটি সাধারণ প্র্যাকটিস। কিন্তু Local-first অ্যাপ্রোচে ডাটা প্রথমে ব্রাউজারে থাকে, তারপর প্রয়োজনে সিঙ্ক হয়।\n\n## সুবিধা\n- দ্রুত পারফরমেন্স\n- অফলাইন সাপোর্ট\n- প্রাইভেসি\n\nবন্টন এবং পৃষ্ঠা — দুটোই এই ফিলোসফি ফলো করে।",
+          excerpt: "কেন সার্ভারলেস নয়, কেন Local-first? আমার ডেভেলপমেন্ট ফিলোসফি নিয়ে আলোচনা।",
+          coverImage: "/images/blog/local-first.png",
+          author: "Abdullah Al Maksud",
+          tags: ["local-first", "web-development", "philosophy"],
+          category: "Development",
+          isPublished: true,
+          publishedAt: "2026-07-15",
+        },
+        {
+          title: "React Performance Optimization Tips",
+          slug: "react-performance-optimization-tips",
+          content: "# React Performance\n\nReact অ্যাপ্লিকেশন দ্রুত করার জন্য কিছু প্রমাণিত টেকনিক:\n\n## 1. useMemo ও useCallback\n\n```tsx\nconst memoizedValue = useMemo(() => computeExpensive(a, b), [a, b]);\n```\n\n## 2. React.lazy\n\nCode splitting দিয়ে initial bundle সাইজ কমানো যায়।\n\n## 3. Virtual Lists\n\nবড় লিস্টের জন্য `react-window` বা `@tanstack/virtual` ব্যবহার করুন।",
+          excerpt: "React অ্যাপ স্লো? এই ৫টি কৌশল দিয়ে পারফরমেন্স বাড়ান।",
+          coverImage: "/images/blog/react-perf.png",
+          author: "Abdullah Al Maksud",
+          tags: ["react", "performance", "javascript"],
+          category: "Tutorial",
+          isPublished: true,
+          publishedAt: "2026-06-20",
+        },
+        {
+          title: "TypeScript দিয়ে Backend: Hono vs Express",
+          slug: "typescript-backend-hono-vs-express",
+          content: "# Hono vs Express\n\nHono একটি আল্ট্রা-ফাস্ট, এজ-ফার্স্ট ওয়েব ফ্রেমওয়ার্ক। Express এর তুলনায় কেন আমি Hono পছন্দ করি:\n\n## টাইপ সেফটি\nHono-তে TypeScript ফার্স্ট-ক্লাস সিটিজেন।\n\n## পারফরমেন্স\nBenchmark-এ Hono Express এর চেয়ে ৫-১০x দ্রুত।\n\n## এজ ডিপ্লয়মেন্ট\nVercel, Cloudflare Workers, Deno — সব জায়গায় চলে।",
+          excerpt: "Express ছেড়ে Hono কেন? TypeScript ব্যাকেন্ডের জন্য সেরা চয়েস।",
+          coverImage: "/images/blog/hono-vs-express.png",
+          author: "Abdullah Al Maksud",
+          tags: ["typescript", "hono", "express", "backend"],
+          category: "Comparison",
+          isPublished: false,
+          publishedAt: "",
+        },
+      ];
+
+      await BlogModel.create(initialBlogs);
+      console.log("Blog seeding complete!");
+    }
+  } catch (error) {
+    console.error("Blog seeding failed:", error);
+  }
+};
+
+const seedInitialBooks = async () => {
+  try {
+    const count = await BookModel.countDocuments();
+    if (count === 0) {
+      console.log("Seeding initial books into MongoDB...");
+      const initialBooks = [
+        {
+          title: "Clean Code",
+          slug: "clean-code",
+          author: "Robert C. Martin",
+          coverImage: "/images/books/clean-code.png",
+          description: "A Handbook of Agile Software Craftsmanship. কোড লেখার আর্ট শেখায় এই বই — কিভাবে রিডেবল, মেইনটেইনেবল কোড লিখতে হয়।",
+          genre: "Software Engineering",
+          rating: 5,
+          readDate: "2024-03-15",
+          reviewText: "প্রতিটি ডেভেলপারের অবশ্যপাঠ্য। নামকরণ, ফাংশন ডিজাইন, এরর হ্যান্ডলিং — সব বিষয়ে গভীর ইনসাইট।",
+          tags: ["programming", "best-practices", "craftsmanship"],
+          isRecommended: true,
+          purchaseLink: "https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882",
+        },
+        {
+          title: "The Pragmatic Programmer",
+          slug: "the-pragmatic-programmer",
+          author: "David Thomas, Andrew Hunt",
+          coverImage: "/images/books/pragmatic-programmer.png",
+          description: "From Journeyman to Master. ডেভেলপার হিসেবে ক্যারিয়ার গড়ার প্র্যাক্টিকাল গাইড।",
+          genre: "Software Engineering",
+          rating: 5,
+          readDate: "2024-06-10",
+          reviewText: "DRY, orthogonality, tracer bullets — এই কনসেপ্টগুলো আমার চিন্তার ধারা পাল্টে দিয়েছে।",
+          tags: ["programming", "career", "philosophy"],
+          isRecommended: true,
+          purchaseLink: "https://www.amazon.com/Pragmatic-Programmer-journey-mastery/dp/0135957052",
+        },
+        {
+          title: "দেয়াল",
+          slug: "deyal",
+          author: "হুমায়ূন আহমেদ",
+          coverImage: "/images/books/deyal.png",
+          description: "বাংলাদেশের স্বাধীনতা যুদ্ধ ও রাজনৈতিক ইতিহাসের উপর ভিত্তি করে লেখা ঐতিহাসিক উপন্যাস।",
+          genre: "Historical Fiction",
+          rating: 4,
+          readDate: "2025-01-20",
+          reviewText: "বাংলাদেশের ইতিহাস বুঝতে হলে এই বইটি পড়া উচিত। হুমায়ূন আহমেদের অন্যতম সেরা কাজ।",
+          tags: ["bengali", "history", "novel"],
+          isRecommended: true,
+          purchaseLink: "",
+        },
+      ];
+
+      await BookModel.create(initialBooks);
+      console.log("Book seeding complete!");
+    }
+  } catch (error) {
+    console.error("Book seeding failed:", error);
+  }
+};
+
 export const connectDatabase = async () => {
   if (mongoose.connection.readyState === 1) {
     return mongoose.connection;
@@ -176,7 +288,9 @@ export const connectDatabase = async () => {
     cachedMongoose.promise = mongoose
       .connect(env.MONGODB_URI, opts)
       .then((m) => {
-        seedInitialProjects().catch((err) => console.error("Seeding error:", err));
+        seedInitialProjects().catch((err) => console.error("Project seeding error:", err));
+        seedInitialBlogs().catch((err) => console.error("Blog seeding error:", err));
+        seedInitialBooks().catch((err) => console.error("Book seeding error:", err));
         return m;
       })
       .catch((error) => {

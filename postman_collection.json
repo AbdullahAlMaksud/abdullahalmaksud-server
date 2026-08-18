@@ -1,8 +1,8 @@
 {
   "info": {
-    "_postman_id": "abdullahalmaksud-api-collection-v1",
+    "_postman_id": "abdullahalmaksud-api-collection-v2",
     "name": "Abdullah Al Maksud API Collection",
-    "description": "Complete Postman API collection for Abdullah Al Maksud Portfolio Server. Easily test Health, Better Auth, Portfolio Data, and Admin Operations.",
+    "description": "Complete Postman API collection for Abdullah Al Maksud Portfolio Server. Includes Health, Better Auth, Portfolio Data, Blog CRUD, Book CRUD, Project CRUD, and Admin Operations.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -155,7 +155,7 @@
       ]
     },
     {
-      "name": "3. Portfolio Public Data (v1)",
+      "name": "3. Portfolio Public Data",
       "item": [
         {
           "name": "Get Site Data (en/bn)",
@@ -196,9 +196,271 @@
             },
             "description": "Retrieves all bundle content including static projects, blog posts, and books."
           }
+        }
+      ]
+    },
+    {
+      "name": "4. Blog Posts (CRUD)",
+      "description": "Full CRUD API for blog posts. Public GET endpoints, Admin-only POST/PUT/DELETE. Supports pagination (?page=1&limit=10) and published filter (?published=true).",
+      "item": [
+        {
+          "name": "Get All Blog Posts (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/blogs?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "blogs"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page (default: 10, max: 50)"
+                },
+                {
+                  "key": "published",
+                  "value": "true",
+                  "description": "Filter only published posts",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Retrieves paginated list of all blog posts from MongoDB. Use ?published=true to filter only published posts."
+          }
         },
         {
-          "name": "Get All Projects (MongoDB)",
+          "name": "Get Blog Post by Slug (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/blogs/:slug",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "blogs", ":slug"],
+              "variable": [
+                {
+                  "key": "slug",
+                  "value": "why-i-build-local-first-apps",
+                  "description": "Unique blog post slug"
+                }
+              ]
+            },
+            "description": "Retrieves a single blog post by its unique slug."
+          }
+        },
+        {
+          "name": "Create Blog Post (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"নতুন ব্লগ পোস্ট\",\n  \"slug\": \"new-blog-post\",\n  \"content\": \"# শিরোনাম\\n\\nব্লগ পোস্টের বিস্তারিত কন্টেন্ট এখানে লিখুন। Markdown সাপোর্টেড।\\n\\n## সাব-হেডিং\\n\\n- পয়েন্ট ১\\n- পয়েন্ট ২\\n- পয়েন্ট ৩\",\n  \"excerpt\": \"এটি একটি নতুন ব্লগ পোস্টের সংক্ষিপ্ত বিবরণ।\",\n  \"coverImage\": \"/images/blog/new-post.png\",\n  \"author\": \"Abdullah Al Maksud\",\n  \"tags\": [\"javascript\", \"tutorial\", \"web\"],\n  \"category\": \"Tutorial\",\n  \"isPublished\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/blogs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "blogs"]
+            },
+            "description": "Creates a new blog post in MongoDB. Requires active Admin session. Slug must be unique. If isPublished=true, publishedAt is auto-set."
+          }
+        },
+        {
+          "name": "Update Blog Post (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"আপডেটেড ব্লগ টাইটেল\",\n  \"content\": \"# আপডেটেড কন্টেন্ট\\n\\nব্লগ পোস্টের আপডেটেড কন্টেন্ট।\",\n  \"isPublished\": true,\n  \"tags\": [\"updated\", \"blog\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/blogs/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "blogs", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "BLOG_MONGO_ID_HERE",
+                  "description": "MongoDB _id of the blog post"
+                }
+              ]
+            },
+            "description": "Updates an existing blog post by its MongoDB _id. Requires active Admin session. Supports partial updates."
+          }
+        },
+        {
+          "name": "Delete Blog Post (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/blogs/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "blogs", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "BLOG_MONGO_ID_HERE",
+                  "description": "MongoDB _id of the blog post"
+                }
+              ]
+            },
+            "description": "Deletes a blog post by its MongoDB _id. Requires active Admin session."
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Books (CRUD)",
+      "description": "Full CRUD API for books/reading list. Public GET endpoints, Admin-only POST/PUT/DELETE. Supports pagination (?page=1&limit=10) and recommended filter (?recommended=true).",
+      "item": [
+        {
+          "name": "Get All Books (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page (default: 10, max: 50)"
+                },
+                {
+                  "key": "recommended",
+                  "value": "true",
+                  "description": "Filter only recommended books",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Retrieves paginated list of all books from MongoDB. Use ?recommended=true to filter only recommended books."
+          }
+        },
+        {
+          "name": "Get Book by Slug (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/:slug",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", ":slug"],
+              "variable": [
+                {
+                  "key": "slug",
+                  "value": "clean-code",
+                  "description": "Unique book slug"
+                }
+              ]
+            },
+            "description": "Retrieves a single book by its unique slug."
+          }
+        },
+        {
+          "name": "Create Book (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Atomic Habits\",\n  \"slug\": \"atomic-habits\",\n  \"author\": \"James Clear\",\n  \"coverImage\": \"/images/books/atomic-habits.png\",\n  \"description\": \"An Easy & Proven Way to Build Good Habits & Break Bad Ones. ক্ষুদ্র অভ্যাসের শক্তি দিয়ে জীবন পরিবর্তনের বাস্তবসম্মত গাইড।\",\n  \"genre\": \"Self-help\",\n  \"rating\": 5,\n  \"readDate\": \"2026-01-15\",\n  \"reviewText\": \"অভ্যাস গঠনের জন্য সবচেয়ে প্র্যাক্টিকাল বই। 1% improvement concept চমৎকার।\",\n  \"tags\": [\"self-help\", \"habits\", \"productivity\"],\n  \"isRecommended\": true,\n  \"purchaseLink\": \"https://www.amazon.com/Atomic-Habits-Proven-Build-Break/dp/0735211299\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books"]
+            },
+            "description": "Adds a new book to the reading list in MongoDB. Requires active Admin session. Slug must be unique."
+          }
+        },
+        {
+          "name": "Update Book (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"reviewText\": \"আপডেটেড রিভিউ: বইটি ভালো, তবে কিছু জায়গায় রিপিটিটিভ।\",\n  \"isRecommended\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "BOOK_MONGO_ID_HERE",
+                  "description": "MongoDB _id of the book"
+                }
+              ]
+            },
+            "description": "Updates an existing book by its MongoDB _id. Requires active Admin session. Supports partial updates."
+          }
+        },
+        {
+          "name": "Delete Book (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "BOOK_MONGO_ID_HERE",
+                  "description": "MongoDB _id of the book"
+                }
+              ]
+            },
+            "description": "Deletes a book by its MongoDB _id. Requires active Admin session."
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Software Projects (CRUD)",
+      "description": "Full CRUD API for software/portfolio projects. Public GET endpoints, Admin-only POST/PUT/DELETE. Projects are stored in MongoDB with auto-syncing of duplicate fields.",
+      "item": [
+        {
+          "name": "Get All Projects (Public)",
           "request": {
             "method": "GET",
             "header": [],
@@ -207,115 +469,29 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "projects"]
             },
-            "description": "Retrieves dynamic list of all projects stored in MongoDB (sorted by newest)."
+            "description": "Retrieves dynamic list of all software projects stored in MongoDB (sorted by newest first)."
           }
         },
         {
-          "name": "Get Project by Slug (MongoDB)",
+          "name": "Get Project by Slug (Public)",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/projects/bonton",
+              "raw": "{{baseUrl}}/api/v1/projects/:slug",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "projects", "bonton"]
-            },
-            "description": "Retrieves single project details by its unique slug (e.g. bonton, prishtha, okkhor, ghorial)."
-          }
-        },
-        {
-          "name": "Get All Blog Posts (en/bn)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/blog-posts?locale=en",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "blog-posts"],
-              "query": [
-                {
-                  "key": "locale",
-                  "value": "en"
-                }
-              ]
-            },
-            "description": "Retrieves list of blog articles for the specified locale."
-          }
-        },
-        {
-          "name": "Get Blog Post by Slug",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/blog-posts/:slug?locale=en",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "blog-posts", ":slug"],
-              "query": [
-                {
-                  "key": "locale",
-                  "value": "en"
-                }
-              ],
+              "path": ["api", "v1", "projects", ":slug"],
               "variable": [
                 {
                   "key": "slug",
-                  "value": "sample-post-slug"
+                  "value": "bonton",
+                  "description": "Unique project slug (e.g. bonton, prishtha, okkhor, ghorial)"
                 }
               ]
             },
-            "description": "Retrieves specific blog article content by its slug."
+            "description": "Retrieves single project details by its unique slug."
           }
         },
-        {
-          "name": "Get All Books (en/bn)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/books?locale=en",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "books"],
-              "query": [
-                {
-                  "key": "locale",
-                  "value": "en"
-                }
-              ]
-            },
-            "description": "Retrieves reading list / book list."
-          }
-        },
-        {
-          "name": "Get Book by ID",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/books/:id?locale=en",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "books", ":id"],
-              "query": [
-                {
-                  "key": "locale",
-                  "value": "en"
-                }
-              ],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "sample-book-id"
-                }
-              ]
-            },
-            "description": "Retrieves specific book details by ID."
-          }
-        }
-      ]
-    },
-    {
-      "name": "4. Admin Operations (Protected)",
-      "item": [
         {
           "name": "Create Project (Admin)",
           "request": {
@@ -335,7 +511,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "projects"]
             },
-            "description": "Creates a new project in MongoDB. Requires active Admin session."
+            "description": "Creates a new software project in MongoDB. Requires active Admin session. Slug must be unique. Fields like image/repo/demo are auto-synced from coverImage/gitRepo/liveLink."
           }
         },
         {
@@ -359,11 +535,12 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "PROJECT_MONGO_ID_HERE"
+                  "value": "PROJECT_MONGO_ID_HERE",
+                  "description": "MongoDB _id of the project"
                 }
               ]
             },
-            "description": "Updates an existing project by its MongoDB _id. Requires active Admin session."
+            "description": "Updates an existing project by its MongoDB _id. Requires active Admin session. Supports partial updates."
           }
         },
         {
@@ -378,15 +555,22 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "PROJECT_MONGO_ID_HERE"
+                  "value": "PROJECT_MONGO_ID_HERE",
+                  "description": "MongoDB _id of the project"
                 }
               ]
             },
             "description": "Deletes a project by its MongoDB _id. Requires active Admin session."
           }
-        },
+        }
+      ]
+    },
+    {
+      "name": "7. Admin Operations",
+      "description": "Admin-only utility endpoints for file uploads, dashboard metrics, messages, and notifications.",
+      "item": [
         {
-          "name": "Upload File (Vercel Blob / Admin)",
+          "name": "Upload File (Vercel Blob)",
           "request": {
             "method": "POST",
             "header": [],
@@ -409,7 +593,7 @@
           }
         },
         {
-          "name": "Get Dashboard Data (Admin)",
+          "name": "Get Dashboard Data",
           "request": {
             "method": "GET",
             "header": [],
@@ -428,7 +612,7 @@
           }
         },
         {
-          "name": "Get Contact Messages (Admin)",
+          "name": "Get Contact Messages",
           "request": {
             "method": "GET",
             "header": [],
@@ -447,7 +631,7 @@
           }
         },
         {
-          "name": "Get Notifications (Admin)",
+          "name": "Get Notifications",
           "request": {
             "method": "GET",
             "header": [],
