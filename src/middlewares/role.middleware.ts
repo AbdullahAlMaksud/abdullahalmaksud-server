@@ -42,3 +42,6 @@ export const requireAdmin = createMiddleware<AppEnv>(async (c, next) => {
 
   await next();
 });
+
+export const adminOnly = requireAdmin;
+

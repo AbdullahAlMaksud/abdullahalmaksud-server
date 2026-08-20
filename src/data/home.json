@@ -1,0 +1,116 @@
+{
+  "hero": {
+    "greeting": "Hello, I'm",
+    "firstName": "Maksud",
+    "subtitlePrefix": "I build digital experiences that are ",
+    "subtitleHighlight": "fast, clean & meaningful.",
+    "exploreText": "EXPLORE MY WORLD",
+    "portraitImage": "/images/portrait.png",
+    "portraitAlt": "Abdullah Al Maksud"
+  },
+  "about": {
+    "badge": "ABOUT ME",
+    "headlineLines": [
+      "Curious mind.",
+      "Creative soul.",
+      "Code in hand."
+    ],
+    "signature": "Maksud",
+    "infoBadges": [
+      {
+        "text": "Based in Bangladesh",
+        "icon": "MapPin"
+      },
+      {
+        "text": "5+ Years Experience",
+        "icon": "Calendar"
+      },
+      {
+        "text": "Building · Writing · Designing",
+        "icon": "Code2"
+      },
+      {
+        "text": "Always learning",
+        "icon": "Coffee"
+      }
+    ]
+  },
+  "featuredProjects": {
+    "tagText": "FEATURED PROJECT",
+    "viewAllText": "VIEW ALL PROJECTS",
+    "viewAllLink": "/work/projects",
+    "defaultMockup": "/images/projects/devtools.jpg"
+  },
+  "books": {
+    "badge": "BOOKS",
+    "headlineLines": [
+      "Books shape",
+      "mindset and",
+      "change lives."
+    ],
+    "exploreText": "MY BOOK SHELF",
+    "exploreLink": "/work/books"
+  },
+  "writing": {
+    "badge": "WRITING",
+    "headlineLines": [
+      "Thoughts that",
+      "inspire and",
+      "create impact."
+    ],
+    "exploreText": "READ WRITINGS",
+    "exploreLink": "/blogs"
+  },
+  "quote": {
+    "lines": [
+      "I turn",
+      "ideas into",
+      "impactful",
+      "solutions."
+    ],
+    "highlightIndex": 2
+  },
+  "graphicDesign": {
+    "badge": "GRAPHIC DESIGN",
+    "headlineLines": [
+      "Visuals that",
+      "communicate and",
+      "connect."
+    ],
+    "exploreText": "VIEW DESIGNS",
+    "exploreLink": "/work/graphics"
+  },
+  "contact": {
+    "headlineLines": [
+      "Let's create",
+      "something",
+      "meaningful",
+      "together."
+    ],
+    "highlightIndex": 2,
+    "ctaText": "GET IN TOUCH",
+    "email": "contact@abdullahalmaksud.com"
+  },
+  "footer": {
+    "connectText": "Let's connect",
+    "copyright": "© 2025 Maksud. All rights reserved.",
+    "socials": [
+      {
+        "platform": "Github",
+        "url": "https://github.com/abdullahalmaksud"
+      },
+      {
+        "platform": "Linkedin",
+        "url": "https://linkedin.com/in/abdullahalmaksud"
+      },
+      {
+        "platform": "Mail",
+        "url": "mailto:contact@abdullahalmaksud.com"
+      },
+      {
+        "platform": "Twitter",
+        "url": "https://twitter.com/abdullahalmaksud"
+      }
+    ]
+  }
+}

@@ -5,10 +5,21 @@ import { ProjectModel } from "./project.model.js";
 
 export const getAllProjects = async (c: Context<AppEnv>) => {
   try {
-    const projects = await ProjectModel.find().sort({ createdAt: -1 });
+    const category = c.req.query("category");
+    const featured = c.req.query("featured");
+
+    const filter: Record<string, any> = {};
+    if (category) {
+      filter.$or = [{ category }, { categories: category }, { tags: category }, { stack: category }];
+    }
+    if (featured === "true") {
+      filter.$or = [{ isFeatured: true }, { featured: true }];
+    }
+
+    const projects = await ProjectModel.find(filter).sort({ index: 1, createdAt: -1 });
     return c.json(projects);
   } catch (error) {
-    return c.json({ success: false, message: "Database query failed" }, 500);
+    return c.json({ success: false, message: "Database query failed", error: (error as Error).message }, 500);
   }
 };
 
@@ -23,7 +34,7 @@ export const getProjectBySlug = async (c: Context<AppEnv>) => {
 
     return c.json(project);
   } catch (error) {
-    return c.json({ success: false, message: "Database query failed" }, 500);
+    return c.json({ success: false, message: "Database query failed", error: (error as Error).message }, 500);
   }
 };
 

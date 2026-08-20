@@ -1,0 +1,43 @@
+{
+  "designs": [
+    {
+      "id": "byou",
+      "title": "BYOU",
+      "subtitle": "Visual Identity",
+      "coverImage": "/images/designs/byou.jpg",
+      "description": "Minimalist luxury fragrance branding and packaging visual identity.",
+      "category": "Visual Identity",
+      "bg": "#0A0D14",
+      "tools": ["Illustrator", "Photoshop"],
+      "link": "#",
+      "featured": true,
+      "year": "2025"
+    },
+    {
+      "id": "knot-logo",
+      "title": "88 KNOT",
+      "subtitle": "Logo Design",
+      "coverImage": "/images/designs/88-knot.jpg",
+      "description": "Geometric infinity loop branding and identity for interactive puzzle system.",
+      "category": "Logo Design",
+      "bg": "#080A0E",
+      "tools": ["Illustrator", "Figma"],
+      "link": "#",
+      "featured": true,
+      "year": "2025"
+    },
+    {
+      "id": "nature",
+      "title": "NATURE",
+      "subtitle": "Poster Design",
+      "coverImage": "/images/designs/nature-poster.jpg",
+      "description": "Sustainable botanical illustration and typographic editorial poster series.",
+      "category": "Poster Design",
+      "bg": "#0B1C14",
+      "tools": ["Photoshop", "InDesign"],
+      "link": "#",
+      "featured": true,
+      "year": "2025"
+    }
+  ]
+}

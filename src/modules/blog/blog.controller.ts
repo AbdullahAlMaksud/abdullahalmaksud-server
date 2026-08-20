@@ -6,13 +6,22 @@ import { BlogModel } from "./blog.model.js";
 export const getAllBlogs = async (c: Context<AppEnv>) => {
   try {
     const page = Math.max(1, Number(c.req.query("page")) || 1);
-    const limit = Math.min(50, Math.max(1, Number(c.req.query("limit")) || 10));
+    const limit = Math.min(100, Math.max(1, Number(c.req.query("limit")) || 20));
     const skip = (page - 1) * limit;
 
     const publishedOnly = c.req.query("published");
+    const category = c.req.query("category");
+    const featured = c.req.query("featured");
+
     const filter: Record<string, any> = {};
     if (publishedOnly === "true") {
       filter.isPublished = true;
+    }
+    if (category && category.toLowerCase() !== "all") {
+      filter.category = { $regex: new RegExp(`^${category}$`, "i") };
+    }
+    if (featured === "true") {
+      filter.featured = true;
     }
 
     const [blogs, total] = await Promise.all([

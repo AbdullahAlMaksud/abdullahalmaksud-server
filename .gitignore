@@ -40,3 +40,6 @@ yarn.lock
 .DS_Store
 
 .vercel
+
+# Documentation
+API_DOCUMENTATION.md

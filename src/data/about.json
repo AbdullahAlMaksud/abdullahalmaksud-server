@@ -1,0 +1,196 @@
+{
+  "header": {
+    "badge": "ABOUT ME",
+    "headline": "Curious mind. Creative soul. Code in hand.",
+    "intro": "Hello! I'm Abdullah Al Maksud, a passionate Full-Stack Developer, UI/UX Designer, and Author based in Bangladesh. I love turning complex ideas into elegant, blazing-fast, and meaningful digital experiences.",
+    "subIntro": "Whether building high-performance web systems with Next.js, designing pixel-perfect interfaces with meticulous attention to detail, or writing books and articles that spark curiosity—I care deeply about craftsmanship, usability, and impact.",
+    "signature": "Maksud",
+    "location": "Dhaka, Bangladesh",
+    "experienceYears": "5+ Years Experience",
+    "focusAreas": "Building · Writing · Designing",
+    "learningMindset": "Always Curious & Learning",
+    "cvUrl": "/CV of Abdullah Al Maksud.pdf",
+    "email": "contact@abdullahalmaksud.com"
+  },
+  "pillars": [
+    {
+      "id": "engineering",
+      "title": "Web & App Engineering",
+      "icon": "Code2",
+      "tag": "Development",
+      "description": "Building scalable, high-performance web applications and mobile apps with Next.js, React, TypeScript, and modern backend APIs.",
+      "skills": ["Next.js & React", "TypeScript", "Node.js & REST APIs", "Database & Prisma", "State & Performance"]
+    },
+    {
+      "id": "design",
+      "title": "UI/UX & Design Systems",
+      "icon": "Palette",
+      "tag": "Design & Identity",
+      "description": "Crafting cohesive visual identities, responsive design systems, and delightful interfaces with rich micro-animations and micro-interactions.",
+      "skills": ["UI/UX Prototyping", "Figma Systems", "Visual Branding", "Typography & Layout", "Micro-interactions"]
+    },
+    {
+      "id": "writing",
+      "title": "Writing & Authorship",
+      "icon": "BookOpen",
+      "tag": "Author & Thinker",
+      "description": "Author of popular science book 'What If (Emon Jodi Hoto)' and deep-dive technical essays on software craft, developer productivity, and mindset.",
+      "skills": ["Book Authorship", "Science Communication", "Tech Articles", "Concept Simplification", "Content Strategy"]
+    },
+    {
+      "id": "tooling",
+      "title": "Developer Tooling & Systems",
+      "icon": "Terminal",
+      "tag": "Engineering DX",
+      "description": "Creating intuitive utilities, open-source developer toolkits, and productivity suites that streamline engineers' workflows.",
+      "skills": ["DevTools Suite", "CLI Utilities", "Open Source Packages", "CI/CD & Automation", "Workflow Design"]
+    }
+  ],
+  "experience": [
+    {
+      "id": "exp-1",
+      "year": "2025 — Present",
+      "role": "Senior Full-Stack Developer & UI Architect",
+      "company": "Independent / Digital Products & Client Solutions",
+      "location": "Remote / Bangladesh",
+      "type": "Full-Time / Contract",
+      "current": true,
+      "description": "Architecting scalable web applications, modern developer tooling suites (DevTools), and creating high-impact visual design identities with Next.js, TypeScript, and Tailwind CSS.",
+      "highlights": [
+        "Architecting full-stack digital products with modular architecture and high-performance server components.",
+        "Building developer productivity tools and intuitive web utilities with seamless UX.",
+        "Creating custom UI/UX design systems with fluid dark/light themes and responsive micro-animations."
+      ],
+      "technologies": ["Next.js 14", "TypeScript", "Tailwind CSS", "React", "Node.js", "PostgreSQL", "Figma"]
+    },
+    {
+      "id": "exp-2",
+      "year": "2024 — 2025",
+      "role": "Author & Science Communicator",
+      "company": "GyanKosh Publications",
+      "location": "Dhaka, Bangladesh",
+      "type": "Published Work",
+      "current": false,
+      "description": "Authored and published the acclaimed popular science and curiosity book 'What If (Emon Jodi Hoto)', breaking down astrophysics, physics thought experiments, and scientific queries for readers.",
+      "highlights": [
+        "Published nationwide across Ekushey Boi Mela, Rokomari, and leading book distribution platforms.",
+        "Authored educational essays on software craftsmanship, engineering mindset, and modern web architectures.",
+        "Conducted reader engagement sessions and science communication discussions."
+      ],
+      "technologies": ["Book Publishing", "Technical Writing", "Science Research", "Editorial Layout", "Rokomari"]
+    },
+    {
+      "id": "exp-3",
+      "year": "2021 — 2024",
+      "role": "Full-Stack Engineer",
+      "company": "Product Studio & Tech Agencies",
+      "location": "Bangladesh & Remote",
+      "type": "Agency & Freelance",
+      "current": false,
+      "description": "Engineered robust web and mobile applications with React, React Native, and Node.js for startups and business clients across various industries.",
+      "highlights": [
+        "Developed cross-platform mobile apps for iOS and Android using React Native and Expo.",
+        "Built responsive client portals and dashboards with React, Redux, and RESTful API integrations.",
+        "Optimized client websites for Core Web Vitals, achieving 40%+ faster initial load times and improved SEO."
+      ],
+      "technologies": ["React.js", "React Native", "Node.js", "Express", "MongoDB", "Redux", "REST APIs"]
+    },
+    {
+      "id": "exp-4",
+      "year": "2019 — 2021",
+      "role": "Frontend Developer & UI Designer",
+      "company": "Creative Digital Agency",
+      "location": "Dhaka, Bangladesh",
+      "type": "Early Career",
+      "current": false,
+      "description": "Focused on creating responsive user interfaces, brand identities, marketing graphics, and landing pages for local businesses and creative startups.",
+      "highlights": [
+        "Crafted 25+ brand identities, typography guidelines, and marketing visual assets.",
+        "Implemented pixel-perfect responsive HTML5/CSS3 and JavaScript interfaces from design prototypes.",
+        "Collaborated with product teams to refine user workflows and enhance visual presentation."
+      ],
+      "technologies": ["HTML5/CSS3", "JavaScript (ES6+)", "Figma", "UI/UX Design", "Photoshop", "Illustrator"]
+    }
+  ],
+  "education": [
+    {
+      "id": "edu-1",
+      "year": "2019 — 2023",
+      "degree": "Bachelor of Science in Computer Science & Engineering (B.Sc. in CSE)",
+      "institution": "University / Engineering Institute",
+      "location": "Bangladesh",
+      "status": "Graduated",
+      "description": "Comprehensive academic study in computer science fundamentals, software engineering, algorithms, database systems, and human-computer interaction (HCI).",
+      "highlights": [
+        "Majored in Software Engineering, Object-Oriented Programming, and Web Technologies.",
+        "Completed capstone projects focusing on full-stack web applications and user-centric system design.",
+        "Active participant in tech seminars, coding competitions, and open-source learning circles."
+      ],
+      "courses": ["Data Structures & Algorithms", "Software Architecture", "Database Management Systems", "Web Engineering", "Computer Networks", "HCI & UI Design"]
+    },
+    {
+      "id": "edu-2",
+      "year": "2017 — 2019",
+      "degree": "Higher Secondary Certificate (HSC) — Science",
+      "institution": "Science Division",
+      "location": "Bangladesh",
+      "status": "Completed with Distinction",
+      "description": "Specialized in physical sciences, higher mathematics, chemistry, and Information & Communication Technology (ICT).",
+      "highlights": [
+        "Built a strong foundation in analytical thinking, mathematical problem solving, and physics.",
+        "Discovered early passion for computer programming, algorithms, and digital graphic design."
+      ],
+      "courses": ["Higher Mathematics", "Physics", "Chemistry", "Information & Communication Technology (ICT)"]
+    },
+    {
+      "id": "edu-3",
+      "year": "2015 — 2017",
+      "degree": "Secondary School Certificate (SSC) — Science",
+      "institution": "Science Division",
+      "location": "Bangladesh",
+      "status": "Completed with Distinction",
+      "description": "Core secondary education emphasizing science, general mathematics, and introductory computer studies.",
+      "highlights": [
+        "Graduated with excellent academic standing.",
+        "Developed early enthusiasm for curiosity-driven science, book reading, and creative arts."
+      ],
+      "courses": ["General Science", "General Mathematics", "Physics", "Chemistry", "Computer Basics"]
+    },
+    {
+      "id": "edu-4",
+      "year": "Ongoing & Lifelong",
+      "degree": "Continuous Learning & Professional Specializations",
+      "institution": "Industry Standards & Independent Research",
+      "location": "Global / Online",
+      "status": "In Progress",
+      "description": "Dedicated to staying at the forefront of modern web ecosystems, cloud architectures, AI tools integration, and state-of-the-art UI/UX craft.",
+      "highlights": [
+        "Active exploration of Next.js App Router, Server Actions, modern TypeScript patterns, and cloud platforms.",
+        "Deep research in design systems, micro-animations, and accessible frontend engineering."
+      ],
+      "courses": ["Next.js & React Server Architecture", "Advanced TypeScript", "Design Systems & Tokens", "Performance & SEO Optimization"]
+    }
+  ],
+  "skillsCategories": [
+    {
+      "title": "Frontend & Mobile",
+      "icon": "Smartphone",
+      "skills": ["Next.js 14", "React.js", "React Native", "TypeScript", "Tailwind CSS", "Redux Toolkit", "Framer Motion", "HTML5 / CSS3"]
+    },
+    {
+      "title": "Backend & Cloud",
+      "icon": "Database",
+      "skills": ["Node.js", "Express.js", "RESTful APIs", "MongoDB", "PostgreSQL", "Prisma ORM", "Vercel", "Firebase"]
+    },
+    {
+      "title": "Design & Creative",
+      "icon": "Palette",
+      "skills": ["UI/UX Design", "Figma", "Design Systems", "Typography", "Visual Identity", "Adobe Photoshop", "Adobe Illustrator"]
+    },
+    {
+      "title": "Tools & Workflow",
+      "icon": "Terminal",
+      "skills": ["Git & GitHub", "Docker", "Postman", "Bun / npm", "Linux / Bash", "VS Code", "CI/CD Workflows", "Vite"]
+    }
+  ]
+}

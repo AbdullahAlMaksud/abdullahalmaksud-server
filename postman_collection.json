@@ -1,14 +1,14 @@
 {
   "info": {
-    "_postman_id": "abdullahalmaksud-api-collection-v2",
+    "_postman_id": "abdullahalmaksud-api-collection-v4",
     "name": "Abdullah Al Maksud API Collection",
-    "description": "Complete Postman API collection for Abdullah Al Maksud Portfolio Server. Includes Health, Better Auth, Portfolio Data, Blog CRUD, Book CRUD, Project CRUD, and Admin Operations.",
+    "description": "Complete Postman API collection for Abdullah Al Maksud Portfolio Server. Includes System Health, Home & About Configurations, Software Projects CRUD, Block-based Blog Posts CRUD, Books & Publications, Graphic Design Portfolio, File Uploads, and Admin Dashboard.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     {
       "key": "baseUrl",
-      "value": "https://api-abdullahalmaksud.vercel.app",
+      "value": "http://localhost:4000",
       "type": "string"
     }
   ],
@@ -17,16 +17,20 @@
       "name": "1. System & Health",
       "item": [
         {
-          "name": "Root Status",
+          "name": "Root Welcome",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/",
               "host": ["{{baseUrl}}"],
               "path": [""]
-            },
-            "description": "Returns basic API information, health path, auth base path, and configured frontend origin."
+            }
           }
         },
         {
@@ -38,87 +42,16 @@
               "raw": "{{baseUrl}}/health",
               "host": ["{{baseUrl}}"],
               "path": ["health"]
-            },
-            "description": "Checks system health, uptime, MongoDB connection state, and server timestamp."
-          }
-        },
-        {
-          "name": "Health Status (/api/health)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/health",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "health"]
-            },
-            "description": "Alternative health endpoint mounted under /api route."
+            }
           }
         }
       ]
     },
     {
-      "name": "2. Authentication (Better Auth)",
+      "name": "2. Authentication",
       "item": [
         {
-          "name": "Sign Up (Email & Password)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Abdullah Al Maksud\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"YourStrongPassword123!\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/auth/sign-up/email",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "sign-up", "email"]
-            },
-            "description": "Registers a new user using Better Auth. If email matches ADMIN_EMAILS, user automatically gets admin role."
-          }
-        },
-        {
-          "name": "Sign In (Email & Password)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"YourStrongPassword123!\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/auth/sign-in/email",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "sign-in", "email"]
-            },
-            "description": "Authenticates user and returns session cookie (auth_session)."
-          }
-        },
-        {
-          "name": "Get Session (/api/auth/get-session)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/auth/get-session",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "get-session"]
-            },
-            "description": "Fetches current active Better Auth session using session cookies."
-          }
-        },
-        {
-          "name": "Get Current User Profile (/api/me)",
+          "name": "Get Current Session (Me)",
           "request": {
             "method": "GET",
             "header": [],
@@ -126,158 +59,40 @@
               "raw": "{{baseUrl}}/api/me",
               "host": ["{{baseUrl}}"],
               "path": ["api", "me"]
-            },
-            "description": "Returns current logged in user details, role (admin/user), and session info."
+            }
           }
         },
         {
-          "name": "Sign Out",
+          "name": "Get Session via BetterAuth",
           "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{}"
-            },
+            "method": "GET",
+            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/auth/sign-out",
+              "raw": "{{baseUrl}}/api/auth/get-session",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "sign-out"]
-            },
-            "description": "Invalidates current session and clears cookies."
+              "path": ["api", "auth", "get-session"]
+            }
           }
         }
       ]
     },
     {
-      "name": "3. Portfolio Public Data",
+      "name": "3. Home Page Configuration",
       "item": [
         {
-          "name": "Get Site Data (en/bn)",
+          "name": "Get Home Page Data",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/site?locale=en",
+              "raw": "{{baseUrl}}/api/v1/home",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "site"],
-              "query": [
-                {
-                  "key": "locale",
-                  "value": "en",
-                  "description": "Locale: en or bn"
-                }
-              ]
-            },
-            "description": "Retrieves site metadata, navigation structure, social links, and profile information."
+              "path": ["api", "v1", "home"]
+            }
           }
         },
         {
-          "name": "Get All Content Data (en/bn)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/content?locale=en",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "content"],
-              "query": [
-                {
-                  "key": "locale",
-                  "value": "en",
-                  "description": "Locale: en or bn"
-                }
-              ]
-            },
-            "description": "Retrieves all bundle content including static projects, blog posts, and books."
-          }
-        }
-      ]
-    },
-    {
-      "name": "4. Blog Posts (CRUD)",
-      "description": "Full CRUD API for blog posts. Public GET endpoints, Admin-only POST/PUT/DELETE. Supports pagination (?page=1&limit=10) and published filter (?published=true).",
-      "item": [
-        {
-          "name": "Get All Blog Posts (Public)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/blogs?page=1&limit=10",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "blogs"],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "1",
-                  "description": "Page number (default: 1)"
-                },
-                {
-                  "key": "limit",
-                  "value": "10",
-                  "description": "Items per page (default: 10, max: 50)"
-                },
-                {
-                  "key": "published",
-                  "value": "true",
-                  "description": "Filter only published posts",
-                  "disabled": true
-                }
-              ]
-            },
-            "description": "Retrieves paginated list of all blog posts from MongoDB. Use ?published=true to filter only published posts."
-          }
-        },
-        {
-          "name": "Get Blog Post by Slug (Public)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/blogs/:slug",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "blogs", ":slug"],
-              "variable": [
-                {
-                  "key": "slug",
-                  "value": "why-i-build-local-first-apps",
-                  "description": "Unique blog post slug"
-                }
-              ]
-            },
-            "description": "Retrieves a single blog post by its unique slug."
-          }
-        },
-        {
-          "name": "Create Blog Post (Admin)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"title\": \"নতুন ব্লগ পোস্ট\",\n  \"slug\": \"new-blog-post\",\n  \"content\": \"# শিরোনাম\\n\\nব্লগ পোস্টের বিস্তারিত কন্টেন্ট এখানে লিখুন। Markdown সাপোর্টেড।\\n\\n## সাব-হেডিং\\n\\n- পয়েন্ট ১\\n- পয়েন্ট ২\\n- পয়েন্ট ৩\",\n  \"excerpt\": \"এটি একটি নতুন ব্লগ পোস্টের সংক্ষিপ্ত বিবরণ।\",\n  \"coverImage\": \"/images/blog/new-post.png\",\n  \"author\": \"Abdullah Al Maksud\",\n  \"tags\": [\"javascript\", \"tutorial\", \"web\"],\n  \"category\": \"Tutorial\",\n  \"isPublished\": true\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/blogs",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "blogs"]
-            },
-            "description": "Creates a new blog post in MongoDB. Requires active Admin session. Slug must be unique. If isPublished=true, publishedAt is auto-set."
-          }
-        },
-        {
-          "name": "Update Blog Post (Admin)",
+          "name": "Update Home Page Data (Admin)",
           "request": {
             "method": "PUT",
             "header": [
@@ -288,124 +103,34 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"আপডেটেড ব্লগ টাইটেল\",\n  \"content\": \"# আপডেটেড কন্টেন্ট\\n\\nব্লগ পোস্টের আপডেটেড কন্টেন্ট।\",\n  \"isPublished\": true,\n  \"tags\": [\"updated\", \"blog\"]\n}"
+              "raw": "{\n  \"hero\": {\n    \"greeting\": \"Hello, I'm\",\n    \"firstName\": \"Maksud\",\n    \"subtitlePrefix\": \"I build digital experiences that are \",\n    \"subtitleHighlight\": \"fast, clean & meaningful.\",\n    \"exploreText\": \"EXPLORE MY WORLD\",\n    \"portraitImage\": \"/images/portrait.png\",\n    \"portraitAlt\": \"Abdullah Al Maksud\"\n  },\n  \"about\": {\n    \"badge\": \"ABOUT ME\",\n    \"headlineLines\": [\n      \"Curious mind.\",\n      \"Creative soul.\",\n      \"Code in hand.\"\n    ],\n    \"signature\": \"Maksud\",\n    \"infoBadges\": [\n      {\n        \"text\": \"Based in Bangladesh\",\n        \"icon\": \"MapPin\"\n      },\n      {\n        \"text\": \"5+ Years Experience\",\n        \"icon\": \"Calendar\"\n      },\n      {\n        \"text\": \"Building · Writing · Designing\",\n        \"icon\": \"Code2\"\n      },\n      {\n        \"text\": \"Always learning\",\n        \"icon\": \"Coffee\"\n      }\n    ]\n  }\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/blogs/:id",
+              "raw": "{{baseUrl}}/api/v1/home",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "blogs", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "BLOG_MONGO_ID_HERE",
-                  "description": "MongoDB _id of the blog post"
-                }
-              ]
-            },
-            "description": "Updates an existing blog post by its MongoDB _id. Requires active Admin session. Supports partial updates."
-          }
-        },
-        {
-          "name": "Delete Blog Post (Admin)",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/blogs/:id",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "blogs", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "BLOG_MONGO_ID_HERE",
-                  "description": "MongoDB _id of the blog post"
-                }
-              ]
-            },
-            "description": "Deletes a blog post by its MongoDB _id. Requires active Admin session."
+              "path": ["api", "v1", "home"]
+            }
           }
         }
       ]
     },
     {
-      "name": "5. Books (CRUD)",
-      "description": "Full CRUD API for books/reading list. Public GET endpoints, Admin-only POST/PUT/DELETE. Supports pagination (?page=1&limit=10) and recommended filter (?recommended=true).",
+      "name": "4. About Page Configuration",
       "item": [
         {
-          "name": "Get All Books (Public)",
+          "name": "Get About Page Data",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/books?page=1&limit=10",
+              "raw": "{{baseUrl}}/api/v1/about",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "books"],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "1",
-                  "description": "Page number (default: 1)"
-                },
-                {
-                  "key": "limit",
-                  "value": "10",
-                  "description": "Items per page (default: 10, max: 50)"
-                },
-                {
-                  "key": "recommended",
-                  "value": "true",
-                  "description": "Filter only recommended books",
-                  "disabled": true
-                }
-              ]
-            },
-            "description": "Retrieves paginated list of all books from MongoDB. Use ?recommended=true to filter only recommended books."
+              "path": ["api", "v1", "about"]
+            }
           }
         },
         {
-          "name": "Get Book by Slug (Public)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/books/:slug",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "books", ":slug"],
-              "variable": [
-                {
-                  "key": "slug",
-                  "value": "clean-code",
-                  "description": "Unique book slug"
-                }
-              ]
-            },
-            "description": "Retrieves a single book by its unique slug."
-          }
-        },
-        {
-          "name": "Create Book (Admin)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"title\": \"Atomic Habits\",\n  \"slug\": \"atomic-habits\",\n  \"author\": \"James Clear\",\n  \"coverImage\": \"/images/books/atomic-habits.png\",\n  \"description\": \"An Easy & Proven Way to Build Good Habits & Break Bad Ones. ক্ষুদ্র অভ্যাসের শক্তি দিয়ে জীবন পরিবর্তনের বাস্তবসম্মত গাইড।\",\n  \"genre\": \"Self-help\",\n  \"rating\": 5,\n  \"readDate\": \"2026-01-15\",\n  \"reviewText\": \"অভ্যাস গঠনের জন্য সবচেয়ে প্র্যাক্টিকাল বই। 1% improvement concept চমৎকার।\",\n  \"tags\": [\"self-help\", \"habits\", \"productivity\"],\n  \"isRecommended\": true,\n  \"purchaseLink\": \"https://www.amazon.com/Atomic-Habits-Proven-Build-Break/dp/0735211299\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/books",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "books"]
-            },
-            "description": "Adds a new book to the reading list in MongoDB. Requires active Admin session. Slug must be unique."
-          }
-        },
-        {
-          "name": "Update Book (Admin)",
+          "name": "Update About Page Data (Admin)",
           "request": {
             "method": "PUT",
             "header": [
@@ -416,51 +141,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"rating\": 4,\n  \"reviewText\": \"আপডেটেড রিভিউ: বইটি ভালো, তবে কিছু জায়গায় রিপিটিটিভ।\",\n  \"isRecommended\": true\n}"
+              "raw": "{\n  \"header\": {\n    \"badge\": \"ABOUT ME\",\n    \"headline\": \"Curious mind. Creative soul. Code in hand.\",\n    \"intro\": \"Hello! I'm Abdullah Al Maksud, a passionate Full-Stack Developer, UI/UX Designer, and Author based in Bangladesh.\",\n    \"subIntro\": \"Whether building high-performance web systems with Next.js, designing pixel-perfect interfaces, or writing books—I care deeply about craftsmanship.\",\n    \"signature\": \"Maksud\",\n    \"location\": \"Dhaka, Bangladesh\",\n    \"experienceYears\": \"5+ Years Experience\",\n    \"focusAreas\": \"Building · Writing · Designing\",\n    \"learningMindset\": \"Always Curious & Learning\",\n    \"cvUrl\": \"/CV of Abdullah Al Maksud.pdf\",\n    \"email\": \"contact@abdullahalmaksud.com\"\n  }\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/books/:id",
+              "raw": "{{baseUrl}}/api/v1/about",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "books", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "BOOK_MONGO_ID_HERE",
-                  "description": "MongoDB _id of the book"
-                }
-              ]
-            },
-            "description": "Updates an existing book by its MongoDB _id. Requires active Admin session. Supports partial updates."
-          }
-        },
-        {
-          "name": "Delete Book (Admin)",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/books/:id",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "books", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "BOOK_MONGO_ID_HERE",
-                  "description": "MongoDB _id of the book"
-                }
-              ]
-            },
-            "description": "Deletes a book by its MongoDB _id. Requires active Admin session."
+              "path": ["api", "v1", "about"]
+            }
           }
         }
       ]
     },
     {
-      "name": "6. Software Projects (CRUD)",
-      "description": "Full CRUD API for software/portfolio projects. Public GET endpoints, Admin-only POST/PUT/DELETE. Projects are stored in MongoDB with auto-syncing of duplicate fields.",
+      "name": "5. Software Projects",
       "item": [
         {
-          "name": "Get All Projects (Public)",
+          "name": "Get All Projects",
           "request": {
             "method": "GET",
             "header": [],
@@ -468,28 +164,37 @@
               "raw": "{{baseUrl}}/api/v1/projects",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "projects"]
-            },
-            "description": "Retrieves dynamic list of all software projects stored in MongoDB (sorted by newest first)."
+            }
           }
         },
         {
-          "name": "Get Project by Slug (Public)",
+          "name": "Get Featured Projects",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/projects/:slug",
+              "raw": "{{baseUrl}}/api/v1/projects?featured=true",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "projects", ":slug"],
-              "variable": [
+              "path": ["api", "v1", "projects"],
+              "query": [
                 {
-                  "key": "slug",
-                  "value": "bonton",
-                  "description": "Unique project slug (e.g. bonton, prishtha, okkhor, ghorial)"
+                  "key": "featured",
+                  "value": "true"
                 }
               ]
-            },
-            "description": "Retrieves single project details by its unique slug."
+            }
+          }
+        },
+        {
+          "name": "Get Project by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/projects/abdullahalmaksud-web",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "projects", "abdullahalmaksud-web"]
+            }
           }
         },
         {
@@ -504,14 +209,13 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"New Portfolio Project\",\n  \"slug\": \"new-portfolio-project\",\n  \"description\": \"A modern web application built with TypeScript and React.\",\n  \"coverImage\": \"/images/project/new-project.png\",\n  \"logo\": \"/images/project/logo/new-project.png\",\n  \"stack\": [\"React\", \"TypeScript\", \"Tailwind CSS\", \"Hono\"],\n  \"coreFeatures\": [\n    {\n      \"icon\": \"zap\",\n      \"text\": \"Fast Performance\",\n      \"desc\": \"Optimized for speed and efficiency\"\n    },\n    {\n      \"icon\": \"shield\",\n      \"text\": \"Secure Authentication\",\n      \"desc\": \"Role-based access control\"\n    }\n  ],\n  \"gitRepo\": \"https://github.com/abdullahmaksud/new-project\",\n  \"liveLink\": \"https://new-project.abdullahalmaksud.com\",\n  \"categories\": [\"web\", \"saas\", \"tool\"],\n  \"tag\": \"Full-stack Application\",\n  \"status\": \"live\",\n  \"isFeatured\": true\n}"
+              "raw": "{\n  \"slug\": \"ai-portfolio-showcase\",\n  \"title\": \"AI Portfolio Showcase\",\n  \"description\": \"Next-generation interactive portfolio with 3D interactions and Vercel Blob integrations.\",\n  \"coverImage\": \"images/projects/ai-portfolio.webp\",\n  \"stack\": [\"Next.js\", \"TypeScript\", \"Tailwind CSS\", \"Framer Motion\"],\n  \"year\": \"2025\",\n  \"liveLink\": \"https://abdullahalmaksud.com\",\n  \"gitRepo\": \"https://github.com/AbdullahAlMaksud/abdullahalmaksud-web\",\n  \"tag\": \"Web Application\",\n  \"isFeatured\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/projects",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "projects"]
-            },
-            "description": "Creates a new software project in MongoDB. Requires active Admin session. Slug must be unique. Fields like image/repo/demo are auto-synced from coverImage/gitRepo/liveLink."
+            }
           }
         },
         {
@@ -526,21 +230,13 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Updated Project Title\",\n  \"description\": \"Updated description of the project.\",\n  \"isFeatured\": true,\n  \"status\": \"live\"\n}"
+              "raw": "{\n  \"title\": \"Updated Project Title\",\n  \"isFeatured\": true\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/projects/:id",
+              "raw": "{{baseUrl}}/api/v1/projects/PROJECT_ID_HERE",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "projects", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "PROJECT_MONGO_ID_HERE",
-                  "description": "MongoDB _id of the project"
-                }
-              ]
-            },
-            "description": "Updates an existing project by its MongoDB _id. Requires active Admin session. Supports partial updates."
+              "path": ["api", "v1", "projects", "PROJECT_ID_HERE"]
+            }
           }
         },
         {
@@ -549,28 +245,247 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/projects/:id",
+              "raw": "{{baseUrl}}/api/v1/projects/PROJECT_ID_HERE",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "projects", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "PROJECT_MONGO_ID_HERE",
-                  "description": "MongoDB _id of the project"
-                }
-              ]
-            },
-            "description": "Deletes a project by its MongoDB _id. Requires active Admin session."
+              "path": ["api", "v1", "projects", "PROJECT_ID_HERE"]
+            }
           }
         }
       ]
     },
     {
-      "name": "7. Admin Operations",
-      "description": "Admin-only utility endpoints for file uploads, dashboard metrics, messages, and notifications.",
+      "name": "6. Blogs & Essays",
       "item": [
         {
-          "name": "Upload File (Vercel Blob)",
+          "name": "Get All Blogs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/blogs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "blogs"]
+            }
+          }
+        },
+        {
+          "name": "Get Blog by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/blogs/crafting-high-performance-apps",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "blogs", "crafting-high-performance-apps"]
+            }
+          }
+        },
+        {
+          "name": "Create Blog Post (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"modern-state-of-web-dev\",\n  \"title\": \"Modern State of Web Development in 2026\",\n  \"excerpt\": \"Exploration of streaming architectures, serverless cold start mitigation, and high-performance frontend interfaces.\",\n  \"coverImage\": \"images/blogs/modern-web.webp\",\n  \"category\": \"Engineering\",\n  \"readingTime\": \"5 min read\",\n  \"published\": true,\n  \"tags\": [\"Next.js\", \"Full-Stack\", \"Performance\"],\n  \"content\": [\n    {\n      \"type\": \"paragraph\",\n      \"text\": \"Modern web development has transitioned toward server-driven UI and seamless asset delivery.\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/blogs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "blogs"]
+            }
+          }
+        },
+        {
+          "name": "Update Blog Post (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Blog Title\",\n  \"published\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/blogs/BLOG_ID_HERE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "blogs", "BLOG_ID_HERE"]
+            }
+          }
+        },
+        {
+          "name": "Delete Blog Post (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/blogs/BLOG_ID_HERE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "blogs", "BLOG_ID_HERE"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Books & Shelf",
+      "item": [
+        {
+          "name": "Get Book Bundle & Shelf",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books"]
+            }
+          }
+        },
+        {
+          "name": "Get All Standalone Books",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/all",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "all"]
+            }
+          }
+        },
+        {
+          "name": "Update Book Showcase Bundle (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"book\": {\n    \"titleBn\": \"এমন যদি হতো\",\n    \"titleEn\": \"Emon Jodi Hoto\",\n    \"author\": \"আব্দুল্লাহ আল মাকসুদ\",\n    \"publisher\": \"জ্ঞানকোষ প্রকাশনী\",\n    \"category\": \"বিজ্ঞান ও প্রযুক্তি\",\n    \"ageGroup\": \"বয়স ১২-১৭\",\n    \"price\": 344,\n    \"year\": 2025,\n    \"rokomariUrl\": \"https://www.rokomari.com/book/439281/emon-jodi-hoto\",\n    \"cover\": \"images/books/emon-jodi-hoto.webp\",\n    \"descriptionBn\": \"কল্পনা আর বিজ্ঞান-এই দুইয়ের মিশেলে জ্ঞান অর্জনের পথ খুলে যায়।\",\n    \"descriptionEn\": \"A blend of imagination and physics unlocking curious inquiries about our universe.\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/bundle",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "bundle"]
+            }
+          }
+        },
+        {
+          "name": "Create Standalone Book (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Atomic Habits\",\n  \"author\": \"James Clear\",\n  \"coverImage\": \"images/books/atomic-habits.jpg\",\n  \"category\": \"Productivity\",\n  \"year\": 2018\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books"]
+            }
+          }
+        },
+        {
+          "name": "Delete Book (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/BOOK_ID_HERE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "BOOK_ID_HERE"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Graphic Design",
+      "item": [
+        {
+          "name": "Get All Graphic Designs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/designs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "designs"]
+            }
+          }
+        },
+        {
+          "name": "Get Design by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/designs/DESIGN_ID_HERE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "designs", "DESIGN_ID_HERE"]
+            }
+          }
+        },
+        {
+          "name": "Create Graphic Design (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"BYOU Minimal Identity\",\n  \"subtitle\": \"Brand & Packaging\",\n  \"description\": \"Minimalist luxury brand system and packaging design.\",\n  \"coverImage\": \"images/designs/byou.webp\",\n  \"tools\": [\"Figma\", \"Illustrator\", \"Photoshop\"],\n  \"year\": \"2025\",\n  \"category\": \"Brand Identity\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/designs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "designs"]
+            }
+          }
+        },
+        {
+          "name": "Delete Graphic Design (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/designs/DESIGN_ID_HERE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "designs", "DESIGN_ID_HERE"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. File Upload (Vercel Blob)",
+      "item": [
+        {
+          "name": "Upload File (Admin)",
           "request": {
             "method": "POST",
             "header": [],
@@ -588,65 +503,48 @@
               "raw": "{{baseUrl}}/api/v1/upload",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "upload"]
-            },
-            "description": "Uploads an asset file to Vercel Blob storage. Requires active Admin session and configured BLOB_READ_WRITE_TOKEN."
+            }
           }
-        },
+        }
+      ]
+    },
+    {
+      "name": "10. Admin Dashboard & Messages",
+      "item": [
         {
-          "name": "Get Dashboard Data",
+          "name": "Get Dashboard Metrics (Admin)",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/dashboard?locale=en",
+              "raw": "{{baseUrl}}/api/v1/dashboard",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "dashboard"],
-              "query": [
-                {
-                  "key": "locale",
-                  "value": "en"
-                }
-              ]
-            },
-            "description": "Fetches admin dashboard metrics, messages, and notification counts. Requires active Admin session."
+              "path": ["api", "v1", "dashboard"]
+            }
           }
         },
         {
-          "name": "Get Contact Messages",
+          "name": "Get Contact Messages (Admin)",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/messages?locale=en",
+              "raw": "{{baseUrl}}/api/v1/messages",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "messages"],
-              "query": [
-                {
-                  "key": "locale",
-                  "value": "en"
-                }
-              ]
-            },
-            "description": "Fetches contact inquiries submitted by users. Requires active Admin session."
+              "path": ["api", "v1", "messages"]
+            }
           }
         },
         {
-          "name": "Get Notifications",
+          "name": "Get System Notifications (Admin)",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/notifications?locale=en",
+              "raw": "{{baseUrl}}/api/v1/notifications",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "notifications"],
-              "query": [
-                {
-                  "key": "locale",
-                  "value": "en"
-                }
-              ]
-            },
-            "description": "Fetches admin notifications list. Requires active Admin session."
+              "path": ["api", "v1", "notifications"]
+            }
           }
         }
       ]

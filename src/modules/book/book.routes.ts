@@ -1,22 +1,24 @@
 import { Hono } from "hono";
 
+import { adminOnly } from "../../middlewares/role.middleware.js";
+import type { AppEnv } from "../../lib/types.js";
 import {
   createBook,
   deleteBook,
-  getAllBooks,
-  getBookBySlug,
+  getBookBundle,
+  getAllStandaloneBooks,
   updateBook,
+  updateBookBundle,
 } from "./book.controller.js";
-import type { AppEnv } from "../../lib/types.js";
-import { requireAdmin } from "../../middlewares/role.middleware.js";
 
 export const bookRoutes = new Hono<AppEnv>();
 
-// Public
-bookRoutes.get("/books", getAllBooks);
-bookRoutes.get("/books/:slug", getBookBySlug);
+// Public routes
+bookRoutes.get("/books", getBookBundle);
+bookRoutes.get("/books/all", getAllStandaloneBooks);
 
-// Admin only
-bookRoutes.post("/books", requireAdmin, createBook);
-bookRoutes.put("/books/:id", requireAdmin, updateBook);
-bookRoutes.delete("/books/:id", requireAdmin, deleteBook);
+// Admin-only mutations
+bookRoutes.put("/books/bundle", adminOnly, updateBookBundle);
+bookRoutes.post("/books", adminOnly, createBook);
+bookRoutes.put("/books/:id", adminOnly, updateBook);
+bookRoutes.delete("/books/:id", adminOnly, deleteBook);

@@ -1,0 +1,54 @@
+{
+  "book": {
+    "titleBn": "এমন যদি হতো",
+    "titleEn": "Emon Jodi Hoto",
+    "author": "আব্দুল্লাহ আল মাকসুদ",
+    "publisher": "জ্ঞানকোষ প্রকাশনী",
+    "category": "বিজ্ঞান ও প্রযুক্তি",
+    "ageGroup": "বয়স ১২-১৭",
+    "cover": "/images/books/emon-jodi-hoto.webp",
+    "price": 344,
+    "rokomariUrl": "https://www.rokomari.com/book/454540/emon-jodi-hoto",
+    "descriptionBn": "কল্পনা আর বিজ্ঞান-এই দুইয়ের মিশেলে জ্ঞান অর্জনের পথ খুলে যায়। 'এমন যদি হতো' বইয়ে অবান্তর মনে হওয়া প্রশ্নগুলোর বৈজ্ঞানিক ব্যাখ্যা খোঁজা হয়েছে। ব্ল্যাকহোলে পড়লে কী হবে? পৃথিবীর যদি দুটি চাঁদ থাকত? গল্পের মতো সহজ ভাষায় মহাবিশ্বের রহস্য উন্মোচন।",
+    "descriptionEn": "A blend of imagination and physics unlocking curious inquiries about our universe. 'What If' explores mind-bending scientific queries—What happens inside a black hole? What if Earth had two moons?—explained through engaging narratives for curious readers.",
+    "year": 2025
+  },
+  "stats": [
+    { "value": "10+", "label": "Projects Completed", "icon": "terminal" },
+    { "value": "3+", "label": "Years of Experience", "icon": "circle-dot" },
+    { "value": "200+", "label": "Articles Published", "icon": "pen-line" },
+    { "value": "1", "label": "Book Published", "icon": "pencil" }
+  ],
+  "books": [
+    {
+      "id": "atomic-habits",
+      "title": "Atomic Habits",
+      "author": "James Clear",
+      "coverColor": "#F5F3EF",
+      "textColor": "#2B2824",
+      "accentColor": "#D97706",
+      "tag": "Habits & Systems",
+      "year": 2024
+    },
+    {
+      "id": "deep-work",
+      "title": "DEEP WORK",
+      "author": "Cal Newport",
+      "coverColor": "#F59E0B",
+      "textColor": "#080A0E",
+      "accentColor": "#080A0E",
+      "tag": "Focus & Flow",
+      "year": 2024
+    },
+    {
+      "id": "naval-almanack",
+      "title": "THE ALMANACK OF NAVAL RAVIKANT",
+      "author": "Eric Jorgenson / Naval",
+      "coverColor": "#F8FAFC",
+      "textColor": "#0F172A",
+      "accentColor": "#475569",
+      "tag": "Wealth & Happiness",
+      "year": 2025
+    }
+  ]
+}

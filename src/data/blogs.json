@@ -1,0 +1,40 @@
+{
+  "blogs": [
+    {
+      "id": "mindset-shift",
+      "slug": "mindset-shift",
+      "title": "মানসিকতার পরিবর্তন",
+      "excerpt": "কীভাবে চিন্তাভাবনার সামান্য পরিবর্তন আমাদের দৃষ্টিভঙ্গি এবং কাজের মানকে বহুগুণ বাড়িয়ে দিতে পারে।",
+      "category": "Mindset",
+      "publishedAt": "Jul 01, 2025",
+      "readingTime": "5 min read",
+      "featured": true,
+      "featuredType": "large",
+      "cover": "/images/blogs/blog-0.jpg"
+    },
+    {
+      "id": "thoughts-on-productivity",
+      "slug": "thoughts-on-productivity",
+      "title": "প্রোডাক্টিভিটি নিয়ে কিছু কথা",
+      "excerpt": "সারাদিন ব্যস্ত থাকার চেয়ে সঠিক সময়ে সঠিক কাজে মনোযোগ দেওয়াই আসল উৎপাদনশীলতা।",
+      "category": "Productivity",
+      "publishedAt": "Jun 18, 2025",
+      "readingTime": "4 min read",
+      "featured": true,
+      "featuredType": "small",
+      "cover": "/images/blogs/blog-1.jpg"
+    },
+    {
+      "id": "life-goals-and-us",
+      "slug": "life-goals-and-us",
+      "title": "জীবন, লক্ষ্য এবং আমরা",
+      "excerpt": "জীবনের দীর্ঘমেয়াদী লক্ষ্য নির্ধারণ এবং প্রতিদিনের ছোট ছোট পদক্ষেপের মেলবন্ধন।",
+      "category": "Life",
+      "publishedAt": "May 27, 2025",
+      "readingTime": "6 min read",
+      "featured": true,
+      "featuredType": "small",
+      "cover": "/images/blogs/blog-0.jpg"
+    }
+  ]
+}
