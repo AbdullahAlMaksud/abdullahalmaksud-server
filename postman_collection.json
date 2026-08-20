@@ -51,7 +51,70 @@
       "name": "2. Authentication",
       "item": [
         {
-          "name": "Get Current Session (Me)",
+          "name": "Sign Up (Email & Password)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"maksud.login@gmail.com\",\n  \"password\": \"YourStrongPassword123!\",\n  \"name\": \"Abdullah Al Maksud\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/sign-up/email",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "sign-up", "email"]
+            }
+          }
+        },
+        {
+          "name": "Sign In (Email & Password)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"maksud.login@gmail.com\",\n  \"password\": \"YourStrongPassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/sign-in/email",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "sign-in", "email"]
+            }
+          }
+        },
+        {
+          "name": "Sign In with Google (Social)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"provider\": \"google\",\n  \"callbackURL\": \"http://localhost:3000/api/auth/callback/google\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/sign-in/social",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "sign-in", "social"]
+            }
+          }
+        },
+        {
+          "name": "Get Current Session (/api/me)",
           "request": {
             "method": "GET",
             "header": [],
@@ -63,7 +126,7 @@
           }
         },
         {
-          "name": "Get Session via BetterAuth",
+          "name": "Get Session (BetterAuth)",
           "request": {
             "method": "GET",
             "header": [],
@@ -71,6 +134,18 @@
               "raw": "{{baseUrl}}/api/auth/get-session",
               "host": ["{{baseUrl}}"],
               "path": ["api", "auth", "get-session"]
+            }
+          }
+        },
+        {
+          "name": "Sign Out",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/sign-out",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "sign-out"]
             }
           }
         }
