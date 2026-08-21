@@ -16,7 +16,7 @@ if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
   socialProviders.google = {
     clientId: env.GOOGLE_CLIENT_ID,
     clientSecret: env.GOOGLE_CLIENT_SECRET,
-    redirectURI: env.GOOGLE_REDIRECT_URI,
+    ...(env.GOOGLE_REDIRECT_URI ? { redirectURI: env.GOOGLE_REDIRECT_URI } : {}),
   };
 }
 
