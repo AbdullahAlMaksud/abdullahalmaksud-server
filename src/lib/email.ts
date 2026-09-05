@@ -29,7 +29,7 @@ export async function sendOtpEmail({ email, otp, type }: SendOtpEmailParams): Pr
   const currentYear = new Date().getFullYear();
 
   try {
-    const response = await fetch("https://api.resend.com/emails", {
+    const response: any = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -172,7 +172,7 @@ export async function sendInquiryEmail({
   const emailFrom = env.EMAIL_FROM || "Portfolio Inquiry <onboarding@resend.dev>";
 
   try {
-    const response = await fetch("https://api.resend.com/emails", {
+    const response: any = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
