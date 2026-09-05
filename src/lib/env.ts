@@ -6,7 +6,7 @@ const envSchema = z.object({
     .enum(["development", "test", "production"])
     .default("development"),
   HOST: z.string().min(1).default("0.0.0.0"),
-  PORT: z.coerce.number().int().positive().default(4000),
+  PORT: z.coerce.number().int().positive().default(5000),
   MONGODB_URI: z.string().min(1, "MONGODB_URI is required"),
   MONGODB_DB_NAME: z.string().min(1).default("abdullahalmaksud"),
   REQUIRE_DATABASE_CONNECTION: z
@@ -16,7 +16,7 @@ const envSchema = z.object({
   BETTER_AUTH_SECRET: z
     .string()
     .min(32, "BETTER_AUTH_SECRET must be at least 32 characters"),
-  BETTER_AUTH_URL: z.string().url().default("http://localhost:4000"),
+  BETTER_AUTH_URL: z.string().url().default("http://localhost:5000"),
   CORS_ORIGIN: z.string().min(1).default("http://localhost:3000"),
   ADMIN_EMAILS: z.string().default(""),
   GOOGLE_CLIENT_ID: z.string().optional(),
@@ -25,6 +25,9 @@ const envSchema = z.object({
   GITHUB_CLIENT_ID: z.string().optional(),
   GITHUB_CLIENT_SECRET: z.string().optional(),
   COOKIE_DOMAIN: z.string().optional(),
+  RESEND_API_KEY: z.string().optional(),
+  EMAIL_FROM: z.string().default("Abdullah Al Maksud Admin <onboarding@resend.dev>"),
+  CONTACT_RECIPIENT_EMAIL: z.string().default("contact@abdullahalmaksud.com"),
   BLOB_READ_WRITE_TOKEN: z.string().optional(),
   BLOB_STORE_ID: z.string().optional(),
   BLOB_BASE_URL: z.string().optional(),

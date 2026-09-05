@@ -9,12 +9,14 @@ try {
 }
 
 import { env } from "./env.js";
+import { log } from "./logger.js";
 import { BlogModel } from "../modules/blog/blog.model.js";
 import { BookBundleModel, BookModel } from "../modules/book/book.model.js";
 import { DesignModel } from "../modules/design/design.model.js";
 import { HomeModel } from "../modules/home/home.model.js";
 import { AboutModel } from "../modules/about/about.model.js";
 import { ProjectModel } from "../modules/project/project.model.js";
+import { CaseStudyModel } from "../modules/case-study/case-study.model.js";
 
 // Static JSON fixtures
 import homeData from "../data/home.json" with { type: "json" };
@@ -69,15 +71,15 @@ export const seedAllInitialData = async () => {
     // 1. Projects
     const projectCount = await ProjectModel.countDocuments();
     if (projectCount === 0) {
-      console.log("Seeding initial projects into MongoDB...");
+      log.seedStart("Projects");
       await ProjectModel.create(projectsData.projects);
-      console.log("Project seeding complete!");
+      log.seedDone("Projects");
     }
 
     // 2. Blogs & Blog Details
     const blogCount = await BlogModel.countDocuments();
     if (blogCount === 0) {
-      console.log("Seeding initial blog posts into MongoDB...");
+      log.seedStart("Blogs");
       const detailsMap = new Map((blogDetailsData.blogDetails as any[]).map((d) => [d.slug, d]));
       
       const mergedBlogs = blogsData.blogs.map((b) => {
@@ -129,53 +131,53 @@ export const seedAllInitialData = async () => {
       }
 
       await BlogModel.create(mergedBlogs);
-      console.log("Blog seeding complete!");
+      log.seedDone("Blogs");
     }
 
     // 3. Books & Bundle
     const bundleCount = await BookBundleModel.countDocuments();
     if (bundleCount === 0) {
-      console.log("Seeding initial book bundle into MongoDB...");
+      log.seedStart("Books");
       await BookBundleModel.create({
         key: "main",
         book: bookData.book,
         stats: bookData.stats,
         books: bookData.books,
       });
-      console.log("Book bundle seeding complete!");
+      log.seedDone("Books");
     }
 
     // 4. Designs
     const designCount = await DesignModel.countDocuments();
     if (designCount === 0) {
-      console.log("Seeding initial graphic designs into MongoDB...");
+      log.seedStart("Designs");
       await DesignModel.create(designsData.designs);
-      console.log("Design seeding complete!");
+      log.seedDone("Designs");
     }
 
     // 5. Home Configuration
     const homeCount = await HomeModel.countDocuments();
     if (homeCount === 0) {
-      console.log("Seeding initial home configuration into MongoDB...");
+      log.seedStart("Home Config");
       await HomeModel.create({
         key: "main",
         ...homeData,
       });
-      console.log("Home configuration seeding complete!");
+      log.seedDone("Home Config");
     }
 
     // 6. About Configuration
     const aboutCount = await AboutModel.countDocuments();
     if (aboutCount === 0) {
-      console.log("Seeding initial about configuration into MongoDB...");
+      log.seedStart("About Config");
       await AboutModel.create({
         key: "main",
         ...aboutData,
       });
-      console.log("About configuration seeding complete!");
+      log.seedDone("About Config");
     }
   } catch (error) {
-    console.error("Auto-seeding check error:", error);
+    log.seedError(error);
   }
 };
 

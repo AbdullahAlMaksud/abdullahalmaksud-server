@@ -11,21 +11,39 @@ const AuthorSchema = new Schema(
 
 const BlogSchema = new Schema(
   {
-    id: { type: String },
     title: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
     excerpt: { type: String, default: "" },
-    content: { type: Schema.Types.Mixed, default: "" }, // Supports Array of Block objects or Markdown string
+    // Lexical Editor — block-based content (or markdown fallback)
+    content: { type: Schema.Types.Mixed, default: null },
+    contentType: {
+      type: String,
+      enum: ["lexical", "markdown", "html"],
+      default: "lexical",
+    },
     cover: { type: String, default: "" },
     coverImage: { type: String, default: "" },
-    author: { type: Schema.Types.Mixed, default: () => ({ name: "Abdullah Al Maksud", avatar: "/images/avatar.jpg", bio: "Developer, designer, writer." }) },
+    author: {
+      type: Schema.Types.Mixed,
+      default: () => ({
+        name: "Abdullah Al Maksud",
+        avatar: "/images/avatar.jpg",
+        bio: "Developer, designer, writer.",
+      }),
+    },
     tags: [{ type: String }],
     category: { type: String, default: "Engineering" },
     readingTime: { type: String, default: "5 min read" },
     featured: { type: Boolean, default: false },
-    featuredType: { type: String, enum: ["large", "small", "standard", ""], default: "" },
-    isPublished: { type: Boolean, default: true },
+    featuredType: {
+      type: String,
+      enum: ["large", "small", "standard", ""],
+      default: "",
+    },
+    isPublished: { type: Boolean, default: false },
     publishedAt: { type: String, default: "" },
+    metaTitle: { type: String, default: "" },
+    metaDescription: { type: String, default: "" },
   },
   {
     timestamps: true,

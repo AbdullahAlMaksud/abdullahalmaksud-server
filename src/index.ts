@@ -7,17 +7,20 @@ import {
   getDatabaseConnectionHelp,
 } from "./lib/database.js";
 import { env, requireDatabaseConnection } from "./lib/env.js";
+import { log } from "./lib/logger.js";
 
 const startServer = async () => {
+  log.banner(env.NODE_ENV);
+
   try {
     await connectDatabases();
-    console.log("MongoDB connected");
+    log.dbConnected(env.MONGODB_DB_NAME);
   } catch (error) {
     if (requireDatabaseConnection) {
       throw error;
     }
 
-    console.warn(`MongoDB connection skipped: ${getDatabaseConnectionHelp(error)}`);
+    log.dbSkipped(getDatabaseConnectionHelp(error));
   }
 
   // Local dev server (tsx/Node.js). Vercel uses api/index.ts instead.
@@ -27,8 +30,9 @@ const startServer = async () => {
     port: env.PORT,
   });
 
-  console.log(`Server is running at http://${env.HOST}:${env.PORT}`);
-  console.log(`Better Auth is mounted at ${env.BETTER_AUTH_URL}/api/auth`);
+  log.serverStart(env.HOST, env.PORT);
+  log.authMounted(env.BETTER_AUTH_URL);
+  console.log("");
 };
 
 const shutdown = async () => {
@@ -40,7 +44,6 @@ process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);
 
 startServer().catch((error) => {
-  console.error("Failed to start server:", error);
+  log.error("Failed to start server", error);
   process.exit(1);
 });
-

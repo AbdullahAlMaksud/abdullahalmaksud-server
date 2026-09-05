@@ -1,8 +1,9 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
-import { admin } from "better-auth/plugins";
+import { admin, bearer, emailOTP } from "better-auth/plugins";
 
 import { authDb, authMongoClient } from "./database.js";
+import { sendOtpEmail } from "./email.js";
 import { corsOrigins, env } from "./env.js";
 import { adminRole, defaultRole, resolveRoleForEmail } from "./roles.js";
 
@@ -10,6 +11,7 @@ const trustedOrigins = corsOrigins.includes("*")
   ? [env.BETTER_AUTH_URL]
   : Array.from(new Set([env.BETTER_AUTH_URL, ...corsOrigins]));
 
+// Only Google OAuth is enabled per specification
 const socialProviders: Record<string, any> = {};
 
 if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
@@ -17,13 +19,6 @@ if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
     clientId: env.GOOGLE_CLIENT_ID,
     clientSecret: env.GOOGLE_CLIENT_SECRET,
     ...(env.GOOGLE_REDIRECT_URI ? { redirectURI: env.GOOGLE_REDIRECT_URI } : {}),
-  };
-}
-
-if (env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET) {
-  socialProviders.github = {
-    clientId: env.GITHUB_CLIENT_ID,
-    clientSecret: env.GITHUB_CLIENT_SECRET,
   };
 }
 
@@ -36,7 +31,7 @@ export const auth = betterAuth({
     transaction: false,
   }),
   emailAndPassword: {
-    enabled: true,
+    enabled: false, // Enforce passwordless sign-in via Email OTP
   },
   socialProviders,
   advanced: {
@@ -61,6 +56,14 @@ export const auth = betterAuth({
     },
   },
   plugins: [
+    emailOTP({
+      sendVerificationOTP: async (data) => {
+        await sendOtpEmail(data);
+      },
+      otpLength: 6,
+      expiresIn: 300, // 5 minutes
+    }),
+    bearer(),
     admin({
       defaultRole,
       adminRoles: [adminRole],

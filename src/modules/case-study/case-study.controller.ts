@@ -1,10 +1,13 @@
 import type { Context } from "hono";
 
 import type { AppEnv } from "../../lib/types.js";
-import { BlogModel } from "./blog.model.js";
-import { createBlogSchema, updateBlogSchema } from "./blog.validation.js";
+import { CaseStudyModel } from "./case-study.model.js";
+import {
+  createCaseStudySchema,
+  updateCaseStudySchema,
+} from "./case-study.validation.js";
 
-export const getAllBlogs = async (c: Context<AppEnv>) => {
+export const getAllCaseStudies = async (c: Context<AppEnv>) => {
   try {
     const page = Math.max(1, Number(c.req.query("page")) || 1);
     const limit = Math.min(100, Math.max(1, Number(c.req.query("limit")) || 20));
@@ -12,11 +15,14 @@ export const getAllBlogs = async (c: Context<AppEnv>) => {
 
     const publishedOnly = c.req.query("published");
     const category = c.req.query("category");
+    const industry = c.req.query("industry");
     const featured = c.req.query("featured");
+    const projectSlug = c.req.query("projectSlug");
     const search = c.req.query("search");
     const includeContent = c.req.query("includeContent") === "true";
 
     const filter: Record<string, any> = {};
+
     if (publishedOnly === "true") {
       filter.isPublished = true;
     } else if (publishedOnly === "false") {
@@ -26,31 +32,42 @@ export const getAllBlogs = async (c: Context<AppEnv>) => {
     if (category && category.toLowerCase() !== "all") {
       filter.category = { $regex: new RegExp(`^${category}$`, "i") };
     }
+
+    if (industry) {
+      filter.industry = { $regex: new RegExp(`^${industry}$`, "i") };
+    }
+
     if (featured === "true") {
       filter.featured = true;
     }
+
+    if (projectSlug) {
+      filter.projectSlug = projectSlug;
+    }
+
     if (search) {
       filter.$or = [
         { title: { $regex: search, $options: "i" } },
         { excerpt: { $regex: search, $options: "i" } },
+        { client: { $regex: search, $options: "i" } },
         { tags: { $regex: search, $options: "i" } },
+        { stack: { $regex: search, $options: "i" } },
       ];
     }
 
-    // Exclude content on list views by default for high performance
     const projection = includeContent ? {} : { content: 0 };
 
-    const [blogs, total] = await Promise.all([
-      BlogModel.find(filter, projection)
-        .sort({ createdAt: -1 })
+    const [caseStudies, total] = await Promise.all([
+      CaseStudyModel.find(filter, projection)
+        .sort({ sortOrder: 1, createdAt: -1 })
         .skip(skip)
         .limit(limit),
-      BlogModel.countDocuments(filter),
+      CaseStudyModel.countDocuments(filter),
     ]);
 
     return c.json({
       success: true,
-      data: blogs,
+      data: caseStudies,
       pagination: {
         page,
         limit,
@@ -63,40 +80,40 @@ export const getAllBlogs = async (c: Context<AppEnv>) => {
   }
 };
 
-export const getBlogBySlug = async (c: Context<AppEnv>) => {
+export const getCaseStudyBySlug = async (c: Context<AppEnv>) => {
   try {
     const slug = c.req.param("slug");
-    const blog = await BlogModel.findOne({ slug });
+    const caseStudy = await CaseStudyModel.findOne({ slug });
 
-    if (!blog) {
-      return c.json({ success: false, message: "Blog post not found" }, 404);
+    if (!caseStudy) {
+      return c.json({ success: false, message: "Case study not found" }, 404);
     }
 
-    return c.json({ success: true, data: blog });
+    return c.json({ success: true, data: caseStudy });
   } catch (error) {
     return c.json({ success: false, message: (error as Error).message }, 500);
   }
 };
 
-export const getBlogById = async (c: Context<AppEnv>) => {
+export const getCaseStudyById = async (c: Context<AppEnv>) => {
   try {
     const id = c.req.param("id");
-    const blog = await BlogModel.findById(id);
+    const caseStudy = await CaseStudyModel.findById(id);
 
-    if (!blog) {
-      return c.json({ success: false, message: "Blog post not found" }, 404);
+    if (!caseStudy) {
+      return c.json({ success: false, message: "Case study not found" }, 404);
     }
 
-    return c.json({ success: true, data: blog });
+    return c.json({ success: true, data: caseStudy });
   } catch (error) {
     return c.json({ success: false, message: (error as Error).message }, 500);
   }
 };
 
-export const createBlog = async (c: Context<AppEnv>) => {
+export const createCaseStudy = async (c: Context<AppEnv>) => {
   try {
     const body = await c.req.json();
-    const parsed = createBlogSchema.safeParse(body);
+    const parsed = createCaseStudySchema.safeParse(body);
 
     if (!parsed.success) {
       return c.json(
@@ -109,27 +126,27 @@ export const createBlog = async (c: Context<AppEnv>) => {
       );
     }
 
-    const existing = await BlogModel.findOne({ slug: parsed.data.slug });
+    const existing = await CaseStudyModel.findOne({ slug: parsed.data.slug });
     if (existing) {
       return c.json(
-        { success: false, message: "Blog post with this slug already exists" },
+        { success: false, message: "Case study with this slug already exists" },
         400
       );
     }
 
-    const blog = new BlogModel(parsed.data);
-    await blog.save();
-    return c.json({ success: true, data: blog }, 201);
+    const caseStudy = new CaseStudyModel(parsed.data);
+    await caseStudy.save();
+    return c.json({ success: true, data: caseStudy }, 201);
   } catch (error) {
     return c.json({ success: false, message: (error as Error).message }, 500);
   }
 };
 
-export const updateBlog = async (c: Context<AppEnv>) => {
+export const updateCaseStudy = async (c: Context<AppEnv>) => {
   try {
     const id = c.req.param("id");
     const body = await c.req.json();
-    const parsed = updateBlogSchema.safeParse(body);
+    const parsed = updateCaseStudySchema.safeParse(body);
 
     if (!parsed.success) {
       return c.json(
@@ -142,38 +159,41 @@ export const updateBlog = async (c: Context<AppEnv>) => {
       );
     }
 
-    const blog = await BlogModel.findById(id);
-    if (!blog) {
-      return c.json({ success: false, message: "Blog post not found" }, 404);
+    const caseStudy = await CaseStudyModel.findById(id);
+    if (!caseStudy) {
+      return c.json({ success: false, message: "Case study not found" }, 404);
     }
 
-    if (parsed.data.slug && parsed.data.slug !== blog.slug) {
-      const existing = await BlogModel.findOne({ slug: parsed.data.slug });
+    if (parsed.data.slug && parsed.data.slug !== caseStudy.slug) {
+      const existing = await CaseStudyModel.findOne({ slug: parsed.data.slug });
       if (existing) {
         return c.json(
-          { success: false, message: "Blog post with this slug already exists" },
+          { success: false, message: "Case study with this slug already exists" },
           400
         );
       }
     }
 
-    Object.assign(blog, parsed.data);
-    await blog.save();
+    Object.assign(caseStudy, parsed.data);
+    await caseStudy.save();
 
-    return c.json({ success: true, data: blog });
+    return c.json({ success: true, data: caseStudy });
   } catch (error) {
     return c.json({ success: false, message: (error as Error).message }, 500);
   }
 };
 
-export const deleteBlog = async (c: Context<AppEnv>) => {
+export const deleteCaseStudy = async (c: Context<AppEnv>) => {
   try {
     const id = c.req.param("id");
-    const blog = await BlogModel.findByIdAndDelete(id);
-    if (!blog) {
-      return c.json({ success: false, message: "Blog post not found" }, 404);
+    const caseStudy = await CaseStudyModel.findByIdAndDelete(id);
+    if (!caseStudy) {
+      return c.json({ success: false, message: "Case study not found" }, 404);
     }
-    return c.json({ success: true, message: "Blog post deleted successfully" });
+    return c.json({
+      success: true,
+      message: "Case study deleted successfully",
+    });
   } catch (error) {
     return c.json({ success: false, message: (error as Error).message }, 500);
   }

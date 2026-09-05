@@ -80,6 +80,7 @@ const StandaloneBookSchema = new Schema(
     title: { type: String, required: true },
     titleBn: { type: String },
     titleEn: { type: String },
+    subtitle: { type: String, default: "" },
     slug: { type: String, required: true, unique: true },
     author: { type: String, required: true },
     coverImage: { type: String, default: "" },
@@ -94,10 +95,40 @@ const StandaloneBookSchema = new Schema(
     category: { type: String, default: "" },
     rating: { type: Number, min: 0, max: 5, default: 5 },
     year: { type: Number, default: 2025 },
+    publicationYear: { type: String, default: "" },
+    edition: { type: String, default: "" },
+    pages: { type: Number, default: 0 },
+    isbn: { type: String, default: "" },
+    publisher: { type: String, default: "" },
     price: { type: Number, default: 0 },
     rokomariUrl: { type: String, default: "" },
     purchaseLink: { type: String, default: "" },
-    publisher: { type: String, default: "" },
+    purchaseLinks: [
+      {
+        label: { type: String, default: "" },
+        url: { type: String, default: "" },
+        isPrimary: { type: Boolean, default: false },
+        _id: false,
+      },
+    ],
+    synopsis: { type: Schema.Types.Mixed, default: "" },
+    content: { type: Schema.Types.Mixed, default: null },
+    contentType: {
+      type: String,
+      enum: ["blocks", "lexical", "json", "markdown", "html"],
+      default: "blocks",
+    },
+    themes: [{ type: String }],
+    chapters: [
+      {
+        number: { type: String, default: "" },
+        title: { type: String, default: "" },
+        description: { type: String, default: "" },
+        _id: false,
+      },
+    ],
+    quotes: [{ type: String }],
+    authorNote: { type: String, default: "" },
     tag: { type: String, default: "" },
     tags: [{ type: String }],
     isRecommended: { type: Boolean, default: true },
@@ -107,6 +138,9 @@ const StandaloneBookSchema = new Schema(
     toJSON: {
       transform: (doc, ret: Record<string, any>) => {
         ret.id = ret._id ? ret._id.toString() : "";
+        if (!ret.coverImage && ret.cover) ret.coverImage = ret.cover;
+        if (!ret.cover && ret.coverImage) ret.cover = ret.coverImage;
+        if (!ret.purchaseLink && ret.rokomariUrl) ret.purchaseLink = ret.rokomariUrl;
         delete ret._id;
         delete ret.__v;
         return ret;

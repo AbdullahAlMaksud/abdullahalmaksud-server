@@ -1,156 +1,211 @@
-# Abdullah Al Maksud Server
+# Abdullah Al Maksud — Core API Server
 
-To install dependencies:
+High-performance, modular backend API powering the **Abdullah Al Maksud Portfolio** and **Admin Management Portal**. Built on **Hono**, **Node.js**, **TypeScript**, **Mongoose / MongoDB Atlas**, **BetterAuth**, **Resend**, and **Vercel Blob**.
+
+> **Package Manager Notice**: This project exclusively uses **`pnpm`**. Do not use `npm`, `yarn`, or `bun`.
+
+---
+
+## Tech Stack & Architecture
+
+- **Web Framework**: [Hono](https://hono.dev/) v4 (Edge & Node.js runtime)
+- **Runtime**: Node.js (>= 20.x) with `@hono/node-server`
+- **Language**: TypeScript 5 (Strict ESM)
+- **Database & ODM**: MongoDB Atlas with [Mongoose](https://mongoosejs.com/) v9
+- **Authentication**: [BetterAuth](https://better-auth.com/) with sessions & Google OAuth
+- **Email Delivery**: [Resend](https://resend.com/) API for transactional emails and contact inquiries
+- **Object Storage**: [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) for cover images, monographs, and screenshots
+- **Validation**: [Zod](https://zod.dev/) v4
+- **Package Manager**: **`pnpm`** (v10)
+
+---
+
+## Quick Start
+
+### 1. Install Dependencies
+
+Ensure you have [pnpm](https://pnpm.io/) installed:
 
 ```bash
-bun install
+# Core install
+pnpm install
 ```
 
-To run in development:
+### 2. Environment Variables
+
+Create your local `.env` file (refer to `.env.example`):
 
 ```bash
-bun run dev
+cp .env.example .env
 ```
 
-To run normally:
-
-```bash
-bun run start
-```
-
-## Environment
-
-`.env` is already created for local development.
+Key environment variables:
 
 ```env
+NODE_ENV=development
 HOST=0.0.0.0
-PORT=4000
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/abdullahalmaksud
-MONGODB_DB_NAME=abdullahalmaksud
+PORT=5000
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/abdullahalmaksud_dev
+MONGODB_DB_NAME=abdullahalmaksud_dev
 REQUIRE_DATABASE_CONNECTION=false
-BETTER_AUTH_SECRET=replace-with-at-least-32-random-characters
-BETTER_AUTH_URL=http://localhost:4000
-CORS_ORIGIN=http://localhost:3000
-ADMIN_EMAILS=abdullah@example.com
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
+BETTER_AUTH_SECRET=your-random-32-char-secret-here
+BETTER_AUTH_URL=http://localhost:5000
+CORS_ORIGIN=http://localhost:3000,http://localhost:4000
+ADMIN_EMAILS=your_email@gmail.com
+RESEND_API_KEY=re_xxxxxxxxxxxx
 ```
 
-Use your MongoDB Atlas URI in `MONGODB_URI`. Keep the real URI only in `.env` or Render environment variables.
-
-In development, `REQUIRE_DATABASE_CONNECTION=false` lets the API start even if
-Atlas is not reachable. Auth and session-backed routes still need MongoDB. In
-production, the server requires MongoDB by default.
-
-## Render Deploy
-
-Render settings:
-
-- Runtime: `Node`
-- Build Command: `bun install --frozen-lockfile`
-- Start Command: `bun run start`
-- Health Check Path: `/health`
-
-Environment variables on Render:
-
-```env
-NODE_ENV=production
-HOST=0.0.0.0
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/abdullahalmaksud
-MONGODB_DB_NAME=abdullahalmaksud
-BETTER_AUTH_SECRET=generate-a-long-random-secret
-BETTER_AUTH_URL=https://your-render-service.onrender.com
-CORS_ORIGIN=https://your-frontend-domain.com,http://localhost:3000
-ADMIN_EMAILS=your-admin-email@example.com
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-GOOGLE_REDIRECT_URI=https://api.your-backend-domain.com/api/auth/callback/google
-COOKIE_DOMAIN=.your-root-domain.com
-```
-
-This repo also includes `render.yaml`, so you can create the Render service from a Blueprint and fill the secret values in the Render dashboard.
-
-For Google login, add this exact Authorized redirect URI in Google Cloud Console:
-
-```text
-https://api.abdullahalmaksud.com/api/auth/callback/google
-```
-
-If you want the Google callback URL to use the frontend domain instead, set:
-
-```env
-GOOGLE_REDIRECT_URI=https://abdullahalmaksud.com/api/auth/callback/google
-COOKIE_DOMAIN=.abdullahalmaksud.com
-```
-
-Then add this exact URI to Google Cloud Console:
-
-```text
-https://abdullahalmaksud.com/api/auth/callback/google
-```
-
-Your frontend must proxy or rewrite `/api/auth/*` to this backend API, otherwise
-Google will redirect to the frontend but Better Auth will not receive the
-callback.
-
-If you have Docker installed, you can start a local MongoDB with:
+### 3. Run Development Server
 
 ```bash
-docker compose up -d
+pnpm dev
 ```
 
-Then use this local URI in `.env`:
+The server starts on **`http://localhost:5000`**.
 
-```env
-MONGODB_URI=mongodb://127.0.0.1:27017/abdullahalmaksud
+### 4. Available Scripts
+
+| Command | Description |
+|---|---|
+| `pnpm dev` | Starts local development server with hot-reload via `tsx --watch` |
+| `pnpm start` | Runs server in standard mode |
+| `pnpm typecheck` | Validates strict TypeScript compilation (`tsc --noEmit`) |
+| `pnpm seed` | Seeds default initial data into MongoDB |
+
+---
+
+## RESTful API Endpoints & CRUD Architecture
+
+All endpoints are available under `/api/v1` (with backward-compatible unversioned `/api` aliases).
+
+### 1. Books (`/api/v1/books`)
+Full CRUD for book publications, shelf showcases, and monograph metadata.
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `GET` | `/api/v1/books` | Public | Featured book bundle & shelf showcase data |
+| `GET` | `/api/v1/books/all` | Public | List of all standalone books |
+| `GET` | `/api/v1/books/:slug` | Public | Get single book by slug with publication metadata |
+| `GET` | `/api/v1/books/id/:id` | Admin | Get book by MongoDB ObjectId |
+| `PUT` | `/api/v1/books/bundle` | Admin | Update featured book bundle |
+| `POST` | `/api/v1/books` | Admin | Create new standalone book with chapters & quotes |
+| `PUT` | `/api/v1/books/:id` | Admin | Replace book record |
+| `PATCH` | `/api/v1/books/:id` | Admin | Partial update book record |
+| `DELETE` | `/api/v1/books/:id` | Admin | Delete book record |
+
+### 2. Blogs & Essays (`/api/v1/blogs`)
+Full CRUD with support for **Block Editor / JSON** structured arrays and Lexical editor states.
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `GET` | `/api/v1/blogs` | Public | Paginated blogs list (`?page=1&limit=10&featured=true&category=...`) |
+| `GET` | `/api/v1/blogs/:slug` | Public | Get single blog post by slug |
+| `GET` | `/api/v1/blogs/id/:id` | Admin | Get blog post by MongoDB ObjectId |
+| `POST` | `/api/v1/blogs` | Admin | Create blog post (supports structured Block JSON) |
+| `PUT` | `/api/v1/blogs/:id` | Admin | Full update blog post |
+| `PATCH` | `/api/v1/blogs/:id` | Admin | Partial update blog post |
+| `DELETE` | `/api/v1/blogs/:id` | Admin | Delete blog post |
+
+### 3. Case Studies (`/api/v1/case-studies`)
+Full CRUD for strategic implementation deep-dives with metrics, tech stack, and solution architecture.
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `GET` | `/api/v1/case-studies` | Public | Paginated case studies list |
+| `GET` | `/api/v1/case-studies/:slug` | Public | Get case study by slug |
+| `GET` | `/api/v1/case-studies/id/:id` | Admin | Get case study by MongoDB ObjectId |
+| `POST` | `/api/v1/case-studies` | Admin | Create case study |
+| `PUT` | `/api/v1/case-studies/:id` | Admin | Full update case study |
+| `PATCH` | `/api/v1/case-studies/:id` | Admin | Partial update case study |
+| `DELETE` | `/api/v1/case-studies/:id` | Admin | Delete case study |
+
+### 4. Projects (`/api/v1/projects`)
+Full CRUD for engineering systems, architecture prototypes, and design modules.
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `GET` | `/api/v1/projects` | Public | Get all projects (paginated or list) |
+| `GET` | `/api/v1/projects/:slug` | Public | Get project by slug |
+| `GET` | `/api/v1/projects/id/:id` | Admin | Get project by MongoDB ObjectId |
+| `POST` | `/api/v1/projects` | Admin | Create project (supports `content` Block JSON) |
+| `PUT` | `/api/v1/projects/:id` | Admin | Full update project |
+| `PATCH` | `/api/v1/projects/:id` | Admin | Partial update project |
+| `DELETE` | `/api/v1/projects/:id` | Admin | Delete project |
+
+### 5. Contact & Email Inquiries (`/api/send-email` & `/api/v1/contact`)
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `POST` | `/api/send-email` | Public | Send client contact inquiry via Resend |
+| `GET` | `/api/v1/contact/messages` | Admin | Retrieve stored inquiries list |
+
+### 6. Uploads & Storage (`/api/v1/upload`)
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `POST` | `/api/v1/upload` | Admin | Upload image/document to Vercel Blob storage |
+
+### 7. Auth & System Health
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `GET` | `/health` | Public | Server & Database health status |
+| `GET` | `/api/me` | Authenticated | Current user profile and role |
+| `POST` | `/api/auth/sign-up/email` | Public | Email signup |
+| `POST` | `/api/auth/sign-in/email` | Public | Email signin |
+| `POST` | `/api/auth/sign-out` | Public | Signout |
+
+---
+
+## Block Editor / JSON Format
+
+The API natively stores and serves structured **Block Editor / JSON** payloads instead of raw markdown strings. Content can be supplied as:
+
+```json
+[
+  {
+    "id": "block-1",
+    "type": "heading",
+    "data": { "level": 2, "text": "Architectural Foundation" }
+  },
+  {
+    "id": "block-2",
+    "type": "paragraph",
+    "data": { "text": "This monograph details the distributed system implementation..." }
+  },
+  {
+    "id": "block-3",
+    "type": "code",
+    "data": { "code": "const api = new Hono();", "language": "typescript" }
+  }
+]
 ```
 
-## Main Endpoints
+Legacy string content is automatically supported as fallback.
 
-- `GET /` - API status
-- `GET /health` - server and MongoDB/Mongoose connection status
-- `GET /api/health` - same health endpoint under the API prefix
-- `GET /api/me` - current logged-in user/session
-- `GET /api/v1/site?locale=en` - localized site configuration
-- `GET /api/v1/content?locale=en` - localized projects, blog posts, and books
-- `GET /api/v1/dashboard?locale=en` - admin-only dashboard data
-- `POST /api/auth/sign-up/email` - Better Auth email signup
-- `POST /api/auth/sign-in/email` - Better Auth email signin
-- `GET /api/auth/get-session` - Better Auth session check
-- `POST /api/auth/sign-out` - Better Auth signout
+---
 
-Users are created with the `user` role by default. Any email listed in
-`ADMIN_EMAILS` is promoted to `admin` when the account is created or when that
-user has an active session.
+## Postman API Collection
 
-## Test With Curl
+A fully configured Postman collection is included in the root directory:
 
-Sign up:
+📁 **`postman_collection.json`**
 
-```bash
-curl -i -X POST http://localhost:4000/api/auth/sign-up/email \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Abdullah","email":"abdullah@example.com","password":"password123"}'
-```
+### Collection Variables:
+- `baseUrl`: Defaults to `http://localhost:5000`
+- `bearerToken`: Set your admin JWT or session token for authenticated endpoints
 
-Sign in:
+Includes 13 categorized folders covering every public and admin CRUD operation across all modules.
 
-```bash
-curl -i -X POST http://localhost:4000/api/auth/sign-in/email \
-  -H "Content-Type: application/json" \
-  -d '{"email":"abdullah@example.com","password":"password123"}'
-```
+---
 
-## Frontend Better Auth Client
+## Deployment
 
-Install Better Auth in your frontend, then point the client to this server:
+### Render (Blueprint)
+The repository includes `render.yaml` configured for `pnpm`:
+- Build Command: `npm install -g pnpm && pnpm install --frozen-lockfile`
+- Start Command: `pnpm start`
+- Health Check: `/health`
 
-```ts
-import { createAuthClient } from "better-auth/react";
-
-export const authClient = createAuthClient({
-  baseURL: "http://localhost:4000",
-});
-```
-
-When calling from the browser, keep credentials/cookies enabled. The server currently allows `http://localhost:3000` through `CORS_ORIGIN`.
+### Vercel Serverless
+The serverless entry point is located in `api/index.ts` using `@hono/node-server`'s `getRequestListener` for full compatibility with Vercel Node.js runtime.

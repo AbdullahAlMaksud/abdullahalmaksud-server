@@ -51,6 +51,32 @@ export const getAllStandaloneBooks = async (c: Context<AppEnv>) => {
   }
 };
 
+export const getBookBySlug = async (c: Context<AppEnv>) => {
+  try {
+    const slug = c.req.param("slug");
+    const book = await BookModel.findOne({ slug });
+    if (!book) {
+      return c.json({ success: false, message: "Book not found" }, 404);
+    }
+    return c.json({ success: true, data: book });
+  } catch (error) {
+    return c.json({ success: false, message: (error as Error).message }, 500);
+  }
+};
+
+export const getBookById = async (c: Context<AppEnv>) => {
+  try {
+    const id = c.req.param("id");
+    const book = await BookModel.findById(id);
+    if (!book) {
+      return c.json({ success: false, message: "Book not found" }, 404);
+    }
+    return c.json({ success: true, data: book });
+  } catch (error) {
+    return c.json({ success: false, message: (error as Error).message }, 500);
+  }
+};
+
 export const createBook = async (c: Context<AppEnv>) => {
   try {
     const body = await c.req.json();

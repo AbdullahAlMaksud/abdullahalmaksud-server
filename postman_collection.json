@@ -1,23 +1,38 @@
 {
   "info": {
-    "_postman_id": "abdullahalmaksud-api-collection-v4",
+    "_postman_id": "abdullahalmaksud-api-collection-v5",
     "name": "Abdullah Al Maksud API Collection",
-    "description": "Complete Postman API collection for Abdullah Al Maksud Portfolio Server. Includes System Health, Home & About Configurations, Software Projects CRUD, Block-based Blog Posts CRUD, Books & Publications, Graphic Design Portfolio, File Uploads, and Admin Dashboard.",
+    "description": "Complete Postman API Collection for Abdullah Al Maksud Portfolio & Admin Server (Hono / Node.js / MongoDB / BetterAuth / Resend / Vercel Blob).\n\nConfigured with collection variables: baseUrl (default: http://localhost:5000) and bearerToken for authenticated Admin requests.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:4000",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "bearerToken",
+      "value": "",
       "type": "string"
     }
   ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
   "item": [
     {
       "name": "1. System & Health",
       "item": [
         {
-          "name": "Root Welcome",
+          "name": "Root Welcome API (JSON)",
           "request": {
             "method": "GET",
             "header": [
@@ -27,14 +42,21 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/",
+              "raw": "{{baseUrl}}/?format=json",
               "host": ["{{baseUrl}}"],
-              "path": [""]
-            }
+              "path": [""],
+              "query": [
+                {
+                  "key": "format",
+                  "value": "json"
+                }
+              ]
+            },
+            "description": "Returns basic API information, documentation paths, and server status."
           }
         },
         {
-          "name": "Health Status",
+          "name": "System Health (/health)",
           "request": {
             "method": "GET",
             "header": [],
@@ -42,17 +64,34 @@
               "raw": "{{baseUrl}}/health",
               "host": ["{{baseUrl}}"],
               "path": ["health"]
-            }
+            },
+            "description": "Deep health check: verifies database connectivity, uptime, environment, and memory usage."
+          }
+        },
+        {
+          "name": "API Health (/api/health)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            },
+            "description": "API route alias for health check."
           }
         }
       ]
     },
     {
-      "name": "2. Authentication",
+      "name": "2. Authentication (Passwordless & Google OAuth)",
       "item": [
         {
-          "name": "Sign Up (Email & Password)",
+          "name": "Send Email OTP (Passwordless Login)",
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
             "header": [
               {
@@ -62,18 +101,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"maksud.login@gmail.com\",\n  \"password\": \"YourStrongPassword123!\",\n  \"name\": \"Abdullah Al Maksud\"\n}"
+              "raw": "{\n  \"email\": \"admin@abdullahalmaksud.com\",\n  \"type\": \"sign-in\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/auth/sign-up/email",
+              "raw": "{{baseUrl}}/api/auth/email-otp/send-verification-otp",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "sign-up", "email"]
-            }
+              "path": ["api", "auth", "email-otp", "send-verification-otp"]
+            },
+            "description": "Sends a 6-digit OTP code to the requested email via Resend."
           }
         },
         {
-          "name": "Sign In (Email & Password)",
+          "name": "Sign In with Email OTP",
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
             "header": [
               {
@@ -83,18 +126,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"maksud.login@gmail.com\",\n  \"password\": \"YourStrongPassword123!\"\n}"
+              "raw": "{\n  \"email\": \"admin@abdullahalmaksud.com\",\n  \"otp\": \"123456\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/auth/sign-in/email",
+              "raw": "{{baseUrl}}/api/auth/sign-in/email-otp",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "sign-in", "email"]
-            }
+              "path": ["api", "auth", "sign-in", "email-otp"]
+            },
+            "description": "Verifies the 6-digit OTP code and establishes an authenticated session cookie / bearer token."
           }
         },
         {
           "name": "Sign In with Google (Social)",
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
             "header": [
               {
@@ -110,7 +157,8 @@
               "raw": "{{baseUrl}}/api/auth/sign-in/social",
               "host": ["{{baseUrl}}"],
               "path": ["api", "auth", "sign-in", "social"]
-            }
+            },
+            "description": "Initiates Google OAuth2 authentication."
           }
         },
         {
@@ -122,11 +170,12 @@
               "raw": "{{baseUrl}}/api/me",
               "host": ["{{baseUrl}}"],
               "path": ["api", "me"]
-            }
+            },
+            "description": "Retrieves the active user session and admin authorization status."
           }
         },
         {
-          "name": "Get Session (BetterAuth)",
+          "name": "Get Session (BetterAuth /api/auth/get-session)",
           "request": {
             "method": "GET",
             "header": [],
@@ -134,7 +183,8 @@
               "raw": "{{baseUrl}}/api/auth/get-session",
               "host": ["{{baseUrl}}"],
               "path": ["api", "auth", "get-session"]
-            }
+            },
+            "description": "Standard BetterAuth session introspection endpoint."
           }
         },
         {
@@ -146,13 +196,100 @@
               "raw": "{{baseUrl}}/api/auth/sign-out",
               "host": ["{{baseUrl}}"],
               "path": ["api", "auth", "sign-out"]
-            }
+            },
+            "description": "Destroys the active session and clears authentication cookies."
           }
         }
       ]
     },
     {
-      "name": "3. Home Page Configuration",
+      "name": "3. Contact & Resend Email Delivery",
+      "item": [
+        {
+          "name": "Send Contact Message (/api/send-email)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane.doe@example.com\",\n  \"subject\": \"New High-Performance Architecture Project\",\n  \"message\": \"Hello Abdullah,\\n\\nWe came across your portfolio and were deeply impressed by your architectural work. We would like to schedule a call to discuss a consulting opportunity.\\n\\nBest regards,\\nJane\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/send-email",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "send-email"]
+            },
+            "description": "Direct root API route used by frontend contact form to submit inquiries and trigger Resend email notifications."
+          }
+        },
+        {
+          "name": "Send Contact Message (/api/v1/contact)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane.doe@example.com\",\n  \"subject\": \"Project Inquiry via v1 Contact\",\n  \"message\": \"Testing inquiry submission via /api/v1/contact.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/contact",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "contact"]
+            },
+            "description": "v1 contact route alias."
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Consolidated Site Data",
+      "item": [
+        {
+          "name": "Get Full Site Payload (/api/v1/site)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/site",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "site"]
+            },
+            "description": "Aggregated site payload including navigation, metadata, and core structure."
+          }
+        },
+        {
+          "name": "Get Complete Content Bundle (/api/v1/content)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/content",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "content"]
+            },
+            "description": "Aggregated content payload for fast frontend hydration."
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Home Page Configuration",
       "item": [
         {
           "name": "Get Home Page Data",
@@ -163,7 +300,8 @@
               "raw": "{{baseUrl}}/api/v1/home",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "home"]
-            }
+            },
+            "description": "Public endpoint retrieving home banner, hero statements, and featured highlights."
           }
         },
         {
@@ -184,13 +322,14 @@
               "raw": "{{baseUrl}}/api/v1/home",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "home"]
-            }
+            },
+            "description": "Admin endpoint to update home page configuration."
           }
         }
       ]
     },
     {
-      "name": "4. About Page Configuration",
+      "name": "6. About Page Configuration",
       "item": [
         {
           "name": "Get About Page Data",
@@ -201,7 +340,8 @@
               "raw": "{{baseUrl}}/api/v1/about",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "about"]
-            }
+            },
+            "description": "Public endpoint returning the about bio, work philosophy, and resume links."
           }
         },
         {
@@ -222,13 +362,14 @@
               "raw": "{{baseUrl}}/api/v1/about",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "about"]
-            }
+            },
+            "description": "Admin endpoint to update about page header, bio, and timeline."
           }
         }
       ]
     },
     {
-      "name": "5. Software Projects",
+      "name": "7. Software Projects",
       "item": [
         {
           "name": "Get All Projects",
@@ -284,7 +425,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"slug\": \"ai-portfolio-showcase\",\n  \"title\": \"AI Portfolio Showcase\",\n  \"description\": \"Next-generation interactive portfolio with 3D interactions and Vercel Blob integrations.\",\n  \"coverImage\": \"images/projects/ai-portfolio.webp\",\n  \"stack\": [\"Next.js\", \"TypeScript\", \"Tailwind CSS\", \"Framer Motion\"],\n  \"year\": \"2025\",\n  \"liveLink\": \"https://abdullahalmaksud.com\",\n  \"gitRepo\": \"https://github.com/AbdullahAlMaksud/abdullahalmaksud-web\",\n  \"tag\": \"Web Application\",\n  \"isFeatured\": true\n}"
+              "raw": "{\n  \"slug\": \"ai-portfolio-showcase\",\n  \"title\": \"AI Portfolio Showcase\",\n  \"description\": \"Next-generation interactive portfolio with 3D interactions and Vercel Blob integrations.\",\n  \"coverImage\": \"images/projects/ai-portfolio.webp\",\n  \"stack\": [\"Next.js\", \"TypeScript\", \"Tailwind CSS\", \"Hono\"],\n  \"year\": \"2026\",\n  \"liveLink\": \"https://abdullahalmaksud.com\",\n  \"gitRepo\": \"https://github.com/AbdullahAlMaksud/abdullahalmaksud-web\",\n  \"tag\": \"Web Application\",\n  \"isFeatured\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/projects",
@@ -329,7 +470,123 @@
       ]
     },
     {
-      "name": "6. Blogs & Essays",
+      "name": "8. Case Studies (Architecture & Engineering)",
+      "item": [
+        {
+          "name": "Get All Case Studies",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/case-studies",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "case-studies"]
+            }
+          }
+        },
+        {
+          "name": "Get Case Study by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/case-studies/distributed-cloud-architecture",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "case-studies", "distributed-cloud-architecture"]
+            }
+          }
+        },
+        {
+          "name": "Get Case Study by ID (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/case-studies/id/CASE_STUDY_ID_HERE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "case-studies", "id", "CASE_STUDY_ID_HERE"]
+            }
+          }
+        },
+        {
+          "name": "Create Case Study (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Distributed Real-Time Cloud Architecture\",\n  \"slug\": \"distributed-cloud-architecture\",\n  \"excerpt\": \"How we architected a sub-50ms distributed API gateway using Hono and Edge Caching.\",\n  \"category\": \"Systems Architecture\",\n  \"industry\": \"Fintech & Infrastructure\",\n  \"client\": \"Enterprise Platform\",\n  \"challenge\": \"Handling 500k concurrent WebSocket connections with minimal memory footprint and zero cold start lag.\",\n  \"solution\": \"Implemented Hono edge runtime combined with MongoDB connection pooling and Redis pub/sub channels.\",\n  \"results\": [\n    {\n      \"metric\": \"Latency Reduction\",\n      \"value\": \"65%\",\n      \"description\": \"Reduced p99 API response latency from 180ms to 48ms.\"\n    },\n    {\n      \"metric\": \"Memory Footprint\",\n      \"value\": \"-40%\",\n      \"description\": \"Decreased server memory consumption under high load.\"\n    }\n  ],\n  \"stack\": [\"Node.js\", \"Hono\", \"TypeScript\", \"MongoDB\", \"Docker\"],\n  \"duration\": \"3 Months\",\n  \"readingTime\": \"7 min read\",\n  \"featured\": true,\n  \"isPublished\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/case-studies",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "case-studies"]
+            }
+          }
+        },
+        {
+          "name": "Update Case Study (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Case Study Title\",\n  \"featured\": true,\n  \"isPublished\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/case-studies/CASE_STUDY_ID_HERE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "case-studies", "CASE_STUDY_ID_HERE"]
+            }
+          }
+        },
+        {
+          "name": "Patch Case Study (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isPublished\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/case-studies/CASE_STUDY_ID_HERE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "case-studies", "CASE_STUDY_ID_HERE"]
+            }
+          }
+        },
+        {
+          "name": "Delete Case Study (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/case-studies/CASE_STUDY_ID_HERE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "case-studies", "CASE_STUDY_ID_HERE"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Blogs & Essays",
       "item": [
         {
           "name": "Get All Blogs",
@@ -367,7 +624,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"slug\": \"modern-state-of-web-dev\",\n  \"title\": \"Modern State of Web Development in 2026\",\n  \"excerpt\": \"Exploration of streaming architectures, serverless cold start mitigation, and high-performance frontend interfaces.\",\n  \"coverImage\": \"images/blogs/modern-web.webp\",\n  \"category\": \"Engineering\",\n  \"readingTime\": \"5 min read\",\n  \"published\": true,\n  \"tags\": [\"Next.js\", \"Full-Stack\", \"Performance\"],\n  \"content\": [\n    {\n      \"type\": \"paragraph\",\n      \"text\": \"Modern web development has transitioned toward server-driven UI and seamless asset delivery.\"\n    }\n  ]\n}"
+              "raw": "{\n  \"slug\": \"modern-state-of-web-dev-2026\",\n  \"title\": \"Modern State of Web Development in 2026\",\n  \"excerpt\": \"Exploration of streaming architectures, serverless cold start mitigation, and high-performance frontend interfaces.\",\n  \"coverImage\": \"images/blogs/modern-web.webp\",\n  \"category\": \"Engineering\",\n  \"readingTime\": \"5 min read\",\n  \"published\": true,\n  \"tags\": [\"Next.js\", \"Full-Stack\", \"Performance\"],\n  \"content\": [\n    {\n      \"type\": \"paragraph\",\n      \"text\": \"Modern web development has transitioned toward server-driven UI and seamless asset delivery.\"\n    }\n  ]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/blogs",
@@ -412,7 +669,7 @@
       ]
     },
     {
-      "name": "7. Books & Shelf",
+      "name": "10. Books & Shelf",
       "item": [
         {
           "name": "Get Book Bundle & Shelf",
@@ -435,6 +692,30 @@
               "raw": "{{baseUrl}}/api/v1/books/all",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "books", "all"]
+            }
+          }
+        },
+        {
+          "name": "Get Book by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/emon-jodi-hoto",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "emon-jodi-hoto"]
+            }
+          }
+        },
+        {
+          "name": "Get Book by ID (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/id/BOOK_ID_HERE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "id", "BOOK_ID_HERE"]
             }
           }
         },
@@ -471,12 +752,54 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Atomic Habits\",\n  \"author\": \"James Clear\",\n  \"coverImage\": \"images/books/atomic-habits.jpg\",\n  \"category\": \"Productivity\",\n  \"year\": 2018\n}"
+              "raw": "{\n  \"title\": \"এমন যদি হতো\",\n  \"slug\": \"emon-jodi-hoto\",\n  \"subtitle\": \"বিজ্ঞান ও ভাবনার সীমানা\",\n  \"author\": \"আব্দুল্লাহ আল মাকসুদ\",\n  \"coverImage\": \"images/books/emon-jodi-hoto.webp\",\n  \"category\": \"Science & Philosophy\",\n  \"genre\": \"Popular Science\",\n  \"language\": \"bn\",\n  \"edition\": \"১ম প্রকাশ\",\n  \"pages\": 184,\n  \"publisher\": \"জ্ঞানকোষ প্রকাশনী\",\n  \"year\": 2025,\n  \"publicationYear\": \"2025\",\n  \"isbn\": \"978-984-8874-55-1\",\n  \"synopsis\": \"A conceptual journey through space, relativity, and curious inquiries.\",\n  \"themes\": [\"Space Physics\", \"Relativity\", \"Human Curiosity\"],\n  \"chapters\": [\n    {\n      \"number\": \"০১\",\n      \"title\": \"মহাকর্ষের অচেনা রূপ\",\n      \"description\": \"মহাকর্ষ এবং আলোর পারস্পরিক সম্পর্কের রূপরেখা।\"\n    }\n  ],\n  \"quotes\": [\"কল্পনা হলো জ্ঞানের চেয়েও শক্তিশালী এক দিগন্ত।\"],\n  \"purchaseLinks\": [\n    {\n      \"label\": \"রকমারি\",\n      \"url\": \"https://www.rokomari.com/book/439281/emon-jodi-hoto\",\n      \"isPrimary\": true\n    }\n  ],\n  \"contentType\": \"blocks\",\n  \"content\": [\n    {\n      \"type\": \"paragraph\",\n      \"text\": \"এই বইটি বিজ্ঞান ও অনুসন্ধিৎসু মনের এক যুগলবন্দি।\"\n    }\n  ]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/books",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "books"]
+            }
+          }
+        },
+        {
+          "name": "Update Book (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"এমন যদি হতো (২য় সংস্করণ)\",\n  \"edition\": \"২য় সংস্করণ\",\n  \"price\": 360\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/BOOK_ID_HERE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "BOOK_ID_HERE"]
+            }
+          }
+        },
+        {
+          "name": "Patch Book (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 350\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/BOOK_ID_HERE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "BOOK_ID_HERE"]
             }
           }
         },
@@ -495,7 +818,7 @@
       ]
     },
     {
-      "name": "8. Graphic Design",
+      "name": "11. Graphic Design",
       "item": [
         {
           "name": "Get All Graphic Designs",
@@ -557,10 +880,10 @@
       ]
     },
     {
-      "name": "9. File Upload (Vercel Blob)",
+      "name": "12. File Upload (Vercel Blob)",
       "item": [
         {
-          "name": "Upload File (Admin)",
+          "name": "Upload File to Vercel Blob (Admin)",
           "request": {
             "method": "POST",
             "header": [],
@@ -578,13 +901,14 @@
               "raw": "{{baseUrl}}/api/v1/upload",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "upload"]
-            }
+            },
+            "description": "Uploads an image, asset, or document to Vercel Blob storage and returns the permanent CDN URL."
           }
         }
       ]
     },
     {
-      "name": "10. Admin Dashboard & Messages",
+      "name": "13. Admin Dashboard & Messages",
       "item": [
         {
           "name": "Get Dashboard Metrics (Admin)",
