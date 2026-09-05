@@ -17,11 +17,9 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # dotenv environment variable files
 .env
+.env*
 .env copy
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
+!.env.example
 
 # lock files (using pnpm-lock.yaml as primary)
 package-lock.json

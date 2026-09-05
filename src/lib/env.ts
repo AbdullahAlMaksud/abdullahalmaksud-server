@@ -1,5 +1,12 @@
-import "dotenv/config";
+import dotenv from "dotenv";
 import { z } from "zod";
+
+// Load base .env
+dotenv.config();
+// If specific NODE_ENV is set and corresponding file exists, override
+if (process.env.NODE_ENV === "production") {
+  dotenv.config({ path: ".env.production", override: true });
+}
 
 const envSchema = z.object({
   NODE_ENV: z
@@ -22,16 +29,11 @@ const envSchema = z.object({
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   GOOGLE_REDIRECT_URI: z.string().url().optional(),
-  GITHUB_CLIENT_ID: z.string().optional(),
-  GITHUB_CLIENT_SECRET: z.string().optional(),
   COOKIE_DOMAIN: z.string().optional(),
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().default("Abdullah Al Maksud Admin <onboarding@resend.dev>"),
   CONTACT_RECIPIENT_EMAIL: z.string().default("contact@abdullahalmaksud.com"),
   BLOB_READ_WRITE_TOKEN: z.string().optional(),
-  BLOB_STORE_ID: z.string().optional(),
-  BLOB_BASE_URL: z.string().optional(),
-  BLOB_WEBHOOK_PUBLIC_KEY: z.string().optional(),
 });
 
 
