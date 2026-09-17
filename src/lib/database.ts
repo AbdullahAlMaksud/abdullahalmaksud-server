@@ -63,7 +63,14 @@ if (!globalThis.authCache) {
 
 let authDatabaseConnected = false;
 
-export const authMongoClient = new MongoClient(env.MONGODB_URI);
+export const authMongoClient = new MongoClient(env.MONGODB_URI, {
+  serverSelectionTimeoutMS: 8000,
+  connectTimeoutMS: 8000,
+  socketTimeoutMS: 30000,
+  maxPoolSize: 5,
+  minPoolSize: 0,
+  maxIdleTimeMS: 10000,
+});
 export const authDb = authMongoClient.db(env.MONGODB_DB_NAME);
 
 export const seedAllInitialData = async () => {
@@ -223,7 +230,7 @@ export const connectDatabase = async () => {
 
 export const connectAuthDatabase = async () => {
   if (!cachedAuth.promise) {
-    cachedAuth.promise = authMongoClient
+    const connectPromise = authMongoClient
       .connect()
       .then((client) => {
         authDatabaseConnected = true;
@@ -234,6 +241,13 @@ export const connectAuthDatabase = async () => {
         cachedAuth.promise = null;
         throw error;
       });
+
+    // Guard: never let auth DB connection hang longer than 10s on Vercel
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Auth database connection timed out (10s)")), 10000)
+    );
+
+    cachedAuth.promise = Promise.race([connectPromise, timeoutPromise]);
   }
 
   try {
