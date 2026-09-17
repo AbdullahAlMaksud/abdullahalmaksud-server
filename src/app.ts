@@ -33,7 +33,18 @@ app.use(
   }),
 );
 
-app.use("*", sessionMiddleware);
+app.use("*", async (c, next) => {
+  // Skip session middleware for auth routes — BetterAuth's auth.handler()
+  // needs to consume the raw request body/stream itself. If sessionMiddleware
+  // (which calls auth.api.getSession()) runs first, the body stream gets
+  // consumed/locked, causing auth.handler() to hang indefinitely (504 on Vercel).
+  if (c.req.path.startsWith("/api/auth")) {
+    c.set("user", null);
+    c.set("session", null);
+    return next();
+  }
+  return sessionMiddleware(c, next);
+});
 
 app.get("/favicon.ico", (c) => c.body(null, 204));
 app.get("/public/favicon.svg", (c) => c.body(null, 204));

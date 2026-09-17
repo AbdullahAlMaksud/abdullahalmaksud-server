@@ -19,31 +19,15 @@ authRoutes.on(["GET", "POST"], "/*", async (c) => {
   }
 
   try {
-    // Build a proper Web Request from Hono's context for BetterAuth
-    const url = new URL(c.req.url);
-    const headers = new Headers();
-    c.req.raw.headers.forEach((value, key) => {
-      headers.set(key, value);
-    });
-
-    const isBodyMethod = ["POST", "PUT", "PATCH"].includes(c.req.method);
-    const webRequest = new Request(url.toString(), {
-      method: c.req.method,
-      headers,
-      body: isBodyMethod ? await c.req.text() : undefined,
-    });
-
     // Timeout guard: prevent auth handler from hanging beyond 25s on Vercel
-    const timeoutPromise = new Promise<Response>((_, reject) =>
+    const timeoutPromise = new Promise<never>((_, reject) =>
       setTimeout(() => reject(new Error("Auth handler timed out (25s)")), 25000)
     );
 
-    const response = await Promise.race([
-      auth.handler(webRequest),
+    return await Promise.race([
+      auth.handler(c.req.raw),
       timeoutPromise,
     ]);
-
-    return response;
   } catch (error) {
     console.error("[AUTH] Handler error:", error);
     return c.json(
