@@ -2,7 +2,7 @@ import { createMiddleware } from "hono/factory";
 
 import { auth } from "../lib/auth.js";
 import {
-  authDb,
+  getAuthDb,
   isAuthDatabaseConnected,
   isDatabaseConnectionError,
   markAuthDatabaseDisconnected,
@@ -22,7 +22,7 @@ export const sessionMiddleware = createMiddleware<AppEnv>(async (c, next) => {
     .getSession({
       headers: (c.req.raw as any).headers as Headers,
     })
-    .catch((error) => {
+    .catch((error: unknown) => {
       if (isDatabaseConnectionError(error)) {
         markAuthDatabaseDisconnected();
         return null;
@@ -39,10 +39,10 @@ export const sessionMiddleware = createMiddleware<AppEnv>(async (c, next) => {
     const role = resolvedRole === "admin" ? resolvedRole : currentRole;
 
     if (role !== user.role) {
-      await authDb
+      await getAuthDb()
         .collection("user")
         .updateOne({ id: user.id }, { $set: { role } })
-        .catch((error) => {
+        .catch((error: unknown) => {
           if (isDatabaseConnectionError(error)) {
             markAuthDatabaseDisconnected();
             return null;

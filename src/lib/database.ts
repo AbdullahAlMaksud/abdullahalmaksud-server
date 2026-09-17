@@ -1,5 +1,4 @@
 import dns from "node:dns";
-import { MongoClient } from "mongodb";
 import mongoose from "mongoose";
 
 try {
@@ -39,16 +38,9 @@ interface MongooseCache {
   promise: Promise<typeof mongoose> | null;
 }
 
-interface AuthCache {
-  conn: MongoClient | null;
-  promise: Promise<MongoClient> | null;
-}
-
 declare global {
   // eslint-disable-next-line no-var
   var mongooseCache: MongooseCache | undefined;
-  // eslint-disable-next-line no-var
-  var authCache: AuthCache | undefined;
 }
 
 let cachedMongoose: MongooseCache = globalThis.mongooseCache || { conn: null, promise: null };
@@ -56,22 +48,18 @@ if (!globalThis.mongooseCache) {
   globalThis.mongooseCache = cachedMongoose;
 }
 
-let cachedAuth: AuthCache = globalThis.authCache || { conn: null, promise: null };
-if (!globalThis.authCache) {
-  globalThis.authCache = cachedAuth;
-}
+/**
+ * Returns the native MongoClient from the existing Mongoose connection.
+ * Must be called AFTER connectDatabase() has resolved.
+ * Reusing Mongoose's connection avoids a second cold-start round-trip to Atlas.
+ */
+export const getAuthMongoClient = () => {
+  const client = (mongoose.connection as any).client;
+  if (!client) throw new Error("Mongoose not connected — call connectDatabase() first");
+  return client;
+};
 
-let authDatabaseConnected = false;
-
-export const authMongoClient = new MongoClient(env.MONGODB_URI, {
-  serverSelectionTimeoutMS: 8000,
-  connectTimeoutMS: 8000,
-  socketTimeoutMS: 30000,
-  maxPoolSize: 5,
-  minPoolSize: 0,
-  maxIdleTimeMS: 10000,
-});
-export const authDb = authMongoClient.db(env.MONGODB_DB_NAME);
+export const getAuthDb = () => getAuthMongoClient().db(env.MONGODB_DB_NAME);
 
 export const seedAllInitialData = async () => {
   try {
@@ -228,43 +216,9 @@ export const connectDatabase = async () => {
   return mongoose.connection;
 };
 
-export const connectAuthDatabase = async () => {
-  if (!cachedAuth.promise) {
-    const connectPromise = authMongoClient
-      .connect()
-      .then((client) => {
-        authDatabaseConnected = true;
-        return client;
-      })
-      .catch((error) => {
-        authDatabaseConnected = false;
-        cachedAuth.promise = null;
-        throw error;
-      });
-
-    // Guard: never let auth DB connection hang longer than 10s on Vercel
-    const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error("Auth database connection timed out (10s)")), 10000)
-    );
-
-    cachedAuth.promise = Promise.race([connectPromise, timeoutPromise]);
-  }
-
-  try {
-    cachedAuth.conn = await cachedAuth.promise;
-    authDatabaseConnected = true;
-  } catch (error) {
-    authDatabaseConnected = false;
-    cachedAuth.promise = null;
-    throw error;
-  }
-
-  return cachedAuth.promise;
-};
-
 export const connectDatabases = async () => {
   await connectDatabase();
-  await connectAuthDatabase();
+  // No separate auth DB connection needed — BetterAuth reuses the Mongoose MongoClient
 };
 
 export const isDatabaseConnectionError = (error: unknown) => {
@@ -282,12 +236,12 @@ export const isDatabaseConnectionError = (error: unknown) => {
   );
 };
 
-export const isAuthDatabaseConnected = () => authDatabaseConnected;
+/** True once Mongoose (and therefore auth DB) is connected. */
+export const isAuthDatabaseConnected = () => mongoose.connection.readyState === 1;
 
+/** No-op — kept for interface compatibility; auth uses Mongoose connection. */
 export const markAuthDatabaseDisconnected = () => {
-  authDatabaseConnected = false;
-  cachedAuth.promise = null;
-  cachedAuth.conn = null;
+  // Intentionally empty: auth DB is Mongoose, disconnection handled by Mongoose events
 };
 
 export const getDatabaseConnectionHelp = (error: unknown) => {
@@ -314,10 +268,8 @@ export const getDatabaseStatus = () => ({
 });
 
 export const disconnectDatabase = async () => {
-  await Promise.allSettled([mongoose.disconnect(), authMongoClient.close()]);
-  authDatabaseConnected = false;
+  await mongoose.disconnect();
   cachedMongoose.promise = null;
   cachedMongoose.conn = null;
-  cachedAuth.promise = null;
-  cachedAuth.conn = null;
 };
+

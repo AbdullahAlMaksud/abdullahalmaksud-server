@@ -2,7 +2,7 @@ import { getRequestListener } from "@hono/node-server";
 import type { IncomingMessage, ServerResponse } from "node:http";
 
 import { app } from "../src/app.js";
-import { auth } from "../src/lib/auth.js";
+import { getAuth } from "../src/lib/auth.js";
 import { connectDatabases, isAuthDatabaseConnected, getDatabaseConnectionHelp } from "../src/lib/database.js";
 
 // Create a Node.js-compatible request listener from the Hono app.
@@ -70,7 +70,7 @@ async function handleAuthRequest(req: IncomingMessage, res: ServerResponse): Pro
       setTimeout(() => reject(new Error("Auth handler timed out (25s)")), 25000)
     );
 
-    const webResponse = await Promise.race([auth.handler(webRequest), timeoutPromise]);
+    const webResponse = await Promise.race([getAuth().handler(webRequest), timeoutPromise]);
 
     // Write status and headers
     const respHeaders: Record<string, string> = {};
