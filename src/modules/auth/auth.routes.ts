@@ -6,7 +6,9 @@ import type { AppEnv } from "../../lib/types.js";
 
 export const authRoutes = new Hono<AppEnv>();
 
-authRoutes.on(["GET", "POST"], "/*", async (c) => {
+// NOTE: On Vercel production, /api/auth/* is intercepted directly in api/index.ts
+// before reaching Hono, so this handler is only used by the local dev server.
+authRoutes.on(["GET", "POST"], "/*", (c) => {
   if (!isAuthDatabaseConnected()) {
     return c.json(
       {
@@ -18,24 +20,5 @@ authRoutes.on(["GET", "POST"], "/*", async (c) => {
     );
   }
 
-  try {
-    // Timeout guard: prevent auth handler from hanging beyond 25s on Vercel
-    const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error("Auth handler timed out (25s)")), 25000)
-    );
-
-    return await Promise.race([
-      auth.handler(c.req.raw),
-      timeoutPromise,
-    ]);
-  } catch (error) {
-    console.error("[AUTH] Handler error:", error);
-    return c.json(
-      {
-        success: false,
-        message: error instanceof Error ? error.message : "Authentication request failed",
-      },
-      500,
-    );
-  }
+  return auth.handler(c.req.raw);
 });
