@@ -43,7 +43,7 @@ async function handleAuthRequest(req: IncomingMessage, res: ServerResponse): Pro
 
     // Build full URL
     const protocol = "https";
-    const host = req.headers.host || "api-abdullahalmaksud.vercel.app";
+    const host = req.headers.host || "api.abdullahalmaksud.com";
     const url = `${protocol}://${host}${req.url}`;
 
     // Build clean Web Request headers
@@ -107,9 +107,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     console.error("Database connection error in Vercel handler:", err);
   });
 
-  // Route /api/auth/* directly to BetterAuth, bypassing Hono
-  // This avoids body stream issues in Vercel's Node.js runtime
-  if (req.url?.startsWith("/api/auth")) {
+  // OPTIONS (CORS preflight) must go through Hono's CORS middleware, not handleAuthRequest
+  // (handleAuthRequest would return 503 before DB connects, blocking browser preflight)
+  if (req.url?.startsWith("/api/auth") && req.method !== "OPTIONS") {
     return handleAuthRequest(req, res);
   }
 
