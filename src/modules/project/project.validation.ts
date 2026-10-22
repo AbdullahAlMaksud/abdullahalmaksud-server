@@ -8,7 +8,10 @@ export const coreFeatureSchema = z.object({
 
 export const createProjectSchema = z.object({
   title: z.string().min(1, "Title is required").max(250),
-  slug: z.string().min(1, "Slug is required").regex(/^[a-z0-9-]+$/, "Slug must only contain lowercase alphanumeric characters and hyphens"),
+  slug: z
+    .string()
+    .min(1, "Slug is required")
+    .regex(/^[a-z0-9-]+$/, "Slug must only contain lowercase alphanumeric characters and hyphens"),
   description: z.string().default(""),
   longDescription: z.string().default(""),
   content: z.any().optional(),

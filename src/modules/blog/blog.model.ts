@@ -6,7 +6,7 @@ const AuthorSchema = new Schema(
     avatar: { type: String, default: "/images/avatar.jpg" },
     bio: { type: String, default: "Developer, designer, writer." },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const BlogSchema = new Schema(
@@ -24,7 +24,7 @@ const BlogSchema = new Schema(
     cover: { type: String, default: "" },
     coverImage: { type: String, default: "" },
     author: {
-      type: Schema.Types.Mixed,
+      type: AuthorSchema,
       default: () => ({
         name: "Abdullah Al Maksud",
         avatar: "/images/avatar.jpg",
@@ -55,7 +55,7 @@ const BlogSchema = new Schema(
         return ret;
       },
     },
-  }
+  },
 );
 
 // Auto-sync cover fields and publishedAt before save
@@ -68,5 +68,4 @@ BlogSchema.pre("save", function (this: any) {
   }
 });
 
-export const BlogModel: Model<any> =
-  mongoose.models.Blog || mongoose.model("Blog", BlogSchema);
+export const BlogModel: Model<any> = mongoose.models.Blog || mongoose.model("Blog", BlogSchema);

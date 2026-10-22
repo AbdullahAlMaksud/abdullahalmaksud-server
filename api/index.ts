@@ -3,7 +3,11 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 
 import { app } from "../src/app.js";
 import { getAuth } from "../src/lib/auth.js";
-import { connectDatabases, isAuthDatabaseConnected, getDatabaseConnectionHelp } from "../src/lib/database.js";
+import {
+  connectDatabases,
+  isAuthDatabaseConnected,
+  getDatabaseConnectionHelp,
+} from "../src/lib/database.js";
 import { isAllowedOrigin } from "../src/lib/env.js";
 
 // Create a Node.js-compatible request listener from the Hono app.
@@ -36,7 +40,7 @@ function applyCorsHeaders(req: IncomingMessage, res: ServerResponse): boolean {
     res.setHeader(
       "Access-Control-Allow-Headers",
       (req.headers["access-control-request-headers"] as string) ||
-        "Content-Type, Authorization, X-Requested-With, Cookie"
+        "Content-Type, Authorization, X-Requested-With, Cookie",
     );
     res.setHeader("Access-Control-Expose-Headers", "Content-Length, set-auth-token");
     res.setHeader("Vary", "Origin");
@@ -65,11 +69,13 @@ async function handleAuthRequest(req: IncomingMessage, res: ServerResponse): Pro
   try {
     if (!isAuthDatabaseConnected()) {
       res.writeHead(503, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({
-        success: false,
-        message: "Authentication is unavailable until MongoDB is connected.",
-        hint: getDatabaseConnectionHelp(new Error("MongoDB is not connected")),
-      }));
+      res.end(
+        JSON.stringify({
+          success: false,
+          message: "Authentication is unavailable until MongoDB is connected.",
+          hint: getDatabaseConnectionHelp(new Error("MongoDB is not connected")),
+        }),
+      );
       return;
     }
 
@@ -102,7 +108,7 @@ async function handleAuthRequest(req: IncomingMessage, res: ServerResponse): Pro
 
     // Timeout guard: prevent hanging beyond 25s
     const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error("Auth handler timed out (25s)")), 25000)
+      setTimeout(() => reject(new Error("Auth handler timed out (25s)")), 25000),
     );
 
     const webResponse = await Promise.race([getAuth().handler(webRequest), timeoutPromise]);
@@ -117,9 +123,8 @@ async function handleAuthRequest(req: IncomingMessage, res: ServerResponse): Pro
 
     // Handle Set-Cookie headers properly (support multiple cookies from BetterAuth)
     const getSetCookieFn = (webResponse.headers as any).getSetCookie;
-    const cookies: string[] = typeof getSetCookieFn === "function"
-      ? getSetCookieFn.call(webResponse.headers)
-      : [];
+    const cookies: string[] =
+      typeof getSetCookieFn === "function" ? getSetCookieFn.call(webResponse.headers) : [];
 
     if (cookies.length > 0) {
       res.setHeader("Set-Cookie", cookies);
@@ -146,10 +151,12 @@ async function handleAuthRequest(req: IncomingMessage, res: ServerResponse): Pro
     console.error("[AUTH] Direct handler error:", error);
     if (!res.headersSent) {
       res.writeHead(500, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({
-        success: false,
-        message: error instanceof Error ? error.message : "Authentication request failed",
-      }));
+      res.end(
+        JSON.stringify({
+          success: false,
+          message: error instanceof Error ? error.message : "Authentication request failed",
+        }),
+      );
     }
   }
 }

@@ -328,8 +328,8 @@ export const renderRootHtml = (data: HomeViewData) => {
           <span class="metric-tag">
             <span>💚</span> Health
           </span>
-          <div class="metric-value ${isHealthy ? 'health-ok' : 'health-degraded'}">
-            ${isHealthy ? 'Healthy' : 'Degraded'}
+          <div class="metric-value ${isHealthy ? "health-ok" : "health-degraded"}">
+            ${isHealthy ? "Healthy" : "Degraded"}
           </div>
           <span class="metric-sub">Database: ${data.database}</span>
         </div>

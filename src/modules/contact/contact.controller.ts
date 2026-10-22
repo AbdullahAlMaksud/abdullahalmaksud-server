@@ -18,7 +18,7 @@ export const handleContactInquiry = async (c: Context<AppEnv>) => {
           success: false,
           error: "Invalid JSON body.",
         },
-        400
+        400,
       );
     }
 
@@ -31,7 +31,7 @@ export const handleContactInquiry = async (c: Context<AppEnv>) => {
           success: false,
           error: "All fields (name, email, subject, message) are required.",
         },
-        400
+        400,
       );
     }
 
@@ -42,7 +42,7 @@ export const handleContactInquiry = async (c: Context<AppEnv>) => {
           success: false,
           error: "Please enter a valid email address.",
         },
-        400
+        400,
       );
     }
 
@@ -59,7 +59,7 @@ export const handleContactInquiry = async (c: Context<AppEnv>) => {
           success: false,
           error: result.message || "Failed to send email via Resend.",
         },
-        500
+        500,
       );
     }
 
@@ -77,7 +77,7 @@ export const handleContactInquiry = async (c: Context<AppEnv>) => {
         success: false,
         error: message,
       },
-      500
+      500,
     );
   }
 };

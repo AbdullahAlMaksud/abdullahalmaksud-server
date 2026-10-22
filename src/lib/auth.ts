@@ -99,6 +99,10 @@ export const getAuth = () => {
 
 // Convenience re-export for local dev (src/index.ts path where Mongoose connects first)
 export const auth = {
-  get handler() { return getAuth().handler; },
-  get api() { return getAuth().api; },
+  get handler() {
+    return getAuth().handler;
+  },
+  get api() {
+    return getAuth().api;
+  },
 } as unknown as ReturnType<typeof createAuth>;

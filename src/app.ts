@@ -4,13 +4,13 @@ import { cors } from "hono/cors";
 import { healthController } from "./modules/health/health.controller.js";
 import { formatUptime } from "./modules/health/health.service.js";
 import { getDatabaseStatus } from "./lib/database.js";
-import { allowedCorsOrigins, corsOrigins, env, isAllowedOrigin } from "./lib/env.js";
+import { isAllowedOrigin } from "./lib/env.js";
 import type { AppEnv } from "./lib/types.js";
 import { errorHandler, notFoundHandler } from "./middlewares/error.middleware.js";
 import { sessionMiddleware } from "./middlewares/session.middleware.js";
 import { routes } from "./modules/index.js";
 
-import { renderRootHtml } from "./modules/home/home.view.js";
+import { renderRootHtml } from "./lib/status-page.js";
 
 export const app = new Hono<AppEnv>();
 
@@ -59,7 +59,10 @@ app.get("/", (c) => {
   const uptimeFormatted = formatUptime(uptime);
   const timestamp = new Date().toISOString();
 
-  if (format === "json" || (acceptHeader.includes("application/json") && !acceptHeader.includes("text/html"))) {
+  if (
+    format === "json" ||
+    (acceptHeader.includes("application/json") && !acceptHeader.includes("text/html"))
+  ) {
     return c.json({
       success: true,
       status,

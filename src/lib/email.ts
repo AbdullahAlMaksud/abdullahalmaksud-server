@@ -21,7 +21,9 @@ export async function sendOtpEmail({ email, otp, type }: SendOtpEmailParams): Pr
   const apiKey = env.RESEND_API_KEY || process.env.RESEND_API_KEY;
 
   if (!apiKey) {
-    console.warn("⚠️ [AUTH OTP] RESEND_API_KEY not found in environment. Code printed above for local use.");
+    console.warn(
+      "⚠️ [AUTH OTP] RESEND_API_KEY not found in environment. Code printed above for local use.",
+    );
     return;
   }
 
@@ -210,7 +212,12 @@ export async function sendInquiryEmail({
     if (!response.ok) {
       console.error("⚠️ [INQUIRY EMAIL] Resend API error:", response.status, data);
       const errMsg =
-        (data && (typeof data.message === "string" ? data.message : typeof data.error === "string" ? data.error : null)) ||
+        (data &&
+          (typeof data.message === "string"
+            ? data.message
+            : typeof data.error === "string"
+              ? data.error
+              : null)) ||
         "Failed to send email via Resend.";
       return {
         success: false,
@@ -233,4 +240,3 @@ export async function sendInquiryEmail({
     };
   }
 }
-

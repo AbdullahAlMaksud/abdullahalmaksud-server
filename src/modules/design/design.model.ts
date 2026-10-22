@@ -24,7 +24,7 @@ const DesignSchema = new Schema(
         return ret;
       },
     },
-  }
+  },
 );
 
 export const DesignModel: Model<any> =

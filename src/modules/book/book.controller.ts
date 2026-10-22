@@ -2,17 +2,19 @@ import type { Context } from "hono";
 
 import type { AppEnv } from "../../lib/types.js";
 import { BookBundleModel, BookModel } from "./book.model.js";
-import defaultBookData from "../../data/book.json" with { type: "json" };
 
 export const getBookBundle = async (c: Context<AppEnv>) => {
   try {
-    let bundle = await BookBundleModel.findOne({ key: "main" });
+    const bundle = await BookBundleModel.findOne({ key: "main" });
     if (!bundle) {
-      // Fallback or self-initialize from local static data
-      return c.json({
-        success: true,
-        data: defaultBookData,
-      });
+      return c.json(
+        {
+          success: false,
+          message: "Book bundle not found in database",
+          data: null,
+        },
+        404,
+      );
     }
 
     return c.json({
@@ -34,7 +36,7 @@ export const updateBookBundle = async (c: Context<AppEnv>) => {
     const bundle = await BookBundleModel.findOneAndUpdate(
       { key: "main" },
       { $set: body },
-      { returnDocument: "after", upsert: true }
+      { returnDocument: "after", upsert: true },
     );
     return c.json({ success: true, data: bundle });
   } catch (error) {

@@ -8,10 +8,8 @@ import { blogRoutes } from "./blog/blog.routes.js";
 import { bookRoutes } from "./book/book.routes.js";
 import { caseStudyRoutes } from "./case-study/case-study.routes.js";
 import { dashboardRoutes } from "./dashboard/dashboard.routes.js";
-import { dataRoutes } from "./data/data.routes.js";
 import { designRoutes } from "./design/design.routes.js";
 import { healthRoutes } from "./health/health.routes.js";
-import { homeRoutes } from "./home/home.routes.js";
 import { projectRoutes } from "./project/project.routes.js";
 import { uploadRoutes } from "./upload/upload.routes.js";
 import { contactRoutes } from "./contact/contact.routes.js";
@@ -28,8 +26,6 @@ routes.put("/me", updateProfileController);
 routes.post("/send-email", handleContactInquiry);
 
 // v1 API modules
-routes.route("/v1", dataRoutes);
-routes.route("/v1", homeRoutes);
 routes.route("/v1", aboutRoutes);
 routes.route("/v1", projectRoutes);
 routes.route("/v1", blogRoutes);
@@ -45,5 +41,3 @@ routes.route("/", projectRoutes);
 routes.route("/", blogRoutes);
 routes.route("/", caseStudyRoutes);
 routes.route("/", bookRoutes);
-
-

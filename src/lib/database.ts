@@ -3,28 +3,11 @@ import mongoose from "mongoose";
 
 try {
   dns.setServers(["8.8.8.8", "8.8.4.4", "1.1.1.1"]);
-} catch (e) {
+} catch (_e) {
   // Ignore if dns setting is restricted
 }
 
 import { env } from "./env.js";
-import { log } from "./logger.js";
-import { BlogModel } from "../modules/blog/blog.model.js";
-import { BookBundleModel, BookModel } from "../modules/book/book.model.js";
-import { DesignModel } from "../modules/design/design.model.js";
-import { HomeModel } from "../modules/home/home.model.js";
-import { AboutModel } from "../modules/about/about.model.js";
-import { ProjectModel } from "../modules/project/project.model.js";
-import { CaseStudyModel } from "../modules/case-study/case-study.model.js";
-
-// Static JSON fixtures
-import homeData from "../data/home.json" with { type: "json" };
-import aboutData from "../data/about.json" with { type: "json" };
-import projectsData from "../data/projects.json" with { type: "json" };
-import blogsData from "../data/blogs.json" with { type: "json" };
-import blogDetailsData from "../data/blog-details.json" with { type: "json" };
-import bookData from "../data/book.json" with { type: "json" };
-import designsData from "../data/designs.json" with { type: "json" };
 
 const connectionStates: Record<number, string> = {
   0: "disconnected",
@@ -43,7 +26,7 @@ declare global {
   var mongooseCache: MongooseCache | undefined;
 }
 
-let cachedMongoose: MongooseCache = globalThis.mongooseCache || { conn: null, promise: null };
+const cachedMongoose: MongooseCache = globalThis.mongooseCache || { conn: null, promise: null };
 if (!globalThis.mongooseCache) {
   globalThis.mongooseCache = cachedMongoose;
 }
@@ -60,121 +43,6 @@ export const getAuthMongoClient = () => {
 };
 
 export const getAuthDb = () => getAuthMongoClient().db(env.MONGODB_DB_NAME);
-
-export const seedAllInitialData = async () => {
-  try {
-    // 1. Projects
-    const projectCount = await ProjectModel.countDocuments();
-    if (projectCount === 0) {
-      log.seedStart("Projects");
-      await ProjectModel.create(projectsData.projects);
-      log.seedDone("Projects");
-    }
-
-    // 2. Blogs & Blog Details
-    const blogCount = await BlogModel.countDocuments();
-    if (blogCount === 0) {
-      log.seedStart("Blogs");
-      const detailsMap = new Map((blogDetailsData.blogDetails as any[]).map((d) => [d.slug, d]));
-      
-      const mergedBlogs = blogsData.blogs.map((b) => {
-        const detail = detailsMap.get(b.slug);
-        return {
-          id: b.id,
-          slug: b.slug,
-          title: b.title,
-          excerpt: b.excerpt,
-          category: b.category,
-          publishedAt: b.publishedAt,
-          readingTime: b.readingTime,
-          featured: b.featured,
-          featuredType: b.featuredType,
-          cover: b.cover,
-          coverImage: b.cover,
-          author: detail?.author || {
-            name: "Abdullah Al Maksud",
-            avatar: "/images/avatar.jpg",
-            bio: "Developer, designer, writer.",
-          },
-          tags: detail?.tags || [b.category],
-          content: detail?.content || b.excerpt,
-          isPublished: true,
-        };
-      });
-
-      // Add detail posts that were not in summary
-      for (const d of blogDetailsData.blogDetails as any[]) {
-        if (!mergedBlogs.some((b) => b.slug === d.slug)) {
-          mergedBlogs.push({
-            id: d.slug,
-            slug: d.slug,
-            title: d.title,
-            excerpt: d.excerpt,
-            category: d.category,
-            publishedAt: d.publishedAt,
-            readingTime: d.readingTime,
-            featured: false,
-            featuredType: "",
-            cover: d.cover,
-            coverImage: d.cover,
-            author: d.author,
-            tags: d.tags,
-            content: d.content,
-            isPublished: true,
-          });
-        }
-      }
-
-      await BlogModel.create(mergedBlogs);
-      log.seedDone("Blogs");
-    }
-
-    // 3. Books & Bundle
-    const bundleCount = await BookBundleModel.countDocuments();
-    if (bundleCount === 0) {
-      log.seedStart("Books");
-      await BookBundleModel.create({
-        key: "main",
-        book: bookData.book,
-        stats: bookData.stats,
-        books: bookData.books,
-      });
-      log.seedDone("Books");
-    }
-
-    // 4. Designs
-    const designCount = await DesignModel.countDocuments();
-    if (designCount === 0) {
-      log.seedStart("Designs");
-      await DesignModel.create(designsData.designs);
-      log.seedDone("Designs");
-    }
-
-    // 5. Home Configuration
-    const homeCount = await HomeModel.countDocuments();
-    if (homeCount === 0) {
-      log.seedStart("Home Config");
-      await HomeModel.create({
-        key: "main",
-        ...homeData,
-      });
-      log.seedDone("Home Config");
-    }
-
-    // 6. About Configuration
-    const aboutCount = await AboutModel.countDocuments();
-    if (aboutCount === 0) {
-      log.seedStart("About Config");
-      await AboutModel.create({
-        key: "main",
-        ...aboutData,
-      });
-      log.seedDone("About Config");
-    }
-  } catch (error) {
-    log.seedError(error);
-  }
-};
 
 export const connectDatabase = async () => {
   if (mongoose.connection.readyState === 1) {
@@ -196,10 +64,7 @@ export const connectDatabase = async () => {
 
     cachedMongoose.promise = mongoose
       .connect(env.MONGODB_URI, opts)
-      .then((m) => {
-        seedAllInitialData().catch((err) => console.error("Auto-seeding error:", err));
-        return m;
-      })
+      .then((m) => m)
       .catch((error) => {
         cachedMongoose.promise = null;
         throw error;
@@ -272,4 +137,3 @@ export const disconnectDatabase = async () => {
   cachedMongoose.promise = null;
   cachedMongoose.conn = null;
 };
-

@@ -6,7 +6,7 @@ const CoreFeatureSchema = new Schema(
     text: { type: String, required: true },
     desc: { type: String, required: true },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const ProjectSchema = new Schema(
@@ -69,7 +69,7 @@ const ProjectSchema = new Schema(
         return ret;
       },
     },
-  }
+  },
 );
 
 // Pre-save hook to normalize incoming legacy aliases to canonical fields

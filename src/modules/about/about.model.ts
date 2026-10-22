@@ -18,8 +18,7 @@ const AboutSchema = new Schema(
         return ret;
       },
     },
-  }
+  },
 );
 
-export const AboutModel: Model<any> =
-  mongoose.models.About || mongoose.model("About", AboutSchema);
+export const AboutModel: Model<any> = mongoose.models.About || mongoose.model("About", AboutSchema);

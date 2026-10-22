@@ -8,7 +8,10 @@ export const caseStudyResultSchema = z.object({
 
 export const createCaseStudySchema = z.object({
   title: z.string().min(1, "Title is required").max(250),
-  slug: z.string().min(1, "Slug is required").regex(/^[a-z0-9-]+$/, "Slug must only contain lowercase alphanumeric characters and hyphens"),
+  slug: z
+    .string()
+    .min(1, "Slug is required")
+    .regex(/^[a-z0-9-]+$/, "Slug must only contain lowercase alphanumeric characters and hyphens"),
   excerpt: z.string().default(""),
   content: z.any().optional(), // Lexical EditorState JSON, block array, or markdown string
   contentType: z.enum(["lexical", "markdown", "html", "blocks", "json"]).default("blocks"),

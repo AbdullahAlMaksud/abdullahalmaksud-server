@@ -2,13 +2,19 @@ import type { Context } from "hono";
 
 import type { AppEnv } from "../../lib/types.js";
 import { AboutModel } from "./about.model.js";
-import defaultAboutData from "../../data/about.json" with { type: "json" };
 
 export const getAboutData = async (c: Context<AppEnv>) => {
   try {
     const about = await AboutModel.findOne({ key: "main" });
     if (!about) {
-      return c.json(defaultAboutData);
+      return c.json(
+        {
+          success: false,
+          message: "About data not found in database",
+          data: null,
+        },
+        404,
+      );
     }
 
     return c.json({
@@ -29,7 +35,7 @@ export const updateAboutData = async (c: Context<AppEnv>) => {
     const about = await AboutModel.findOneAndUpdate(
       { key: "main" },
       { $set: body },
-      { returnDocument: "after", upsert: true }
+      { returnDocument: "after", upsert: true },
     );
     return c.json({ success: true, data: about });
   } catch (error) {

@@ -41,10 +41,7 @@ export const getAllBlogs = async (c: Context<AppEnv>) => {
     const projection = includeContent ? {} : { content: 0 };
 
     const [blogs, total] = await Promise.all([
-      BlogModel.find(filter, projection)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit),
+      BlogModel.find(filter, projection).sort({ createdAt: -1 }).skip(skip).limit(limit),
       BlogModel.countDocuments(filter),
     ]);
 
@@ -105,16 +102,13 @@ export const createBlog = async (c: Context<AppEnv>) => {
           message: "Validation failed",
           errors: parsed.error.format(),
         },
-        400
+        400,
       );
     }
 
     const existing = await BlogModel.findOne({ slug: parsed.data.slug });
     if (existing) {
-      return c.json(
-        { success: false, message: "Blog post with this slug already exists" },
-        400
-      );
+      return c.json({ success: false, message: "Blog post with this slug already exists" }, 400);
     }
 
     const blog = new BlogModel(parsed.data);
@@ -138,7 +132,7 @@ export const updateBlog = async (c: Context<AppEnv>) => {
           message: "Validation failed",
           errors: parsed.error.format(),
         },
-        400
+        400,
       );
     }
 
@@ -150,10 +144,7 @@ export const updateBlog = async (c: Context<AppEnv>) => {
     if (parsed.data.slug && parsed.data.slug !== blog.slug) {
       const existing = await BlogModel.findOne({ slug: parsed.data.slug });
       if (existing) {
-        return c.json(
-          { success: false, message: "Blog post with this slug already exists" },
-          400
-        );
+        return c.json({ success: false, message: "Blog post with this slug already exists" }, 400);
       }
     }
 

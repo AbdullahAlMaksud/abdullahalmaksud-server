@@ -48,34 +48,50 @@ export const log = {
   serverStart: (host: string, port: number) => {
     const url = `http://${host === "0.0.0.0" ? "localhost" : host}:${port}`;
     console.log("");
-    console.log(`  ${badge("SERVER", c.bgGreen)} ${c.greenBright}${c.bold}Abdullah Al Maksud API${c.reset}`);
+    console.log(
+      `  ${badge("SERVER", c.bgGreen)} ${c.greenBright}${c.bold}Abdullah Al Maksud API${c.reset}`,
+    );
     console.log("");
-    console.log(`  ${c.green}➜${c.reset}  ${c.bold}Local:${c.reset}   ${c.cyanBright}${url}${c.reset}`);
-    console.log(`  ${c.green}➜${c.reset}  ${c.bold}Network:${c.reset} ${c.cyanBright}http://${host}:${port}${c.reset}`);
+    console.log(
+      `  ${c.green}➜${c.reset}  ${c.bold}Local:${c.reset}   ${c.cyanBright}${url}${c.reset}`,
+    );
+    console.log(
+      `  ${c.green}➜${c.reset}  ${c.bold}Network:${c.reset} ${c.cyanBright}http://${host}:${port}${c.reset}`,
+    );
     console.log("");
   },
 
   authMounted: (url: string) => {
-    console.log(`  ${c.blue}➜${c.reset}  ${c.bold}Auth:${c.reset}    ${c.cyanBright}${url}/api/auth${c.reset}`);
+    console.log(
+      `  ${c.blue}➜${c.reset}  ${c.bold}Auth:${c.reset}    ${c.cyanBright}${url}/api/auth${c.reset}`,
+    );
   },
 
   /** ──── Database ──── */
   dbConnected: (dbName?: string) => {
     const label = dbName ? ` (${dbName})` : "";
-    console.log(`  ${c.green}✓${c.reset} ${c.greenBright}MongoDB connected${c.reset}${c.dim}${label}${c.reset}`);
+    console.log(
+      `  ${c.green}✓${c.reset} ${c.greenBright}MongoDB connected${c.reset}${c.dim}${label}${c.reset}`,
+    );
   },
 
   dbSkipped: (reason: string) => {
-    console.log(`  ${c.yellow}⚠${c.reset} ${c.yellowBright}MongoDB skipped${c.reset} ${c.dim}— ${reason}${c.reset}`);
+    console.log(
+      `  ${c.yellow}⚠${c.reset} ${c.yellowBright}MongoDB skipped${c.reset} ${c.dim}— ${reason}${c.reset}`,
+    );
   },
 
   /** ──── Seeding ──── */
   seedStart: (collection: string) => {
-    console.log(`  ${c.blue}◆${c.reset} ${c.blueBright}Seeding${c.reset} ${c.cyan}${collection}${c.reset}${c.dim}...${c.reset}`);
+    console.log(
+      `  ${c.blue}◆${c.reset} ${c.blueBright}Seeding${c.reset} ${c.cyan}${collection}${c.reset}${c.dim}...${c.reset}`,
+    );
   },
 
   seedDone: (collection: string) => {
-    console.log(`  ${c.green}✓${c.reset} ${c.greenBright}Seeded${c.reset}  ${c.cyan}${collection}${c.reset}`);
+    console.log(
+      `  ${c.green}✓${c.reset} ${c.greenBright}Seeded${c.reset}  ${c.cyan}${collection}${c.reset}`,
+    );
   },
 
   seedError: (error: unknown) => {
@@ -107,7 +123,9 @@ export const log = {
     const modeLabel = env.toUpperCase();
     console.log("");
     console.log(`  ${c.dim}───────────────────────────────────────${c.reset}`);
-    console.log(`  ${c.bold}${c.cyanBright}  abdullahalmaksud${c.reset} ${c.dim}// Server${c.reset}`);
+    console.log(
+      `  ${c.bold}${c.cyanBright}  abdullahalmaksud${c.reset} ${c.dim}// Server${c.reset}`,
+    );
     console.log(`  ${c.dim}  Mode:${c.reset} ${modeColor}${c.bold}${modeLabel}${c.reset}`);
     console.log(`  ${c.dim}───────────────────────────────────────${c.reset}`);
     console.log("");

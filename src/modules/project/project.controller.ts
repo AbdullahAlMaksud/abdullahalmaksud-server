@@ -93,7 +93,7 @@ export const getAllProjects = async (c: Context<AppEnv>) => {
         message: "Database query failed",
         error: (error as Error).message,
       },
-      500
+      500,
     );
   }
 };
@@ -121,7 +121,7 @@ export const getProjectBySlug = async (c: Context<AppEnv>) => {
         message: "Database query failed",
         error: (error as Error).message,
       },
-      500
+      500,
     );
   }
 };
@@ -148,7 +148,7 @@ export const getProjectById = async (c: Context<AppEnv>) => {
         message: "Database query failed",
         error: (error as Error).message,
       },
-      500
+      500,
     );
   }
 };
@@ -165,16 +165,13 @@ export const createProject = async (c: Context<AppEnv>) => {
           message: "Validation failed",
           errors: parsed.error.format(),
         },
-        400
+        400,
       );
     }
 
     const existing = await ProjectModel.findOne({ slug: parsed.data.slug });
     if (existing) {
-      return c.json(
-        { success: false, message: "Project with this slug already exists" },
-        400
-      );
+      return c.json({ success: false, message: "Project with this slug already exists" }, 400);
     }
 
     const project = new ProjectModel(parsed.data);
@@ -198,7 +195,7 @@ export const updateProject = async (c: Context<AppEnv>) => {
           message: "Validation failed",
           errors: parsed.error.format(),
         },
-        400
+        400,
       );
     }
 
@@ -210,10 +207,7 @@ export const updateProject = async (c: Context<AppEnv>) => {
     if (parsed.data.slug && parsed.data.slug !== project.slug) {
       const existing = await ProjectModel.findOne({ slug: parsed.data.slug });
       if (existing) {
-        return c.json(
-          { success: false, message: "Project with this slug already exists" },
-          400
-        );
+        return c.json({ success: false, message: "Project with this slug already exists" }, 400);
       }
     }
 

@@ -3,6 +3,9 @@
 High-performance, modular backend API powering the **Abdullah Al Maksud Portfolio** and **Admin Management Portal**. Built on **Hono**, **Node.js**, **TypeScript**, **Mongoose / MongoDB Atlas**, **BetterAuth**, **Resend**, and **Vercel Blob**.
 
 > **Package Manager Notice**: This project exclusively uses **`pnpm`**. Do not use `npm`, `yarn`, or `bun`.
+>
+> 📖 **বাংলা পূর্ণাঙ্গ ডকুমেন্টেশন**: বিস্তারিত ডাটা স্ট্রাকচার, স্কিমা ও এপিআই ব্যবহারের নির্দেশিকার জন্য দেখুন [API_DOCUMENTATION_BN.md](file:///c:/Users/AbdullahPC/Desktop/abdullahalmaksud/AbdullahAlMaksudServer/API_DOCUMENTATION_BN.md)।
+> 📮 **Postman Collection**: সকল এপিআই টেস্ট করার জন্য আপডেটকৃত [postman_collection.json](file:///c:/Users/AbdullahPC/Desktop/abdullahalmaksud/AbdullahAlMaksudServer/postman_collection.json) ব্যবহার করুন।
 
 ---
 
@@ -65,12 +68,29 @@ The server starts on **`http://localhost:5000`**.
 
 ### 4. Available Scripts
 
-| Command | Description |
-|---|---|
-| `pnpm dev` | Starts local development server with hot-reload via `tsx --watch` |
-| `pnpm start` | Runs server in standard mode |
-| `pnpm typecheck` | Validates strict TypeScript compilation (`tsc --noEmit`) |
-| `pnpm seed` | Seeds default initial data into MongoDB |
+| Command             | Description                                                       |
+| ------------------- | ----------------------------------------------------------------- |
+| `pnpm dev`          | Starts local development server with hot-reload via `tsx --watch` |
+| `pnpm start`        | Runs server in standard mode                                      |
+| `pnpm build`        | Validates strict TypeScript compilation (`tsc --noEmit`)          |
+| `pnpm typecheck`    | Type check verification (`tsc --noEmit`)                          |
+| `pnpm test:build`   | Build test (`tsc --noEmit`)                                       |
+| `pnpm test:lint`    | Lint test via ESLint (`eslint .`)                                 |
+| `pnpm lint:fix`     | Automatically fixes auto-fixable ESLint issues (`eslint . --fix`) |
+| `pnpm format`       | Formats all source files with Prettier (`prettier --write .`)     |
+| `pnpm format:check` | Verifies code formatting with Prettier (`prettier --check .`)     |
+| `pnpm test`         | Runs complete CI validation: build test + lint test               |
+| `pnpm test:commit`  | Tests conventional commit message validation with Commitlint      |
+
+### 5. Git Hooks & Commit Convention (Husky + Commitlint)
+
+This repository enforces Conventional Commits and automated pre-commit / pre-push validation:
+
+- **Pre-commit**: Automatically runs `lint-staged` on staged files (`eslint --fix` & `prettier --write`).
+- **Commit-msg**: Automatically validates commit messages via Commitlint (`.commitlintrc.json`).
+  - Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`, `wip`.
+  - Format example: `feat: add user authentication flow`
+- **Pre-push**: Runs `pnpm test` (both build test and lint test) to ensure broken code is never pushed to GitHub.
 
 ---
 
@@ -79,81 +99,85 @@ The server starts on **`http://localhost:5000`**.
 All endpoints are available under `/api/v1` (with backward-compatible unversioned `/api` aliases).
 
 ### 1. Books (`/api/v1/books`)
+
 Full CRUD for book publications, shelf showcases, and monograph metadata.
 
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `GET` | `/api/v1/books` | Public | Featured book bundle & shelf showcase data |
-| `GET` | `/api/v1/books/all` | Public | List of all standalone books |
-| `GET` | `/api/v1/books/:slug` | Public | Get single book by slug with publication metadata |
-| `GET` | `/api/v1/books/id/:id` | Admin | Get book by MongoDB ObjectId |
-| `PUT` | `/api/v1/books/bundle` | Admin | Update featured book bundle |
-| `POST` | `/api/v1/books` | Admin | Create new standalone book with chapters & quotes |
-| `PUT` | `/api/v1/books/:id` | Admin | Replace book record |
-| `PATCH` | `/api/v1/books/:id` | Admin | Partial update book record |
-| `DELETE` | `/api/v1/books/:id` | Admin | Delete book record |
+| Method   | Endpoint               | Access | Description                                       |
+| -------- | ---------------------- | ------ | ------------------------------------------------- |
+| `GET`    | `/api/v1/books`        | Public | Featured book bundle & shelf showcase data        |
+| `GET`    | `/api/v1/books/all`    | Public | List of all standalone books                      |
+| `GET`    | `/api/v1/books/:slug`  | Public | Get single book by slug with publication metadata |
+| `GET`    | `/api/v1/books/id/:id` | Admin  | Get book by MongoDB ObjectId                      |
+| `PUT`    | `/api/v1/books/bundle` | Admin  | Update featured book bundle                       |
+| `POST`   | `/api/v1/books`        | Admin  | Create new standalone book with chapters & quotes |
+| `PUT`    | `/api/v1/books/:id`    | Admin  | Replace book record                               |
+| `PATCH`  | `/api/v1/books/:id`    | Admin  | Partial update book record                        |
+| `DELETE` | `/api/v1/books/:id`    | Admin  | Delete book record                                |
 
 ### 2. Blogs & Essays (`/api/v1/blogs`)
+
 Full CRUD with support for **Block Editor / JSON** structured arrays and Lexical editor states.
 
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `GET` | `/api/v1/blogs` | Public | Paginated blogs list (`?page=1&limit=10&featured=true&category=...`) |
-| `GET` | `/api/v1/blogs/:slug` | Public | Get single blog post by slug |
-| `GET` | `/api/v1/blogs/id/:id` | Admin | Get blog post by MongoDB ObjectId |
-| `POST` | `/api/v1/blogs` | Admin | Create blog post (supports structured Block JSON) |
-| `PUT` | `/api/v1/blogs/:id` | Admin | Full update blog post |
-| `PATCH` | `/api/v1/blogs/:id` | Admin | Partial update blog post |
-| `DELETE` | `/api/v1/blogs/:id` | Admin | Delete blog post |
+| Method   | Endpoint               | Access | Description                                                          |
+| -------- | ---------------------- | ------ | -------------------------------------------------------------------- |
+| `GET`    | `/api/v1/blogs`        | Public | Paginated blogs list (`?page=1&limit=10&featured=true&category=...`) |
+| `GET`    | `/api/v1/blogs/:slug`  | Public | Get single blog post by slug                                         |
+| `GET`    | `/api/v1/blogs/id/:id` | Admin  | Get blog post by MongoDB ObjectId                                    |
+| `POST`   | `/api/v1/blogs`        | Admin  | Create blog post (supports structured Block JSON)                    |
+| `PUT`    | `/api/v1/blogs/:id`    | Admin  | Full update blog post                                                |
+| `PATCH`  | `/api/v1/blogs/:id`    | Admin  | Partial update blog post                                             |
+| `DELETE` | `/api/v1/blogs/:id`    | Admin  | Delete blog post                                                     |
 
 ### 3. Case Studies (`/api/v1/case-studies`)
+
 Full CRUD for strategic implementation deep-dives with metrics, tech stack, and solution architecture.
 
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `GET` | `/api/v1/case-studies` | Public | Paginated case studies list |
-| `GET` | `/api/v1/case-studies/:slug` | Public | Get case study by slug |
-| `GET` | `/api/v1/case-studies/id/:id` | Admin | Get case study by MongoDB ObjectId |
-| `POST` | `/api/v1/case-studies` | Admin | Create case study |
-| `PUT` | `/api/v1/case-studies/:id` | Admin | Full update case study |
-| `PATCH` | `/api/v1/case-studies/:id` | Admin | Partial update case study |
-| `DELETE` | `/api/v1/case-studies/:id` | Admin | Delete case study |
+| Method   | Endpoint                      | Access | Description                        |
+| -------- | ----------------------------- | ------ | ---------------------------------- |
+| `GET`    | `/api/v1/case-studies`        | Public | Paginated case studies list        |
+| `GET`    | `/api/v1/case-studies/:slug`  | Public | Get case study by slug             |
+| `GET`    | `/api/v1/case-studies/id/:id` | Admin  | Get case study by MongoDB ObjectId |
+| `POST`   | `/api/v1/case-studies`        | Admin  | Create case study                  |
+| `PUT`    | `/api/v1/case-studies/:id`    | Admin  | Full update case study             |
+| `PATCH`  | `/api/v1/case-studies/:id`    | Admin  | Partial update case study          |
+| `DELETE` | `/api/v1/case-studies/:id`    | Admin  | Delete case study                  |
 
 ### 4. Projects (`/api/v1/projects`)
+
 Full CRUD for engineering systems, architecture prototypes, and design modules.
 
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `GET` | `/api/v1/projects` | Public | Get all projects (paginated or list) |
-| `GET` | `/api/v1/projects/:slug` | Public | Get project by slug |
-| `GET` | `/api/v1/projects/id/:id` | Admin | Get project by MongoDB ObjectId |
-| `POST` | `/api/v1/projects` | Admin | Create project (supports `content` Block JSON) |
-| `PUT` | `/api/v1/projects/:id` | Admin | Full update project |
-| `PATCH` | `/api/v1/projects/:id` | Admin | Partial update project |
-| `DELETE` | `/api/v1/projects/:id` | Admin | Delete project |
+| Method   | Endpoint                  | Access | Description                                    |
+| -------- | ------------------------- | ------ | ---------------------------------------------- |
+| `GET`    | `/api/v1/projects`        | Public | Get all projects (paginated or list)           |
+| `GET`    | `/api/v1/projects/:slug`  | Public | Get project by slug                            |
+| `GET`    | `/api/v1/projects/id/:id` | Admin  | Get project by MongoDB ObjectId                |
+| `POST`   | `/api/v1/projects`        | Admin  | Create project (supports `content` Block JSON) |
+| `PUT`    | `/api/v1/projects/:id`    | Admin  | Full update project                            |
+| `PATCH`  | `/api/v1/projects/:id`    | Admin  | Partial update project                         |
+| `DELETE` | `/api/v1/projects/:id`    | Admin  | Delete project                                 |
 
 ### 5. Contact & Email Inquiries (`/api/send-email` & `/api/v1/contact`)
 
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `POST` | `/api/send-email` | Public | Send client contact inquiry via Resend |
-| `GET` | `/api/v1/contact/messages` | Admin | Retrieve stored inquiries list |
+| Method | Endpoint                   | Access | Description                            |
+| ------ | -------------------------- | ------ | -------------------------------------- |
+| `POST` | `/api/send-email`          | Public | Send client contact inquiry via Resend |
+| `GET`  | `/api/v1/contact/messages` | Admin  | Retrieve stored inquiries list         |
 
 ### 6. Uploads & Storage (`/api/v1/upload`)
 
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `POST` | `/api/v1/upload` | Admin | Upload image/document to Vercel Blob storage |
+| Method | Endpoint         | Access | Description                                  |
+| ------ | ---------------- | ------ | -------------------------------------------- |
+| `POST` | `/api/v1/upload` | Admin  | Upload image/document to Vercel Blob storage |
 
 ### 7. Auth & System Health
 
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `GET` | `/health` | Public | Server & Database health status |
-| `GET` | `/api/me` | Authenticated | Current user profile and role |
-| `POST` | `/api/auth/sign-up/email` | Public | Email signup |
-| `POST` | `/api/auth/sign-in/email` | Public | Email signin |
-| `POST` | `/api/auth/sign-out` | Public | Signout |
+| Method | Endpoint                  | Access        | Description                     |
+| ------ | ------------------------- | ------------- | ------------------------------- |
+| `GET`  | `/health`                 | Public        | Server & Database health status |
+| `GET`  | `/api/me`                 | Authenticated | Current user profile and role   |
+| `POST` | `/api/auth/sign-up/email` | Public        | Email signup                    |
+| `POST` | `/api/auth/sign-in/email` | Public        | Email signin                    |
+| `POST` | `/api/auth/sign-out`      | Public        | Signout                         |
 
 ---
 
@@ -187,11 +211,12 @@ Legacy string content is automatically supported as fallback.
 
 ## Postman API Collection
 
-A fully configured Postman collection is included in the root directory:
+A fully configured Postman collection is included in the `doc` directory:
 
-📁 **`postman_collection.json`**
+📁 **`doc/postman_collection.json`**
 
 ### Collection Variables:
+
 - `baseUrl`: Defaults to `http://localhost:5000`
 - `bearerToken`: Set your admin JWT or session token for authenticated endpoints
 
@@ -202,10 +227,13 @@ Includes 13 categorized folders covering every public and admin CRUD operation a
 ## Deployment
 
 ### Render (Blueprint)
+
 The repository includes `render.yaml` configured for `pnpm`:
+
 - Build Command: `npm install -g pnpm && pnpm install --frozen-lockfile`
 - Start Command: `pnpm start`
 - Health Check: `/health`
 
 ### Vercel Serverless
+
 The serverless entry point is located in `api/index.ts` using `@hono/node-server`'s `getRequestListener` for full compatibility with Vercel Node.js runtime.

@@ -25,7 +25,7 @@ const FeaturedBookSchema = new Schema(
     description: { type: String, default: "" },
     year: { type: Number, default: 2025 },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const BookStatSchema = new Schema(
@@ -34,7 +34,7 @@ const BookStatSchema = new Schema(
     label: { type: String, required: true },
     icon: { type: String, default: "" },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const ShelfBookSchema = new Schema(
@@ -51,7 +51,7 @@ const ShelfBookSchema = new Schema(
     genre: { type: String, default: "" },
     year: { type: Number, default: 2024 },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const BookBundleSchema = new Schema(
@@ -71,7 +71,7 @@ const BookBundleSchema = new Schema(
         return ret;
       },
     },
-  }
+  },
 );
 
 // Individual Book Schema for standalone book records
@@ -146,7 +146,7 @@ const StandaloneBookSchema = new Schema(
         return ret;
       },
     },
-  }
+  },
 );
 
 export const BookBundleModel: Model<any> =

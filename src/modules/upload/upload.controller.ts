@@ -22,7 +22,10 @@ export const uploadFile = async (c: Context<AppEnv>) => {
     }
 
     if (!env.BLOB_READ_WRITE_TOKEN || env.BLOB_READ_WRITE_TOKEN.includes("YOUR_SECRET_TOKEN")) {
-      return c.json({ success: false, message: "Vercel Blob token is not configured on the server" }, 500);
+      return c.json(
+        { success: false, message: "Vercel Blob token is not configured on the server" },
+        500,
+      );
     }
 
     // Sanitize filename to avoid unsafe characters
@@ -56,7 +59,10 @@ export const uploadFile = async (c: Context<AppEnv>) => {
 export const listFiles = async (c: Context<AppEnv>) => {
   try {
     if (!env.BLOB_READ_WRITE_TOKEN || env.BLOB_READ_WRITE_TOKEN.includes("YOUR_SECRET_TOKEN")) {
-      return c.json({ success: false, message: "Vercel Blob token is not configured on the server" }, 500);
+      return c.json(
+        { success: false, message: "Vercel Blob token is not configured on the server" },
+        500,
+      );
     }
 
     const limitQuery = c.req.query("limit");
@@ -88,7 +94,10 @@ export const getFileInfo = async (c: Context<AppEnv>) => {
     }
 
     if (!env.BLOB_READ_WRITE_TOKEN || env.BLOB_READ_WRITE_TOKEN.includes("YOUR_SECRET_TOKEN")) {
-      return c.json({ success: false, message: "Vercel Blob token is not configured on the server" }, 500);
+      return c.json(
+        { success: false, message: "Vercel Blob token is not configured on the server" },
+        500,
+      );
     }
 
     const info = await head(url, {
@@ -118,7 +127,10 @@ export const deleteFile = async (c: Context<AppEnv>) => {
     }
 
     if (!env.BLOB_READ_WRITE_TOKEN || env.BLOB_READ_WRITE_TOKEN.includes("YOUR_SECRET_TOKEN")) {
-      return c.json({ success: false, message: "Vercel Blob token is not configured on the server" }, 500);
+      return c.json(
+        { success: false, message: "Vercel Blob token is not configured on the server" },
+        500,
+      );
     }
 
     await del(url, {

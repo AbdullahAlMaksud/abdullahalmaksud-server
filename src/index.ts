@@ -1,11 +1,7 @@
 import { serve } from "@hono/node-server";
 
 import { app } from "./app.js";
-import {
-  connectDatabases,
-  disconnectDatabase,
-  getDatabaseConnectionHelp,
-} from "./lib/database.js";
+import { connectDatabases, disconnectDatabase, getDatabaseConnectionHelp } from "./lib/database.js";
 import { env, requireDatabaseConnection } from "./lib/env.js";
 import { log } from "./lib/logger.js";
 
@@ -24,7 +20,7 @@ const startServer = async () => {
   }
 
   // Local dev server (tsx/Node.js). Vercel uses api/index.ts instead.
-  const server = serve({
+  serve({
     fetch: app.fetch,
     hostname: env.HOST,
     port: env.PORT,

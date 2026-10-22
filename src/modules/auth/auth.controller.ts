@@ -58,10 +58,7 @@ export const updateProfileController = async (c: Context<AppEnv>) => {
       updateFields.updatedAt = new Date();
       await getAuthDb()
         .collection("user")
-        .updateOne(
-          { $or: [{ id: user.id }, { email: user.email }] },
-          { $set: updateFields }
-        );
+        .updateOne({ $or: [{ id: user.id }, { email: user.email }] }, { $set: updateFields });
     }
 
     const updatedUser = {

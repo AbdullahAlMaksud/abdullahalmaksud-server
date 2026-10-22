@@ -6,7 +6,7 @@ const CaseStudyResultSchema = new Schema(
     value: { type: String, required: true },
     description: { type: String, default: "" },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const CaseStudySchema = new Schema(
@@ -66,7 +66,7 @@ const CaseStudySchema = new Schema(
         return ret;
       },
     },
-  }
+  },
 );
 
 CaseStudySchema.pre("save", function (this: any) {

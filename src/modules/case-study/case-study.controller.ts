@@ -2,10 +2,7 @@ import type { Context } from "hono";
 
 import type { AppEnv } from "../../lib/types.js";
 import { CaseStudyModel } from "./case-study.model.js";
-import {
-  createCaseStudySchema,
-  updateCaseStudySchema,
-} from "./case-study.validation.js";
+import { createCaseStudySchema, updateCaseStudySchema } from "./case-study.validation.js";
 
 export const getAllCaseStudies = async (c: Context<AppEnv>) => {
   try {
@@ -122,16 +119,13 @@ export const createCaseStudy = async (c: Context<AppEnv>) => {
           message: "Validation failed",
           errors: parsed.error.format(),
         },
-        400
+        400,
       );
     }
 
     const existing = await CaseStudyModel.findOne({ slug: parsed.data.slug });
     if (existing) {
-      return c.json(
-        { success: false, message: "Case study with this slug already exists" },
-        400
-      );
+      return c.json({ success: false, message: "Case study with this slug already exists" }, 400);
     }
 
     const caseStudy = new CaseStudyModel(parsed.data);
@@ -155,7 +149,7 @@ export const updateCaseStudy = async (c: Context<AppEnv>) => {
           message: "Validation failed",
           errors: parsed.error.format(),
         },
-        400
+        400,
       );
     }
 
@@ -167,10 +161,7 @@ export const updateCaseStudy = async (c: Context<AppEnv>) => {
     if (parsed.data.slug && parsed.data.slug !== caseStudy.slug) {
       const existing = await CaseStudyModel.findOne({ slug: parsed.data.slug });
       if (existing) {
-        return c.json(
-          { success: false, message: "Case study with this slug already exists" },
-          400
-        );
+        return c.json({ success: false, message: "Case study with this slug already exists" }, 400);
       }
     }
 

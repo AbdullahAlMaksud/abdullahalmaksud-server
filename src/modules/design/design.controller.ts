@@ -2,7 +2,6 @@ import type { Context } from "hono";
 
 import type { AppEnv } from "../../lib/types.js";
 import { DesignModel } from "./design.model.js";
-import defaultDesignsData from "../../data/designs.json" with { type: "json" };
 
 export const getAllDesigns = async (c: Context<AppEnv>) => {
   try {
@@ -18,10 +17,6 @@ export const getAllDesigns = async (c: Context<AppEnv>) => {
     }
 
     const designs = await DesignModel.find(filter).sort({ createdAt: -1 });
-    if (designs.length === 0 && Object.keys(filter).length === 0) {
-      return c.json(defaultDesignsData.designs);
-    }
-
     return c.json(designs);
   } catch (error) {
     return c.json({ success: false, message: (error as Error).message }, 500);
@@ -49,10 +44,7 @@ export const createDesign = async (c: Context<AppEnv>) => {
 
     const existing = await DesignModel.findOne({ id: body.id });
     if (existing) {
-      return c.json(
-        { success: false, message: "Design with this ID already exists" },
-        400
-      );
+      return c.json({ success: false, message: "Design with this ID already exists" }, 400);
     }
 
     const design = new DesignModel(body);
@@ -68,11 +60,9 @@ export const updateDesign = async (c: Context<AppEnv>) => {
     const id = c.req.param("id");
     const body = await c.req.json();
 
-    const design = await DesignModel.findOneAndUpdate(
-      { $or: [{ id }, { _id: id }] },
-      body,
-      { returnDocument: "after" }
-    );
+    const design = await DesignModel.findOneAndUpdate({ $or: [{ id }, { _id: id }] }, body, {
+      returnDocument: "after",
+    });
 
     if (!design) {
       return c.json({ success: false, message: "Design not found" }, 404);
