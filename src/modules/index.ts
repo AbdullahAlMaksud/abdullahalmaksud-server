@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 
-import { currentSessionController } from "./auth/auth.controller.js";
+import { currentSessionController, updateProfileController } from "./auth/auth.controller.js";
 import type { AppEnv } from "../lib/types.js";
 import { authRoutes } from "./auth/auth.routes.js";
 import { aboutRoutes } from "./about/about.routes.js";
@@ -23,6 +23,8 @@ export const routes = new Hono<AppEnv>();
 routes.route("/auth", authRoutes);
 routes.route("/health", healthRoutes);
 routes.get("/me", currentSessionController);
+routes.patch("/me", updateProfileController);
+routes.put("/me", updateProfileController);
 routes.post("/send-email", handleContactInquiry);
 
 // v1 API modules

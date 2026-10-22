@@ -29,7 +29,7 @@ export const updateAboutData = async (c: Context<AppEnv>) => {
     const about = await AboutModel.findOneAndUpdate(
       { key: "main" },
       { $set: body },
-      { new: true, upsert: true }
+      { returnDocument: "after", upsert: true }
     );
     return c.json({ success: true, data: about });
   } catch (error) {

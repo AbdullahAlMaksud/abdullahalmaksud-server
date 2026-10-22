@@ -4,12 +4,19 @@ import { admin, bearer, emailOTP } from "better-auth/plugins";
 
 import { getAuthDb, getAuthMongoClient } from "./database.js";
 import { sendOtpEmail } from "./email.js";
-import { corsOrigins, env } from "./env.js";
+import { corsOrigins, env, isAllowedOrigin } from "./env.js";
 import { adminRole, defaultRole, resolveRoleForEmail } from "./roles.js";
 
-const trustedOrigins = corsOrigins.includes("*")
+const defaultTrustedOrigins = corsOrigins.includes("*")
   ? [env.BETTER_AUTH_URL]
-  : Array.from(new Set([env.BETTER_AUTH_URL, ...corsOrigins]));
+  : Array.from(
+      new Set([
+        env.BETTER_AUTH_URL,
+        "https://chief.abdullahalmaksud.com",
+        "https://abdullahalmaksud.com",
+        ...corsOrigins,
+      ]),
+    );
 
 // Only Google OAuth is enabled per specification
 const socialProviders: Record<string, any> = {};
@@ -26,7 +33,13 @@ function createAuth() {
   return betterAuth({
     baseURL: env.BETTER_AUTH_URL,
     secret: env.BETTER_AUTH_SECRET,
-    trustedOrigins,
+    trustedOrigins: (request) => {
+      const origin = request?.headers?.get("origin");
+      if (origin && isAllowedOrigin(origin)) {
+        return Array.from(new Set([origin, ...defaultTrustedOrigins]));
+      }
+      return defaultTrustedOrigins;
+    },
     // Use Mongoose's native MongoClient — avoids a second cold-start connection on Vercel
     database: mongodbAdapter(getAuthDb(), {
       client: getAuthMongoClient(),

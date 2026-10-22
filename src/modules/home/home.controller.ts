@@ -33,7 +33,7 @@ export const updateHomeData = async (c: Context<AppEnv>) => {
     const home = await HomeModel.findOneAndUpdate(
       { key: "main" },
       { $set: body },
-      { new: true, upsert: true }
+      { returnDocument: "after", upsert: true }
     );
     return c.json({ success: true, data: home });
   } catch (error) {

@@ -71,7 +71,7 @@ export const updateDesign = async (c: Context<AppEnv>) => {
     const design = await DesignModel.findOneAndUpdate(
       { $or: [{ id }, { _id: id }] },
       body,
-      { new: true }
+      { returnDocument: "after" }
     );
 
     if (!design) {

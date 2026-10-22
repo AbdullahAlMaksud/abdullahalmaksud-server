@@ -4,6 +4,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { app } from "../src/app.js";
 import { getAuth } from "../src/lib/auth.js";
 import { connectDatabases, isAuthDatabaseConnected, getDatabaseConnectionHelp } from "../src/lib/database.js";
+import { isAllowedOrigin } from "../src/lib/env.js";
 
 // Create a Node.js-compatible request listener from the Hono app.
 // Vercel's Node.js runtime passes Node IncomingMessage/ServerResponse objects.
@@ -22,11 +23,45 @@ function readBody(req: IncomingMessage): Promise<Buffer> {
 }
 
 /**
+ * Set CORS headers on the Node ServerResponse if the request Origin is allowed.
+ */
+function applyCorsHeaders(req: IncomingMessage, res: ServerResponse): boolean {
+  const origin = req.headers.origin;
+  if (!origin) return false;
+
+  if (isAllowedOrigin(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      (req.headers["access-control-request-headers"] as string) ||
+        "Content-Type, Authorization, X-Requested-With, Cookie"
+    );
+    res.setHeader("Access-Control-Expose-Headers", "Content-Length, set-auth-token");
+    res.setHeader("Vary", "Origin");
+    return true;
+  }
+  return false;
+}
+
+/**
  * Handle BetterAuth requests directly, bypassing Hono's body stream handling.
  * This avoids the body-already-consumed issue when getRequestListener
  * converts Node IncomingMessage to Web Request.
  */
 async function handleAuthRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  // Always attach CORS headers so preflight, successes, and errors allow browser access
+  applyCorsHeaders(req, res);
+
+  // Handle CORS preflight (OPTIONS) immediately without waiting for DB connection
+  if (req.method === "OPTIONS") {
+    res.setHeader("Access-Control-Max-Age", "600");
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
   try {
     if (!isAuthDatabaseConnected()) {
       res.writeHead(503, { "Content-Type": "application/json" });
@@ -72,12 +107,30 @@ async function handleAuthRequest(req: IncomingMessage, res: ServerResponse): Pro
 
     const webResponse = await Promise.race([getAuth().handler(webRequest), timeoutPromise]);
 
-    // Write status and headers
-    const respHeaders: Record<string, string> = {};
+    // Copy webResponse headers (excluding set-cookie and access-control headers which we manage)
     webResponse.headers.forEach((val, key) => {
-      respHeaders[key] = val;
+      const lower = key.toLowerCase();
+      if (lower !== "set-cookie" && !lower.startsWith("access-control-")) {
+        res.setHeader(key, val);
+      }
     });
-    res.writeHead(webResponse.status, respHeaders);
+
+    // Handle Set-Cookie headers properly (support multiple cookies from BetterAuth)
+    const getSetCookieFn = (webResponse.headers as any).getSetCookie;
+    const cookies: string[] = typeof getSetCookieFn === "function"
+      ? getSetCookieFn.call(webResponse.headers)
+      : [];
+
+    if (cookies.length > 0) {
+      res.setHeader("Set-Cookie", cookies);
+    } else {
+      const singleCookie = webResponse.headers.get("set-cookie");
+      if (singleCookie) {
+        res.setHeader("Set-Cookie", singleCookie);
+      }
+    }
+
+    res.writeHead(webResponse.status);
 
     // Stream body
     if (webResponse.body) {
@@ -107,9 +160,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     console.error("Database connection error in Vercel handler:", err);
   });
 
-  // OPTIONS (CORS preflight) must go through Hono's CORS middleware, not handleAuthRequest
-  // (handleAuthRequest would return 503 before DB connects, blocking browser preflight)
-  if (req.url?.startsWith("/api/auth") && req.method !== "OPTIONS") {
+  if (req.url?.startsWith("/api/auth")) {
     return handleAuthRequest(req, res);
   }
 

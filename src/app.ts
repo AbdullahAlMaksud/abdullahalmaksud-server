@@ -2,7 +2,9 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 
 import { healthController } from "./modules/health/health.controller.js";
-import { allowedCorsOrigins, corsOrigins, env } from "./lib/env.js";
+import { formatUptime } from "./modules/health/health.service.js";
+import { getDatabaseStatus } from "./lib/database.js";
+import { allowedCorsOrigins, corsOrigins, env, isAllowedOrigin } from "./lib/env.js";
 import type { AppEnv } from "./lib/types.js";
 import { errorHandler, notFoundHandler } from "./middlewares/error.middleware.js";
 import { sessionMiddleware } from "./middlewares/session.middleware.js";
@@ -20,14 +22,10 @@ app.use(
         return null;
       }
 
-      if (corsOrigins.includes("*")) {
-        return origin;
-      }
-
-      return allowedCorsOrigins.has(origin) ? origin : null;
+      return isAllowedOrigin(origin) ? origin : null;
     },
     allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    exposeHeaders: ["Content-Length"],
+    exposeHeaders: ["Content-Length", "set-auth-token"],
     maxAge: 600,
     credentials: true,
   }),
@@ -53,19 +51,36 @@ app.get("/", (c) => {
   const format = c.req.query("format");
   const acceptHeader = c.req.header("accept") || "";
 
+  const uptime = process.uptime();
+  const dbStatus = getDatabaseStatus();
+  const isDbConnected = dbStatus.state === "connected";
+  const status = "running";
+  const health = isDbConnected ? "healthy" : "degraded";
+  const uptimeFormatted = formatUptime(uptime);
+  const timestamp = new Date().toISOString();
+
   if (format === "json" || (acceptHeader.includes("application/json") && !acceptHeader.includes("text/html"))) {
     return c.json({
       success: true,
-      message: "Abdullah Al Maksud API is running",
-      authBasePath: "/api/auth",
-      healthPath: "/health",
-      frontendOrigin: env.CORS_ORIGIN,
+      status,
+      health,
+      uptime: Math.round(uptime * 100) / 100,
+      uptimeFormatted,
+      database: dbStatus.state,
+      timestamp,
     });
   }
 
-  const host = c.req.header("host") || "localhost:4000";
-  const protocol = host.includes("localhost") ? "http" : "https";
-  return c.html(renderRootHtml(`${protocol}://${host}`));
+  return c.html(
+    renderRootHtml({
+      status,
+      health,
+      uptime,
+      uptimeFormatted,
+      database: dbStatus.state,
+      timestamp,
+    }),
+  );
 });
 
 app.get("/health", healthController);

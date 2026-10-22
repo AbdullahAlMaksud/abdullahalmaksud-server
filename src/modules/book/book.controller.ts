@@ -34,7 +34,7 @@ export const updateBookBundle = async (c: Context<AppEnv>) => {
     const bundle = await BookBundleModel.findOneAndUpdate(
       { key: "main" },
       { $set: body },
-      { new: true, upsert: true }
+      { returnDocument: "after", upsert: true }
     );
     return c.json({ success: true, data: bundle });
   } catch (error) {
@@ -93,7 +93,7 @@ export const updateBook = async (c: Context<AppEnv>) => {
     const id = c.req.param("id");
     const body = await c.req.json();
 
-    const book = await BookModel.findByIdAndUpdate(id, body, { new: true });
+    const book = await BookModel.findByIdAndUpdate(id, body, { returnDocument: "after" });
     if (!book) {
       return c.json({ success: false, message: "Book not found" }, 404);
     }

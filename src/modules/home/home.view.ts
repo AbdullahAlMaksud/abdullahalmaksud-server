@@ -1,26 +1,41 @@
-import { env } from "../../lib/env.js";
+export interface HomeViewData {
+  status: string;
+  health: string;
+  uptime: number;
+  uptimeFormatted: string;
+  database: string;
+  timestamp: string;
+}
 
-export const renderRootHtml = (currentOrigin: string) => {
+export const renderRootHtml = (data: HomeViewData) => {
+  const isHealthy = data.health === "healthy" || data.health === "ok";
+  const statusColor = isHealthy ? "#10b981" : "#f59e0b";
+  const statusGlow = isHealthy ? "rgba(16, 185, 129, 0.25)" : "rgba(245, 158, 11, 0.25)";
+  const statusBadgeBg = isHealthy ? "rgba(16, 185, 129, 0.1)" : "rgba(245, 158, 11, 0.1)";
+  const statusBadgeBorder = isHealthy ? "rgba(16, 185, 129, 0.3)" : "rgba(245, 158, 11, 0.3)";
+  const statusText = isHealthy ? "#34d399" : "#fbbf24";
+
   return `<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Abdullah Al Maksud — Portfolio API Hub</title>
+  <title>Server Status — Abdullah Al Maksud API</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #090d16;
-      --card-bg: rgba(15, 23, 42, 0.75);
+      --bg: #080c14;
+      --card-bg: rgba(15, 23, 42, 0.72);
       --card-border: rgba(255, 255, 255, 0.08);
+      --card-hover-border: rgba(56, 189, 248, 0.3);
       --primary: #38bdf8;
-      --primary-glow: rgba(56, 189, 248, 0.25);
-      --accent: #10b981;
-      --accent-glow: rgba(16, 185, 129, 0.25);
+      --accent: ${statusColor};
+      --accent-glow: ${statusGlow};
       --text: #f1f5f9;
       --text-muted: #94a3b8;
+      --text-subtle: #64748b;
     }
 
     * {
@@ -38,265 +53,247 @@ export const renderRootHtml = (currentOrigin: string) => {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 2rem 1rem;
+      padding: 1.5rem;
       position: relative;
       overflow-x: hidden;
     }
 
-    /* Ambient background glow */
+    /* Ambient background glows */
     .ambient-glow {
       position: fixed;
-      width: 600px;
-      height: 600px;
+      width: 500px;
+      height: 500px;
       border-radius: 50%;
       pointer-events: none;
       z-index: 0;
       filter: blur(140px);
-      opacity: 0.18;
+      opacity: 0.16;
     }
     .glow-1 {
-      top: -200px;
-      left: 10%;
+      top: -150px;
+      left: 15%;
       background: radial-gradient(circle, #38bdf8, #6366f1);
     }
     .glow-2 {
-      bottom: -200px;
-      right: 10%;
-      background: radial-gradient(circle, #10b981, #06b6d4);
+      bottom: -150px;
+      right: 15%;
+      background: radial-gradient(circle, ${statusColor}, #06b6d4);
     }
 
     .container {
       width: 100%;
-      max-width: 900px;
+      max-width: 680px;
       position: relative;
       z-index: 1;
     }
 
-    /* Header Section */
+    /* Main Container Card */
+    .status-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .status-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+
+    /* Header */
     .header {
       text-align: center;
-      margin-bottom: 2.5rem;
+      margin-bottom: 2.25rem;
     }
 
     .status-badge {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      color: #34d399;
-      font-size: 0.85rem;
+      background: ${statusBadgeBg};
+      border: 1px solid ${statusBadgeBorder};
+      color: ${statusText};
+      font-size: 0.82rem;
       font-weight: 600;
-      padding: 0.35rem 0.9rem;
+      letter-spacing: 0.02em;
+      padding: 0.35rem 0.95rem;
       border-radius: 9999px;
       margin-bottom: 1.25rem;
-      box-shadow: 0 0 20px var(--accent-glow);
+      box-shadow: 0 0 24px var(--accent-glow);
     }
 
     .status-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #10b981;
+      background: var(--accent);
       position: relative;
     }
+
     .status-dot::after {
       content: '';
       position: absolute;
       inset: -4px;
       border-radius: 50%;
-      background: #10b981;
+      background: var(--accent);
       opacity: 0.6;
-      animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+      animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
     }
 
     @keyframes ping {
       0% { transform: scale(1); opacity: 0.8; }
-      100% { transform: scale(2.2); opacity: 0; }
+      100% { transform: scale(2.4); opacity: 0; }
     }
 
     h1 {
-      font-size: clamp(2rem, 5vw, 3rem);
+      font-size: clamp(1.75rem, 4vw, 2.25rem);
       font-weight: 800;
       letter-spacing: -0.03em;
-      background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
+      background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.35rem;
     }
 
     .subtitle {
       color: var(--text-muted);
-      font-size: 1.05rem;
-      max-width: 580px;
-      margin: 0 auto;
-      line-height: 1.6;
+      font-size: 0.95rem;
+      font-weight: 500;
     }
 
-    /* Stack Badges */
-    .stack-pills {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-top: 1.25rem;
-    }
-    .pill {
-      font-size: 0.78rem;
-      font-family: 'JetBrains Mono', monospace;
-      padding: 0.25rem 0.65rem;
-      border-radius: 6px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--card-border);
-      color: #cbd5e1;
-    }
-
-    /* Main Grid */
-    .grid {
+    /* 3 Focused Metric Cards */
+    .metrics-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.25rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
       margin-bottom: 2rem;
     }
 
-    .card {
-      background: var(--card-bg);
+    .metric-card {
+      background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--card-border);
       border-radius: 16px;
-      padding: 1.5rem;
-      backdrop-filter: blur(12px);
-      transition: all 0.25s ease;
+      padding: 1.25rem 1rem;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      text-decoration: none;
-      color: inherit;
+      align-items: center;
+      text-align: center;
+      transition: all 0.25s ease;
       position: relative;
-      overflow: hidden;
     }
 
-    .card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 16px;
-      padding: 1px;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events: none;
+    .metric-card:hover {
+      border-color: var(--card-hover-border);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.5);
     }
 
-    .card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(56, 189, 248, 0.4);
-      box-shadow: 0 12px 30px -10px var(--primary-glow);
-    }
-
-    .card-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 0.85rem;
-    }
-
-    .method-badge {
+    .metric-tag {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      letter-spacing: 0.05em;
-    }
-    .method-get {
-      background: rgba(56, 189, 248, 0.15);
-      color: #38bdf8;
-      border: 1px solid rgba(56, 189, 248, 0.3);
-    }
-    .method-crud {
-      background: rgba(168, 85, 247, 0.15);
-      color: #c084fc;
-      border: 1px solid rgba(168, 85, 247, 0.3);
-    }
-
-    .card-icon {
-      font-size: 1.35rem;
-    }
-
-    .card-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin-bottom: 0.35rem;
-      color: #f8fafc;
-    }
-
-    .card-path {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.82rem;
-      color: #38bdf8;
-      background: rgba(56, 189, 248, 0.08);
-      padding: 0.25rem 0.5rem;
-      border-radius: 6px;
-      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
       margin-bottom: 0.65rem;
-      word-break: break-all;
-    }
-
-    .card-desc {
-      color: var(--text-muted);
-      font-size: 0.88rem;
-      line-height: 1.5;
-    }
-
-    /* Footer & Actions */
-    .footer {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 1.25rem 1.75rem;
-      backdrop-filter: blur(12px);
       display: flex;
-      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .metric-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.35rem;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: -0.02em;
+    }
+
+    .metric-value.status-running {
+      color: #34d399;
+    }
+
+    .metric-value.health-ok {
+      color: #38bdf8;
+    }
+
+    .metric-value.health-degraded {
+      color: #fbbf24;
+    }
+
+    .metric-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Footer / Actions */
+    .panel-footer {
+      display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 1rem;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 1.25rem;
       flex-wrap: wrap;
+      gap: 1rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--card-border);
     }
 
-    .footer-link {
-      color: #94a3b8;
-      text-decoration: none;
-      font-size: 0.88rem;
-      font-weight: 500;
-      transition: color 0.2s ease;
-      display: flex;
+    .timestamp-box {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-subtle);
+    }
+
+    .timestamp-box span {
+      color: var(--text-muted);
+    }
+
+    .json-btn {
+      display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-    }
-
-    .footer-link:hover {
-      color: #38bdf8;
-    }
-
-    .json-link {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      color: #64748b;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--primary);
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.2s ease;
     }
 
-    @media (max-width: 640px) {
-      .footer {
-        flex-direction: column;
-        text-align: center;
+    .json-btn:hover {
+      background: rgba(56, 189, 248, 0.16);
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 600px) {
+      .status-panel {
+        padding: 1.75rem 1.25rem;
       }
-      .footer-links {
-        justify-content: center;
+
+      .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+
+      .panel-footer {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
       }
     }
   </style>
@@ -306,116 +303,85 @@ export const renderRootHtml = (currentOrigin: string) => {
   <div class="ambient-glow glow-2"></div>
 
   <div class="container">
-    <header class="header">
-      <div class="status-badge">
-        <span class="status-dot"></span>
-        All Systems Operational
+    <div class="status-panel">
+      <header class="header">
+        <div class="status-badge" id="live-badge">
+          <span class="status-dot"></span>
+          <span>Server is Running</span>
+        </div>
+        <h1>Abdullah Al Maksud</h1>
+        <p class="subtitle">API Server Status</p>
+      </header>
+
+      <div class="metrics-grid">
+        <!-- 1. Server Status -->
+        <div class="metric-card">
+          <span class="metric-tag">
+            <span>●</span> Status
+          </span>
+          <div class="metric-value status-running">Running</div>
+          <span class="metric-sub">HTTP Server Active</span>
+        </div>
+
+        <!-- 2. System Health -->
+        <div class="metric-card">
+          <span class="metric-tag">
+            <span>💚</span> Health
+          </span>
+          <div class="metric-value ${isHealthy ? 'health-ok' : 'health-degraded'}">
+            ${isHealthy ? 'Healthy' : 'Degraded'}
+          </div>
+          <span class="metric-sub">Database: ${data.database}</span>
+        </div>
+
+        <!-- 3. Uptime -->
+        <div class="metric-card">
+          <span class="metric-tag">
+            <span>⏱️</span> Uptime
+          </span>
+          <div class="metric-value" id="uptime-display">${data.uptimeFormatted}</div>
+          <span class="metric-sub">Continuous Runtime</span>
+        </div>
       </div>
-      <h1>Abdullah Al Maksud</h1>
-      <p class="subtitle">
-        High-performance modular REST API server powering portfolio, software projects, blog articles, and reading list.
-      </p>
-      <div class="stack-pills">
-        <span class="pill">⚡ Hono v4</span>
-        <span class="pill">🔷 TypeScript</span>
-        <span class="pill">🍃 MongoDB Atlas</span>
-        <span class="pill">🔒 Better Auth</span>
-        <span class="pill">▲ Vercel Edge/Serverless</span>
-      </div>
-    </header>
 
-    <div class="grid">
-      <!-- Health Check -->
-      <a href="/health" class="card" target="_blank" rel="noopener">
-        <div>
-          <div class="card-top">
-            <span class="method-badge method-get">GET</span>
-            <span class="card-icon">💚</span>
-          </div>
-          <div class="card-title">System Health</div>
-          <div class="card-path">/health</div>
-          <p class="card-desc">Check database connection status, server uptime, and environment diagnostics.</p>
+      <footer class="panel-footer">
+        <div class="timestamp-box">
+          System Time: <span id="time-display">${data.timestamp}</span>
         </div>
-      </a>
-
-      <!-- Software Projects -->
-      <a href="/api/v1/projects" class="card" target="_blank" rel="noopener">
-        <div>
-          <div class="card-top">
-            <span class="method-badge method-crud">CRUD</span>
-            <span class="card-icon">🚀</span>
-          </div>
-          <div class="card-title">Software Projects</div>
-          <div class="card-path">/api/v1/projects</div>
-          <p class="card-desc">Dynamic project showcase, tech stack list, core features, and live demo links.</p>
-        </div>
-      </a>
-
-      <!-- Blog Posts -->
-      <a href="/api/v1/blogs" class="card" target="_blank" rel="noopener">
-        <div>
-          <div class="card-top">
-            <span class="method-badge method-crud">CRUD</span>
-            <span class="card-icon">📝</span>
-          </div>
-          <div class="card-title">Blog Articles</div>
-          <div class="card-path">/api/v1/blogs</div>
-          <p class="card-desc">Markdown-powered tech articles, tutorial guides, pagination, and publish filters.</p>
-        </div>
-      </a>
-
-      <!-- Books -->
-      <a href="/api/v1/books" class="card" target="_blank" rel="noopener">
-        <div>
-          <div class="card-top">
-            <span class="method-badge method-crud">CRUD</span>
-            <span class="card-icon">📚</span>
-          </div>
-          <div class="card-title">Reading List</div>
-          <div class="card-path">/api/v1/books</div>
-          <p class="card-desc">Curated books collection, reviews, star ratings, and recommendation tags.</p>
-        </div>
-      </a>
-
-      <!-- Site Meta -->
-      <a href="/api/v1/site?locale=en" class="card" target="_blank" rel="noopener">
-        <div>
-          <div class="card-top">
-            <span class="method-badge method-get">GET</span>
-            <span class="card-icon">🌐</span>
-          </div>
-          <div class="card-title">Site Metadata</div>
-          <div class="card-path">/api/v1/site</div>
-          <p class="card-desc">Multi-locale navigation schema, social connections, and profile information.</p>
-        </div>
-      </a>
-
-      <!-- Authentication -->
-      <a href="/api/me" class="card" target="_blank" rel="noopener">
-        <div>
-          <div class="card-top">
-            <span class="method-badge method-get">AUTH</span>
-            <span class="card-icon">🔐</span>
-          </div>
-          <div class="card-title">User Session</div>
-          <div class="card-path">/api/me</div>
-          <p class="card-desc">Better Auth user session inspector, cookie verification, and role permissions.</p>
-        </div>
-      </a>
+        <a href="/?format=json" class="json-btn">
+          <span>JSON Response</span> &rarr;
+        </a>
+      </footer>
     </div>
-
-    <footer class="footer">
-      <div class="footer-links">
-        <a href="${env.CORS_ORIGIN || 'https://abdullahalmaksud.com'}" class="footer-link" target="_blank" rel="noopener">
-          <span>🌐</span> Portfolio Website
-        </a>
-        <a href="https://github.com/AbdullahAlMaksud/abdullahalmaksud-server" class="footer-link" target="_blank" rel="noopener">
-          <span>🐙</span> GitHub Repository
-        </a>
-      </div>
-      <a href="/?format=json" class="json-link">JSON Response &rarr;</a>
-    </footer>
   </div>
+
+  <script>
+    // Live ticking uptime counter
+    let totalSeconds = ${Math.floor(data.uptime)};
+    const pageLoad = Date.now();
+    const uptimeEl = document.getElementById('uptime-display');
+
+    function updateLiveUptime() {
+      if (!uptimeEl) return;
+      const elapsed = Math.floor((Date.now() - pageLoad) / 1000);
+      const current = totalSeconds + elapsed;
+
+      const d = Math.floor(current / 86400);
+      const h = Math.floor((current % 86400) / 3600);
+      const m = Math.floor((current % 3600) / 60);
+      const s = Math.floor(current % 60);
+
+      const parts = [];
+      if (d > 0) parts.push(d + 'd');
+      if (h > 0 || d > 0) parts.push(h + 'h');
+      if (m > 0 || h > 0 || d > 0) parts.push(m + 'm');
+      parts.push(s + 's');
+
+      uptimeEl.textContent = parts.join(' ');
+    }
+
+    setInterval(updateLiveUptime, 1000);
+  </script>
 </body>
 </html>`;
 };

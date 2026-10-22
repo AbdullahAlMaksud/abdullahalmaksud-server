@@ -97,6 +97,36 @@ export const corsOrigins = env.CORS_ORIGIN.split(",")
 
 export const allowedCorsOrigins = new Set(corsOrigins);
 
+export const isAllowedOrigin = (origin?: string | null): boolean => {
+  if (!origin) return false;
+  if (corsOrigins.includes("*")) return true;
+  if (allowedCorsOrigins.has(origin)) return true;
+
+  try {
+    const url = new URL(origin);
+    const host = url.hostname;
+
+    // Allow apex domain and all subdomains of abdullahalmaksud.com
+    if (host === "abdullahalmaksud.com" || host.endsWith(".abdullahalmaksud.com")) {
+      return true;
+    }
+
+    // Allow local development (any port on localhost or 127.0.0.1)
+    if (host === "localhost" || host === "127.0.0.1") {
+      return true;
+    }
+
+    // Allow Vercel preview & production deployments for abdullahalmaksud
+    if (host.endsWith(".vercel.app") && host.includes("abdullahalmaksud")) {
+      return true;
+    }
+  } catch {
+    return false;
+  }
+
+  return false;
+};
+
 export const adminEmails = new Set(
   env.ADMIN_EMAILS.split(",")
     .map((email) => email.trim().toLowerCase())
