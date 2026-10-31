@@ -39,5 +39,6 @@ yarn.lock
 
 .vercel
 
-# Documentation
-API_DOCUMENTATION.md
+# Documentation in root
+/API_DOCUMENTATION.md
+!doc/API_DOCUMENTATION.md

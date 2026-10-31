@@ -4,8 +4,10 @@ High-performance, modular backend API powering the **Abdullah Al Maksud Portfoli
 
 > **Package Manager Notice**: This project exclusively uses **`pnpm`**. Do not use `npm`, `yarn`, or `bun`.
 >
-> 📖 **বাংলা পূর্ণাঙ্গ ডকুমেন্টেশন**: বিস্তারিত ডাটা স্ট্রাকচার, স্কিমা ও এপিআই ব্যবহারের নির্দেশিকার জন্য দেখুন [API_DOCUMENTATION_BN.md](file:///c:/Users/AbdullahPC/Desktop/abdullahalmaksud/AbdullahAlMaksudServer/API_DOCUMENTATION_BN.md)।
-> 📮 **Postman Collection**: সকল এপিআই টেস্ট করার জন্য আপডেটকৃত [postman_collection.json](file:///c:/Users/AbdullahPC/Desktop/abdullahalmaksud/AbdullahAlMaksudServer/postman_collection.json) ব্যবহার করুন।
+> 📚 **Documentation Hub**: Explore the complete documentation suite in [doc/README.md](doc/README.md).
+> 📖 **বাংলা পূর্ণাঙ্গ ডকুমেন্টেশন**: বিস্তারিত ডাটা স্ট্রাকচার, স্কিমা ও এপিআই ব্যবহারের নির্দেশিকার জন্য দেখুন [doc/API_DOCUMENTATION_BN.md](doc/API_DOCUMENTATION_BN.md)।
+> 📖 **English API Reference**: Complete RESTful endpoint reference in [doc/API_DOCUMENTATION.md](doc/API_DOCUMENTATION.md).
+> 📮 **Postman Collection**: সকল এপিআই টেস্ট করার জন্য আপডেটকৃত [doc/postman_collection.json](doc/postman_collection.json) ও [doc/POSTMAN_GUIDE.md](doc/POSTMAN_GUIDE.md) ব্যবহার করুন।
 
 ---
 

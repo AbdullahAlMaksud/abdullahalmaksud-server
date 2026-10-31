@@ -1,7 +1,7 @@
 {
   "info": {
     "_postman_id": "abdullahalmaksud-api-collection-v7",
-    "name": "Abdullah Al Maksud API Collection (v7.0 — Clean)",
+    "name": "Abdullah Al Maksud API Collection (v7.0 — Enterprise Complete)",
     "description": "সম্পূর্ণ Postman API Collection — Abdullah Al Maksud Portfolio & Admin Server\n\nTech Stack: Hono v4 / Node.js / MongoDB Atlas / BetterAuth / Resend / Vercel Blob / Zod\n\nমডিউলসমূহ: Authentication, About, Projects, Blogs, Books, Case Studies, Designs (Graphics), Contact, Dashboard, File Upload\n\nHome ও Static Data মডিউল রিমুভ করা হয়েছে।",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -36,21 +36,35 @@
         {
           "name": "Root — JSON Status",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
-            "header": [{ "key": "Accept", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/?format=json",
               "host": ["{{baseUrl}}"],
               "path": [""],
-              "query": [{ "key": "format", "value": "json" }]
+              "query": [
+                {
+                  "key": "format",
+                  "value": "json"
+                }
+              ]
             }
           }
         },
         {
           "name": "Root — HTML Status Page",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/",
@@ -62,7 +76,9 @@
         {
           "name": "Health Check",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/health",
@@ -74,7 +90,9 @@
         {
           "name": "Health Check (via /api)",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/health",
@@ -91,9 +109,16 @@
         {
           "name": "Email OTP — Send Code",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"admin@abdullahalmaksud.com\"\n}"
@@ -102,6 +127,44 @@
               "raw": "{{baseUrl}}/api/auth/email-otp/send-verification-otp",
               "host": ["{{baseUrl}}"],
               "path": ["api", "auth", "email-otp", "send-verification-otp"]
+            }
+          }
+        },
+        {
+          "name": "Sign In with Email OTP (POST /api/auth/sign-in/email-otp)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.token) { pm.collectionVariables.set('bearerToken', json.token); }",
+                  "const authHeader = pm.response.headers.get('set-auth-token');",
+                  "if (authHeader) { pm.collectionVariables.set('bearerToken', authHeader); }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@abdullahalmaksud.com\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/sign-in/email-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "sign-in", "email-otp"]
             }
           }
         },
@@ -122,9 +185,16 @@
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"admin@abdullahalmaksud.com\",\n  \"otp\": \"123456\"\n}"
@@ -151,7 +221,12 @@
           "name": "Update Profile (PATCH /api/me)",
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Abdullah Al Maksud\",\n  \"image\": \"https://example.com/avatar.jpg\"\n}"
@@ -166,12 +241,35 @@
         {
           "name": "BetterAuth Session",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/auth/get-session",
               "host": ["{{baseUrl}}"],
               "path": ["api", "auth", "get-session"]
+            }
+          }
+        },
+        {
+          "name": "Update Profile (PUT /api/me)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Abdullah Al Maksud\",\n  \"image\": \"https://example.com/avatar.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "me"]
             }
           }
         }
@@ -183,7 +281,9 @@
         {
           "name": "Get About Data (Public)",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/about",
@@ -196,7 +296,12 @@
           "name": "Update About Data (Admin)",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"header\": {\n    \"title\": \"আব্দুল্লাহ আল মাকসুদ\",\n    \"subtitle\": \"ফুলস্ট্যাক ডেভেলপার ও লেখক\",\n    \"description\": \"প্রযুক্তি ও সৃজনশীলতার সমন্বয়ে...\"\n  },\n  \"pillars\": [\n    { \"icon\": \"💻\", \"title\": \"Development\", \"description\": \"Full-stack web development\" }\n  ],\n  \"experience\": [\n    { \"company\": \"Example Corp\", \"role\": \"Engineer\", \"duration\": \"2023-Present\" }\n  ],\n  \"education\": [\n    { \"institution\": \"Example University\", \"degree\": \"BSc CSE\", \"year\": \"2024\" }\n  ],\n  \"skillsCategories\": [\n    { \"category\": \"Frontend\", \"skills\": [\"React\", \"Next.js\", \"TypeScript\"] }\n  ]\n}"
@@ -216,7 +321,9 @@
         {
           "name": "Get All Projects (Public)",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/projects",
@@ -228,16 +335,27 @@
         {
           "name": "Get All Projects — Filtered",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/projects?category=Web&featured=true&status=live",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "projects"],
               "query": [
-                { "key": "category", "value": "Web" },
-                { "key": "featured", "value": "true" },
-                { "key": "status", "value": "live" }
+                {
+                  "key": "category",
+                  "value": "Web"
+                },
+                {
+                  "key": "featured",
+                  "value": "true"
+                },
+                {
+                  "key": "status",
+                  "value": "live"
+                }
               ]
             }
           }
@@ -245,7 +363,9 @@
         {
           "name": "Get Project by Slug (Public)",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/projects/my-project-slug",
@@ -269,7 +389,12 @@
           "name": "Create Project (Admin)",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"নতুন প্রজেক্ট\",\n  \"slug\": \"new-project\",\n  \"description\": \"প্রজেক্টের সংক্ষিপ্ত বিবরণ\",\n  \"longDescription\": \"বিস্তারিত বর্ণনা\",\n  \"coverImage\": \"https://example.com/cover.jpg\",\n  \"logo\": \"\",\n  \"imageBg\": \"#0F131A\",\n  \"barColor\": \"#E5A93C\",\n  \"screenshots\": [],\n  \"tags\": [\"React\", \"Node.js\"],\n  \"stack\": [\"React\", \"Node.js\", \"MongoDB\"],\n  \"category\": \"Web\",\n  \"github\": \"https://github.com/user/repo\",\n  \"liveLink\": \"https://example.com\",\n  \"year\": \"2025\",\n  \"status\": \"live\",\n  \"featured\": true,\n  \"sortOrder\": 1,\n  \"coreFeatures\": [\n    { \"icon\": \"🚀\", \"text\": \"Fast\", \"desc\": \"Lightning-fast performance\" }\n  ],\n  \"metaTitle\": \"SEO Title\",\n  \"metaDescription\": \"SEO Description\"\n}"
@@ -285,7 +410,12 @@
           "name": "Update Project (Admin — PUT)",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"আপডেটেড প্রজেক্ট\",\n  \"featured\": false\n}"
@@ -301,7 +431,12 @@
           "name": "Update Project (Admin — PATCH)",
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"status\": \"archived\"\n}"
@@ -323,6 +458,17 @@
               "path": ["api", "v1", "projects", "60f7b3b3b3b3b3b3b3b3b3b3"]
             }
           }
+        },
+        {
+          "name": "Get All Projects — Unversioned (GET /api/projects)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/projects",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "projects"]
+            }
+          }
         }
       ]
     },
@@ -332,7 +478,9 @@
         {
           "name": "Get All Blogs (Public)",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/blogs",
@@ -344,15 +492,23 @@
         {
           "name": "Get All Blogs — Filtered",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/blogs?category=Engineering&featured=true",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "blogs"],
               "query": [
-                { "key": "category", "value": "Engineering" },
-                { "key": "featured", "value": "true" }
+                {
+                  "key": "category",
+                  "value": "Engineering"
+                },
+                {
+                  "key": "featured",
+                  "value": "true"
+                }
               ]
             }
           }
@@ -360,7 +516,9 @@
         {
           "name": "Get Blog by Slug (Public)",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/blogs/my-blog-slug",
@@ -384,7 +542,12 @@
           "name": "Create Blog (Admin)",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"নতুন ব্লগ পোস্ট\",\n  \"slug\": \"new-blog-post\",\n  \"excerpt\": \"সংক্ষিপ্ত বিবরণ\",\n  \"content\": null,\n  \"contentType\": \"lexical\",\n  \"cover\": \"https://example.com/cover.jpg\",\n  \"author\": {\n    \"name\": \"Abdullah Al Maksud\",\n    \"avatar\": \"/images/avatar.jpg\",\n    \"bio\": \"Developer, designer, writer.\"\n  },\n  \"tags\": [\"Tech\", \"Development\"],\n  \"category\": \"Engineering\",\n  \"readingTime\": \"5 min read\",\n  \"featured\": false,\n  \"featuredType\": \"\",\n  \"isPublished\": true,\n  \"metaTitle\": \"SEO Title\",\n  \"metaDescription\": \"SEO Description\"\n}"
@@ -400,7 +563,12 @@
           "name": "Update Blog (Admin — PUT)",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"আপডেটেড ব্লগ\",\n  \"isPublished\": true\n}"
@@ -422,6 +590,38 @@
               "path": ["api", "v1", "blogs", "60f7b3b3b3b3b3b3b3b3b3b3"]
             }
           }
+        },
+        {
+          "name": "Update Blog (Admin — PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"featured\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/blogs/60f7b3b3b3b3b3b3b3b3b3b3",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "blogs", "60f7b3b3b3b3b3b3b3b3b3b3"]
+            }
+          }
+        },
+        {
+          "name": "Get All Blogs — Unversioned (GET /api/blogs)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/blogs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "blogs"]
+            }
+          }
         }
       ]
     },
@@ -431,7 +631,9 @@
         {
           "name": "Get Book Bundle (Public)",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/books",
@@ -443,7 +645,9 @@
         {
           "name": "Get All Standalone Books (Public)",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/books/all",
@@ -455,7 +659,9 @@
         {
           "name": "Get Book by Slug (Public)",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/books/emon-jodi-hoto",
@@ -479,7 +685,12 @@
           "name": "Update Book Bundle (Admin)",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"book\": {\n    \"titleBn\": \"এমন যদি হতো\",\n    \"titleEn\": \"Emon Jodi Hoto\",\n    \"author\": \"আব্দুল্লাহ আল মাকসুদ\",\n    \"publisher\": \"জ্ঞানকোষ প্রকাশনী\",\n    \"category\": \"বিজ্ঞান ও প্রযুক্তি\",\n    \"cover\": \"/images/books/emon-jodi-hoto.webp\",\n    \"price\": 344,\n    \"rokomariUrl\": \"https://www.rokomari.com/book/454540/emon-jodi-hoto\"\n  },\n  \"stats\": [\n    { \"value\": \"1\", \"label\": \"বই প্রকাশিত\", \"icon\": \"📚\" }\n  ],\n  \"books\": [\n    {\n      \"id\": \"emon-jodi-hoto\",\n      \"title\": \"এমন যদি হতো\",\n      \"author\": \"আব্দুল্লাহ আল মাকসুদ\",\n      \"coverColor\": \"#F5F3EF\"\n    }\n  ]\n}"
@@ -495,7 +706,12 @@
           "name": "Create Book (Admin)",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"নতুন বই\",\n  \"slug\": \"new-book\",\n  \"author\": \"আব্দুল্লাহ আল মাকসুদ\",\n  \"coverImage\": \"https://example.com/cover.jpg\",\n  \"description\": \"বইয়ের সংক্ষিপ্ত বিবরণ\",\n  \"genre\": \"Fiction\",\n  \"category\": \"উপন্যাস\",\n  \"year\": 2025,\n  \"publisher\": \"জ্ঞানকোষ প্রকাশনী\",\n  \"price\": 300,\n  \"pages\": 200,\n  \"isbn\": \"\",\n  \"rokomariUrl\": \"\",\n  \"purchaseLinks\": [\n    { \"label\": \"রকমারি\", \"url\": \"https://rokomari.com/...\", \"isPrimary\": true }\n  ],\n  \"synopsis\": \"বইয়ের সারাংশ\",\n  \"themes\": [\"Adventure\", \"Science\"],\n  \"chapters\": [\n    { \"number\": \"1\", \"title\": \"প্রথম অধ্যায়\", \"description\": \"...\" }\n  ],\n  \"quotes\": [\"একটি উদ্ধৃতি\"],\n  \"authorNote\": \"লেখকের কথা\",\n  \"isRecommended\": true\n}"
@@ -511,7 +727,12 @@
           "name": "Update Book (Admin — PUT)",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"আপডেটেড বই\",\n  \"price\": 400\n}"
@@ -533,6 +754,38 @@
               "path": ["api", "v1", "books", "60f7b3b3b3b3b3b3b3b3b3b3"]
             }
           }
+        },
+        {
+          "name": "Update Book (Admin — PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 350\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/60f7b3b3b3b3b3b3b3b3b3b3",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "60f7b3b3b3b3b3b3b3b3b3b3"]
+            }
+          }
+        },
+        {
+          "name": "Get Book Bundle — Unversioned (GET /api/books)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"]
+            }
+          }
         }
       ]
     },
@@ -542,7 +795,9 @@
         {
           "name": "Get All Case Studies (Public)",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/case-studies",
@@ -554,7 +809,9 @@
         {
           "name": "Get Case Study by Slug (Public)",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/case-studies/my-case-study-slug",
@@ -578,7 +835,12 @@
           "name": "Create Case Study (Admin)",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"নতুন কেস স্টাডি\",\n  \"slug\": \"new-case-study\",\n  \"excerpt\": \"সংক্ষিপ্ত বিবরণ\",\n  \"content\": null,\n  \"contentType\": \"lexical\",\n  \"coverImage\": \"https://example.com/cover.jpg\",\n  \"screenshots\": [],\n  \"projectSlug\": \"related-project\",\n  \"tags\": [\"Architecture\", \"System Design\"],\n  \"category\": \"Architecture\",\n  \"industry\": \"EdTech\",\n  \"client\": \"\",\n  \"challenge\": \"চ্যালেঞ্জের বিবরণ\",\n  \"solution\": \"সমাধানের বিবরণ\",\n  \"results\": [\n    { \"metric\": \"Performance\", \"value\": \"50%\", \"description\": \"Performance improved by 50%\" }\n  ],\n  \"stack\": [\"React\", \"Node.js\"],\n  \"duration\": \"3 months\",\n  \"readingTime\": \"8 min read\",\n  \"featured\": false,\n  \"isPublished\": true,\n  \"metaTitle\": \"SEO Title\",\n  \"metaDescription\": \"SEO Description\"\n}"
@@ -594,7 +856,12 @@
           "name": "Update Case Study (Admin — PUT)",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"আপডেটেড কেস স্টাডি\",\n  \"isPublished\": true\n}"
@@ -616,6 +883,38 @@
               "path": ["api", "v1", "case-studies", "60f7b3b3b3b3b3b3b3b3b3b3"]
             }
           }
+        },
+        {
+          "name": "Update Case Study (Admin — PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"featured\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/case-studies/60f7b3b3b3b3b3b3b3b3b3b3",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "case-studies", "60f7b3b3b3b3b3b3b3b3b3b3"]
+            }
+          }
+        },
+        {
+          "name": "Get All Case Studies — Unversioned (GET /api/case-studies)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/case-studies",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "case-studies"]
+            }
+          }
         }
       ]
     },
@@ -625,7 +924,9 @@
         {
           "name": "Get All Designs (Public)",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/designs",
@@ -637,15 +938,23 @@
         {
           "name": "Get All Designs — Filtered",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/designs?category=Visual Identity&featured=true",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "designs"],
               "query": [
-                { "key": "category", "value": "Visual Identity" },
-                { "key": "featured", "value": "true" }
+                {
+                  "key": "category",
+                  "value": "Visual Identity"
+                },
+                {
+                  "key": "featured",
+                  "value": "true"
+                }
               ]
             }
           }
@@ -653,7 +962,9 @@
         {
           "name": "Get Design by ID (Public)",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/designs/design-id-123",
@@ -666,7 +977,12 @@
           "name": "Create Design (Admin)",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"id\": \"my-design-id\",\n  \"title\": \"নতুন ডিজাইন\",\n  \"subtitle\": \"ব্র্যান্ড আইডেন্টিটি\",\n  \"coverImage\": \"https://example.com/design.jpg\",\n  \"description\": \"ডিজাইনের বিবরণ\",\n  \"category\": \"Visual Identity\",\n  \"bg\": \"#0A0D14\",\n  \"tools\": [\"Figma\", \"Illustrator\"],\n  \"link\": \"https://dribbble.com/...\",\n  \"featured\": true,\n  \"year\": \"2025\"\n}"
@@ -682,7 +998,12 @@
           "name": "Update Design (Admin)",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"আপডেটেড ডিজাইন\",\n  \"featured\": false\n}"
@@ -713,9 +1034,16 @@
         {
           "name": "Send Contact Inquiry (POST /api/v1/contact)",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"subject\": \"Project Inquiry\",\n  \"message\": \"I'd like to discuss a project collaboration.\"\n}"
@@ -730,9 +1058,16 @@
         {
           "name": "Send Contact Inquiry (POST /api/send-email)",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"subject\": \"Consultation Request\",\n  \"message\": \"I need help with a project.\"\n}"
@@ -741,6 +1076,27 @@
               "raw": "{{baseUrl}}/api/send-email",
               "host": ["{{baseUrl}}"],
               "path": ["api", "send-email"]
+            }
+          }
+        },
+        {
+          "name": "Send Contact Inquiry (POST /api/v1/contact/send)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Abdullah Al Maksud\",\n  \"email\": \"client@example.com\",\n  \"subject\": \"Architecture Review\",\n  \"message\": \"Inquiry regarding backend architecture.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/contact/send",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "contact", "send"]
             }
           }
         }
@@ -817,9 +1173,20 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "upload"],
               "query": [
-                { "key": "limit", "value": "50" },
-                { "key": "cursor", "value": "", "disabled": true },
-                { "key": "prefix", "value": "", "disabled": true }
+                {
+                  "key": "limit",
+                  "value": "50"
+                },
+                {
+                  "key": "cursor",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "prefix",
+                  "value": "",
+                  "disabled": true
+                }
               ]
             }
           }
@@ -832,7 +1199,12 @@
               "raw": "{{baseUrl}}/api/v1/upload/info?url=https://blob.vercel-storage.com/...",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "upload", "info"],
-              "query": [{ "key": "url", "value": "https://blob.vercel-storage.com/..." }]
+              "query": [
+                {
+                  "key": "url",
+                  "value": "https://blob.vercel-storage.com/..."
+                }
+              ]
             }
           }
         },
@@ -844,7 +1216,12 @@
               "raw": "{{baseUrl}}/api/v1/upload?url=https://blob.vercel-storage.com/...",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "upload"],
-              "query": [{ "key": "url", "value": "https://blob.vercel-storage.com/..." }]
+              "query": [
+                {
+                  "key": "url",
+                  "value": "https://blob.vercel-storage.com/..."
+                }
+              ]
             }
           }
         }
