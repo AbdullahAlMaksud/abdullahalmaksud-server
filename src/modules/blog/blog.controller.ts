@@ -3,6 +3,7 @@ import type { Context } from "hono";
 import type { AppEnv } from "../../lib/types.js";
 import { BlogModel } from "./blog.model.js";
 import { createBlogSchema, updateBlogSchema } from "./blog.validation.js";
+import { syncMarkdownContent } from "../../lib/github.js";
 
 export const getAllBlogs = async (c: Context<AppEnv>) => {
   try {
@@ -113,6 +114,25 @@ export const createBlog = async (c: Context<AppEnv>) => {
 
     const blog = new BlogModel(parsed.data);
     await blog.save();
+
+    void syncMarkdownContent({
+      module: "blog",
+      folderKey: blog.folderKey || blog.slug,
+      frontmatter: {
+        title: blog.title,
+        slug: blog.slug,
+        excerpt: blog.excerpt,
+        category: blog.category,
+        tags: blog.tags,
+        coverImage: blog.coverImage || blog.cover,
+        publishedAt: blog.publishedAt,
+        isPublished: blog.isPublished,
+        readingTime: blog.readingTime,
+        author: blog.author?.name,
+      },
+      content: blog.content,
+    });
+
     return c.json({ success: true, data: blog }, 201);
   } catch (error) {
     return c.json({ success: false, message: (error as Error).message }, 500);
@@ -150,6 +170,24 @@ export const updateBlog = async (c: Context<AppEnv>) => {
 
     Object.assign(blog, parsed.data);
     await blog.save();
+
+    void syncMarkdownContent({
+      module: "blog",
+      folderKey: blog.folderKey || blog.slug,
+      frontmatter: {
+        title: blog.title,
+        slug: blog.slug,
+        excerpt: blog.excerpt,
+        category: blog.category,
+        tags: blog.tags,
+        coverImage: blog.coverImage || blog.cover,
+        publishedAt: blog.publishedAt,
+        isPublished: blog.isPublished,
+        readingTime: blog.readingTime,
+        author: blog.author?.name,
+      },
+      content: blog.content,
+    });
 
     return c.json({ success: true, data: blog });
   } catch (error) {

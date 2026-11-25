@@ -14,6 +14,7 @@ export const createBlogSchema = z.object({
     .string()
     .min(1, "Slug is required")
     .regex(/^[a-z0-9-]+$/, "Slug must only contain lowercase alphanumeric characters and hyphens"),
+  folderKey: z.string().optional(),
   excerpt: z.string().default(""),
   content: z.any().optional(), // Lexical editor state JSON, block array, or markdown
   contentType: z.enum(["lexical", "markdown", "html", "blocks", "json"]).default("blocks"),

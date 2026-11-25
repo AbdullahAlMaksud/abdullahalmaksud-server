@@ -1154,6 +1154,16 @@
                   "key": "file",
                   "type": "file",
                   "src": ""
+                },
+                {
+                  "key": "module",
+                  "value": "blog",
+                  "type": "text"
+                },
+                {
+                  "key": "folderKey",
+                  "value": "how-to-code",
+                  "type": "text"
                 }
               ]
             },

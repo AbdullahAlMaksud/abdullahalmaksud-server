@@ -1,10 +1,25 @@
 import type { Context } from "hono";
-import { del, head, list, put } from "@vercel/blob";
 
 import type { AppEnv } from "../../lib/types.js";
 import { env } from "../../lib/env.js";
+import {
+  commitFileToGitHub,
+  deleteFileFromGitHub,
+  isGitHubConfigured,
+  listRepositoryImages,
+} from "../../lib/github.js";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+const sanitizeKey = (key?: unknown, fallback = "misc"): string => {
+  if (typeof key !== "string" || !key.trim()) return fallback;
+  return key
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]/g, "-")
+    .replace(/-{2,}/g, "-")
+    .replace(/^-|-$/g, "");
+};
 
 export const uploadFile = async (c: Context<AppEnv>) => {
   try {
@@ -21,35 +36,51 @@ export const uploadFile = async (c: Context<AppEnv>) => {
       return c.json({ success: false, message: "File size exceeds the 10MB limit" }, 400);
     }
 
-    if (!env.BLOB_READ_WRITE_TOKEN || env.BLOB_READ_WRITE_TOKEN.includes("YOUR_SECRET_TOKEN")) {
+    if (!isGitHubConfigured()) {
       return c.json(
-        { success: false, message: "Vercel Blob token is not configured on the server" },
+        {
+          success: false,
+          message: "GitHub asset storage is not configured (GITHUB_TOKEN missing)",
+        },
         500,
       );
     }
 
-    // Sanitize filename to avoid unsafe characters
+    const moduleName = sanitizeKey(body.module, "general");
+    const folderKey = sanitizeKey(body.folderKey, "misc");
+
+    // Sanitize filename to avoid unsafe characters and add short suffix to avoid edge caching collisions
     const lastDotIndex = file.name.lastIndexOf(".");
     const baseName = (lastDotIndex !== -1 ? file.name.substring(0, lastDotIndex) : file.name)
       .replace(/[^a-zA-Z0-9_-]/g, "_")
       .replace(/_{2,}/g, "_");
-    const extension = lastDotIndex !== -1 ? file.name.substring(lastDotIndex) : "";
-    const sanitizedPathname = `${baseName || "upload"}${extension}`;
+    const extension = lastDotIndex !== -1 ? file.name.substring(lastDotIndex).toLowerCase() : "";
+    const suffix = Date.now().toString(36);
+    const sanitizedFilename = `${baseName || "upload"}-${suffix}${extension}`;
 
-    const blob = await put(sanitizedPathname, file, {
-      access: "public",
-      token: env.BLOB_READ_WRITE_TOKEN,
-      contentType: file.type || undefined,
-      addRandomSuffix: true,
+    const targetPath = `images/${moduleName}/${folderKey}/${sanitizedFilename}`;
+
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    await commitFileToGitHub({
+      path: targetPath,
+      content: buffer,
+      isBinary: true,
+      message: `upload: ${targetPath}`,
     });
+
+    const baseUrl = env.ASSET_CDN_BASE_URL.replace(/\/+$/, "");
+    const cdnUrl = `${baseUrl}/${targetPath}`;
 
     return c.json({
       success: true,
-      url: blob.url,
-      downloadUrl: blob.downloadUrl,
-      pathname: blob.pathname,
-      contentType: blob.contentType,
-      data: blob,
+      url: cdnUrl,
+      downloadUrl: cdnUrl,
+      pathname: targetPath,
+      contentType: file.type || undefined,
+      module: moduleName,
+      folderKey,
     });
   } catch (error) {
     return c.json({ success: false, message: (error as Error).message }, 500);
@@ -58,24 +89,8 @@ export const uploadFile = async (c: Context<AppEnv>) => {
 
 export const listFiles = async (c: Context<AppEnv>) => {
   try {
-    if (!env.BLOB_READ_WRITE_TOKEN || env.BLOB_READ_WRITE_TOKEN.includes("YOUR_SECRET_TOKEN")) {
-      return c.json(
-        { success: false, message: "Vercel Blob token is not configured on the server" },
-        500,
-      );
-    }
-
-    const limitQuery = c.req.query("limit");
-    const limit = limitQuery ? Math.min(Number(limitQuery) || 50, 100) : 50;
-    const cursor = c.req.query("cursor") || undefined;
     const prefix = c.req.query("prefix") || undefined;
-
-    const result = await list({
-      token: env.BLOB_READ_WRITE_TOKEN,
-      limit,
-      cursor,
-      prefix,
-    });
+    const result = await listRepositoryImages(prefix);
 
     return c.json({
       success: true,
@@ -88,23 +103,23 @@ export const listFiles = async (c: Context<AppEnv>) => {
 
 export const getFileInfo = async (c: Context<AppEnv>) => {
   try {
-    const url = c.req.query("url");
-    if (!url) {
-      return c.json({ success: false, message: "URL query parameter is required" }, 400);
+    const rawUrl = c.req.query("url") || c.req.query("path");
+    if (!rawUrl) {
+      return c.json({ success: false, message: "URL or path query parameter is required" }, 400);
     }
 
-    if (!env.BLOB_READ_WRITE_TOKEN || env.BLOB_READ_WRITE_TOKEN.includes("YOUR_SECRET_TOKEN")) {
-      return c.json(
-        { success: false, message: "Vercel Blob token is not configured on the server" },
-        500,
-      );
-    }
+    const baseUrl = env.ASSET_CDN_BASE_URL.replace(/\/+$/, "");
+    const pathname = rawUrl.replace(baseUrl, "").replace(/^\/+/, "");
+    const fullUrl = `${baseUrl}/${pathname}`;
 
-    const info = await head(url, {
-      token: env.BLOB_READ_WRITE_TOKEN,
+    return c.json({
+      success: true,
+      data: {
+        url: fullUrl,
+        downloadUrl: fullUrl,
+        pathname,
+      },
     });
-
-    return c.json({ success: true, data: info });
   } catch (error) {
     return c.json({ success: false, message: (error as Error).message }, 500);
   }
@@ -112,32 +127,29 @@ export const getFileInfo = async (c: Context<AppEnv>) => {
 
 export const deleteFile = async (c: Context<AppEnv>) => {
   try {
-    let url = c.req.query("url");
-    if (!url) {
+    let rawTarget = c.req.query("url") || c.req.query("path");
+    if (!rawTarget) {
       try {
-        const body = await c.req.json();
-        url = body?.url;
+        const body = (await c.req.json()) as { url?: string; path?: string };
+        rawTarget = body?.url || body?.path;
       } catch {
         // Body was not JSON
       }
     }
 
-    if (!url) {
-      return c.json({ success: false, message: "URL is required to delete blob" }, 400);
+    if (!rawTarget) {
+      return c.json({ success: false, message: "URL or path is required to delete file" }, 400);
     }
 
-    if (!env.BLOB_READ_WRITE_TOKEN || env.BLOB_READ_WRITE_TOKEN.includes("YOUR_SECRET_TOKEN")) {
-      return c.json(
-        { success: false, message: "Vercel Blob token is not configured on the server" },
-        500,
-      );
-    }
+    const baseUrl = env.ASSET_CDN_BASE_URL.replace(/\/+$/, "");
+    const pathname = rawTarget.replace(baseUrl, "").replace(/^\/+/, "");
 
-    await del(url, {
-      token: env.BLOB_READ_WRITE_TOKEN,
+    await deleteFileFromGitHub({
+      path: pathname,
+      message: `delete: ${pathname}`,
     });
 
-    return c.json({ success: true, message: "File deleted successfully from Vercel Blob" });
+    return c.json({ success: true, message: "File deleted successfully from repository" });
   } catch (error) {
     return c.json({ success: false, message: (error as Error).message }, 500);
   }

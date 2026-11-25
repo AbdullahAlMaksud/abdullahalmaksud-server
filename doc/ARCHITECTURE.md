@@ -53,7 +53,8 @@ This document details the engineering principles, architectural patterns, and ru
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │                                         Storage & External Services                                    │
 │   • MongoDB Atlas (Mongoose v9 native MongoClient reuse)                                               │
-│   • Vercel Blob Object Storage (@vercel/blob)                                                          │
+│   • GitHub Private Assets Store & Cloudflare Edge CDN (assets.abdullahalmaksud.com)                    │
+│   • Asynchronous Markdown Backup Synchronization (.md with YAML Frontmatter)                           │
 │   • Resend Transactional Email API (with Local Dev Simulation)                                         │
 └────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -167,12 +168,14 @@ src/modules/<module-name>/
 
 ## 7. Storage & External Services Pipeline
 
-### 7.1 Vercel Blob Object Storage
+### 7.1 GitHub Private Asset Store & Cloudflare Edge CDN
 
-- Files are uploaded through `POST /api/v1/upload` with a strict `10 MB` ceiling.
-- File names are sanitized (`/[^a-zA-Z0-9_-]/g`) to eliminate path traversal and invalid characters.
-- Uploads are saved with `addRandomSuffix: true` to prevent cache poisoning and collisions.
-- Full blob management (`list`, `head`, `del`) is exposed to the admin portal.
+- **Storage Target:** Assets are committed to a private GitHub repository (`abdullahalmaksud-assets` or `aam-files`) under `images/{module}/{folderKey}/{filename}-{suffix}.webp`.
+- **Immutable `folderKey`:** On creation, an immutable natural language identifier is generated and saved in MongoDB. Subsequent SEO slug changes never break image URLs or file paths.
+- **Edge Delivery:** Assets are served globally via Cloudflare Edge CDN through the custom branded domain `https://assets.abdullahalmaksud.com`.
+- **Edge Worker:** A Cloudflare Worker transparently authenticates with the private GitHub repository using `GITHUB_TOKEN` and caches responses at Cloudflare's edge for 1 year (`Cache-Control: public, max-age=31536000, immutable`).
+- **Markdown Content Sync:** Blog posts, projects, case studies, and book records are asynchronously serialized into clean Markdown (`.md`) with YAML Frontmatter and committed to `content/{module}/{folderKey}.md` in the background for version-controlled backup.
+- **Admin Media Manager:** The `GET /api/v1/upload` endpoint queries the GitHub Git Trees API (`recursive=1`), preserving 100% backward compatibility with the Admin Panel's Media Gallery and file browser dialogs.
 
 ### 7.2 Resend Transactional Email Engine
 

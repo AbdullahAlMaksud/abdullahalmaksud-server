@@ -19,6 +19,7 @@ const connectionStates: Record<number, string> = {
 interface MongooseCache {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
+  lastError: unknown;
 }
 
 declare global {
@@ -26,7 +27,11 @@ declare global {
   var mongooseCache: MongooseCache | undefined;
 }
 
-const cachedMongoose: MongooseCache = globalThis.mongooseCache || { conn: null, promise: null };
+const cachedMongoose: MongooseCache = globalThis.mongooseCache || {
+  conn: null,
+  promise: null,
+  lastError: null,
+};
 if (!globalThis.mongooseCache) {
   globalThis.mongooseCache = cachedMongoose;
 }
@@ -64,22 +69,30 @@ export const connectDatabase = async () => {
 
     cachedMongoose.promise = mongoose
       .connect(env.MONGODB_URI, opts)
-      .then((m) => m)
+      .then((m) => {
+        cachedMongoose.lastError = null;
+        return m;
+      })
       .catch((error) => {
         cachedMongoose.promise = null;
+        cachedMongoose.lastError = error;
         throw error;
       });
   }
 
   try {
     cachedMongoose.conn = await cachedMongoose.promise;
+    cachedMongoose.lastError = null;
   } catch (error) {
     cachedMongoose.promise = null;
+    cachedMongoose.lastError = error;
     throw error;
   }
 
   return mongoose.connection;
 };
+
+export const getLastDatabaseError = () => cachedMongoose.lastError;
 
 export const connectDatabases = async () => {
   await connectDatabase();
@@ -109,8 +122,18 @@ export const markAuthDatabaseDisconnected = () => {
   // Intentionally empty: auth DB is Mongoose, disconnection handled by Mongoose events
 };
 
-export const getDatabaseConnectionHelp = (error: unknown) => {
-  const message = error instanceof Error ? error.message : String(error);
+export const getDatabaseConnectionHelp = (error: unknown = cachedMongoose.lastError) => {
+  const resolvedError = error ?? cachedMongoose.lastError;
+  const message =
+    resolvedError instanceof Error ? resolvedError.message : String(resolvedError ?? "");
+
+  if (message.includes("bad auth") || message.includes("authentication failed")) {
+    return [
+      "MongoDB authentication failed ('bad auth : authentication failed').",
+      "Check your database username and password in MONGODB_URI.",
+      "Verify or reset credentials in MongoDB Atlas -> Security -> Database Access.",
+    ].join(" ");
+  }
 
   if (message.includes("MongoDB Atlas") || env.MONGODB_URI.startsWith("mongodb+srv://")) {
     return [
@@ -136,4 +159,5 @@ export const disconnectDatabase = async () => {
   await mongoose.disconnect();
   cachedMongoose.promise = null;
   cachedMongoose.conn = null;
+  cachedMongoose.lastError = null;
 };

@@ -7,6 +7,7 @@ import {
   connectDatabases,
   isAuthDatabaseConnected,
   getDatabaseConnectionHelp,
+  getLastDatabaseError,
 } from "../src/lib/database.js";
 import { isAllowedOrigin } from "../src/lib/env.js";
 
@@ -73,7 +74,9 @@ async function handleAuthRequest(req: IncomingMessage, res: ServerResponse): Pro
         JSON.stringify({
           success: false,
           message: "Authentication is unavailable until MongoDB is connected.",
-          hint: getDatabaseConnectionHelp(new Error("MongoDB is not connected")),
+          hint: getDatabaseConnectionHelp(
+            getLastDatabaseError() ?? new Error("MongoDB is not connected"),
+          ),
         }),
       );
       return;

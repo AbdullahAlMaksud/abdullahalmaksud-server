@@ -13,6 +13,7 @@ const CaseStudySchema = new Schema(
   {
     title: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
+    folderKey: { type: String, index: true },
     excerpt: { type: String, default: "" },
 
     // Lexical Editor block-based content (or markdown fallback)
@@ -70,6 +71,16 @@ const CaseStudySchema = new Schema(
 );
 
 CaseStudySchema.pre("save", function (this: any) {
+  if (!this.folderKey) {
+    this.folderKey =
+      this.slug ||
+      this.title
+        ?.toLowerCase()
+        .replace(/[^a-z0-9_-]/g, "-")
+        .replace(/-{2,}/g, "-")
+        .replace(/^-|-$/g, "");
+  }
+
   if (this.isPublished && !this.publishedAt) {
     this.publishedAt = new Date().toISOString().split("T")[0];
   }

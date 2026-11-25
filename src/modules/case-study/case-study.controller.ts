@@ -3,6 +3,7 @@ import type { Context } from "hono";
 import type { AppEnv } from "../../lib/types.js";
 import { CaseStudyModel } from "./case-study.model.js";
 import { createCaseStudySchema, updateCaseStudySchema } from "./case-study.validation.js";
+import { syncMarkdownContent } from "../../lib/github.js";
 
 export const getAllCaseStudies = async (c: Context<AppEnv>) => {
   try {
@@ -130,6 +131,27 @@ export const createCaseStudy = async (c: Context<AppEnv>) => {
 
     const caseStudy = new CaseStudyModel(parsed.data);
     await caseStudy.save();
+
+    void syncMarkdownContent({
+      module: "case-study",
+      folderKey: caseStudy.folderKey || caseStudy.slug,
+      frontmatter: {
+        title: caseStudy.title,
+        slug: caseStudy.slug,
+        excerpt: caseStudy.excerpt,
+        coverImage: caseStudy.coverImage,
+        category: caseStudy.category,
+        tags: caseStudy.tags,
+        stack: caseStudy.stack,
+        client: caseStudy.client,
+        industry: caseStudy.industry,
+        duration: caseStudy.duration,
+        publishedAt: caseStudy.publishedAt,
+        isPublished: caseStudy.isPublished,
+      },
+      content: caseStudy.content,
+    });
+
     return c.json({ success: true, data: caseStudy }, 201);
   } catch (error) {
     return c.json({ success: false, message: (error as Error).message }, 500);
@@ -167,6 +189,26 @@ export const updateCaseStudy = async (c: Context<AppEnv>) => {
 
     Object.assign(caseStudy, parsed.data);
     await caseStudy.save();
+
+    void syncMarkdownContent({
+      module: "case-study",
+      folderKey: caseStudy.folderKey || caseStudy.slug,
+      frontmatter: {
+        title: caseStudy.title,
+        slug: caseStudy.slug,
+        excerpt: caseStudy.excerpt,
+        coverImage: caseStudy.coverImage,
+        category: caseStudy.category,
+        tags: caseStudy.tags,
+        stack: caseStudy.stack,
+        client: caseStudy.client,
+        industry: caseStudy.industry,
+        duration: caseStudy.duration,
+        publishedAt: caseStudy.publishedAt,
+        isPublished: caseStudy.isPublished,
+      },
+      content: caseStudy.content,
+    });
 
     return c.json({ success: true, data: caseStudy });
   } catch (error) {

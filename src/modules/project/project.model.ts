@@ -13,6 +13,7 @@ const ProjectSchema = new Schema(
   {
     title: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
+    folderKey: { type: String, index: true },
     description: { type: String, default: "" },
     longDescription: { type: String, default: "" },
     coverImage: { type: String, default: "" },
@@ -107,6 +108,17 @@ ProjectSchema.pre("save", function (this: any) {
   if (this.index !== undefined && this.sortOrder === 0) {
     const parsed = Number(this.index);
     if (!isNaN(parsed)) this.sortOrder = parsed;
+  }
+
+  // Ensure immutable folderKey on creation
+  if (!this.folderKey) {
+    this.folderKey =
+      this.slug ||
+      this.title
+        ?.toLowerCase()
+        .replace(/[^a-z0-9_-]/g, "-")
+        .replace(/-{2,}/g, "-")
+        .replace(/^-|-$/g, "");
   }
 
   const todayStr = new Date().toISOString().split("T")[0];

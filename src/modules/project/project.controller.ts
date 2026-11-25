@@ -3,6 +3,7 @@ import type { Context } from "hono";
 import type { AppEnv } from "../../lib/types.js";
 import { ProjectModel } from "./project.model.js";
 import { createProjectSchema, updateProjectSchema } from "./project.validation.js";
+import { syncMarkdownContent } from "../../lib/github.js";
 
 export const getAllProjects = async (c: Context<AppEnv>) => {
   try {
@@ -176,6 +177,26 @@ export const createProject = async (c: Context<AppEnv>) => {
 
     const project = new ProjectModel(parsed.data);
     await project.save();
+
+    void syncMarkdownContent({
+      module: "project",
+      folderKey: project.folderKey || project.slug,
+      frontmatter: {
+        title: project.title,
+        slug: project.slug,
+        description: project.description,
+        coverImage: project.coverImage,
+        category: project.category,
+        tags: project.tags,
+        stack: project.stack,
+        year: project.year,
+        status: project.status,
+        liveLink: project.liveLink,
+        github: project.github,
+      },
+      content: project.content || project.longDescription,
+    });
+
     return c.json({ success: true, data: project }, 201);
   } catch (error) {
     return c.json({ success: false, message: (error as Error).message }, 500);
@@ -213,6 +234,25 @@ export const updateProject = async (c: Context<AppEnv>) => {
 
     Object.assign(project, parsed.data);
     await project.save();
+
+    void syncMarkdownContent({
+      module: "project",
+      folderKey: project.folderKey || project.slug,
+      frontmatter: {
+        title: project.title,
+        slug: project.slug,
+        description: project.description,
+        coverImage: project.coverImage,
+        category: project.category,
+        tags: project.tags,
+        stack: project.stack,
+        year: project.year,
+        status: project.status,
+        liveLink: project.liveLink,
+        github: project.github,
+      },
+      content: project.content || project.longDescription,
+    });
 
     return c.json({ success: true, data: project });
   } catch (error) {

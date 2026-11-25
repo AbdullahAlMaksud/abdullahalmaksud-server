@@ -46,7 +46,6 @@
   },
   "dependencies": {
     "@hono/node-server": "^2.1.0",
-    "@vercel/blob": "^2.4.1",
     "better-auth": "^1.6.11",
     "dotenv": "^17.4.2",
     "hono": "^4.12.18",

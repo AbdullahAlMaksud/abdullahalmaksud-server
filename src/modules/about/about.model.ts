@@ -3,8 +3,10 @@ import mongoose, { Schema, type Model } from "mongoose";
 const AboutSchema = new Schema(
   {
     key: { type: String, default: "main", unique: true },
+    locale: { type: String, enum: ["en", "bn"], default: "en" },
     header: { type: Schema.Types.Mixed, required: true },
     pillars: [{ type: Schema.Types.Mixed }],
+    principles: [{ type: Schema.Types.Mixed }],
     experience: [{ type: Schema.Types.Mixed }],
     education: [{ type: Schema.Types.Mixed }],
     skillsCategories: [{ type: Schema.Types.Mixed }],

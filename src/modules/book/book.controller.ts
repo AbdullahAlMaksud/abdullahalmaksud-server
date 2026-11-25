@@ -2,6 +2,7 @@ import type { Context } from "hono";
 
 import type { AppEnv } from "../../lib/types.js";
 import { BookBundleModel, BookModel } from "./book.model.js";
+import { syncMarkdownContent } from "../../lib/github.js";
 
 export const getBookBundle = async (c: Context<AppEnv>) => {
   try {
@@ -84,6 +85,24 @@ export const createBook = async (c: Context<AppEnv>) => {
     const body = await c.req.json();
     const book = new BookModel(body);
     await book.save();
+
+    void syncMarkdownContent({
+      module: "book",
+      folderKey: book.folderKey || book.slug,
+      frontmatter: {
+        title: book.title,
+        titleBn: book.titleBn,
+        slug: book.slug,
+        author: book.author,
+        coverImage: book.coverImage || book.cover,
+        publisher: book.publisher,
+        price: book.price,
+        year: book.year,
+        category: book.category,
+      },
+      content: book.description || book.synopsis || book.content,
+    });
+
     return c.json({ success: true, data: book }, 201);
   } catch (error) {
     return c.json({ success: false, message: (error as Error).message }, 500);
@@ -99,6 +118,23 @@ export const updateBook = async (c: Context<AppEnv>) => {
     if (!book) {
       return c.json({ success: false, message: "Book not found" }, 404);
     }
+
+    void syncMarkdownContent({
+      module: "book",
+      folderKey: book.folderKey || book.slug,
+      frontmatter: {
+        title: book.title,
+        titleBn: book.titleBn,
+        slug: book.slug,
+        author: book.author,
+        coverImage: book.coverImage || book.cover,
+        publisher: book.publisher,
+        price: book.price,
+        year: book.year,
+        category: book.category,
+      },
+      content: book.description || book.synopsis || book.content,
+    });
 
     return c.json({ success: true, data: book });
   } catch (error) {

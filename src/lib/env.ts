@@ -30,6 +30,11 @@ const envSchema = z.object({
   EMAIL_FROM: z.string().default("Abdullah Al Maksud Admin <onboarding@resend.dev>"),
   CONTACT_RECIPIENT_EMAIL: z.string().default("contact@abdullahalmaksud.com"),
   BLOB_READ_WRITE_TOKEN: z.string().optional(),
+  GITHUB_TOKEN: z.string().optional(),
+  GITHUB_REPO_OWNER: z.string().default("abdullahalmaksud"),
+  GITHUB_REPO_NAME: z.string().default("abdullahalmaksud-assets"),
+  GITHUB_BRANCH: z.string().default("main"),
+  ASSET_CDN_BASE_URL: z.string().default("https://assets.abdullahalmaksud.com"),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

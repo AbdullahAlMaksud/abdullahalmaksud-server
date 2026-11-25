@@ -82,6 +82,7 @@ const StandaloneBookSchema = new Schema(
     titleEn: { type: String },
     subtitle: { type: String, default: "" },
     slug: { type: String, required: true, unique: true },
+    folderKey: { type: String, index: true },
     author: { type: String, required: true },
     coverImage: { type: String, default: "" },
     cover: { type: String, default: "" },
@@ -148,6 +149,18 @@ const StandaloneBookSchema = new Schema(
     },
   },
 );
+
+StandaloneBookSchema.pre("save", function (this: any) {
+  if (!this.folderKey) {
+    this.folderKey =
+      this.slug ||
+      this.title
+        ?.toLowerCase()
+        .replace(/[^a-z0-9_-]/g, "-")
+        .replace(/-{2,}/g, "-")
+        .replace(/^-|-$/g, "");
+  }
+});
 
 export const BookBundleModel: Model<any> =
   mongoose.models.BookBundle || mongoose.model("BookBundle", BookBundleSchema);

@@ -957,27 +957,32 @@ Aggregates real-time counters and metrics across all database collections.
 
 ---
 
-## 13. Media & File Upload (Vercel Blob)
+## 13. Media & File Upload (GitHub Private Asset Store & Cloudflare Edge CDN)
 
-Integrated with **Vercel Blob** for fast, edge-cached content delivery.
+Integrated with a **Private GitHub Repository** and served via **Cloudflare Edge CDN** on the branded custom domain `https://assets.abdullahalmaksud.com`. Images are organized with immutable natural language identifiers (`folderKey`) ensuring image links never break upon SEO slug changes.
 
 ### 13.1 Upload File
 
 - **Method / URL:** `POST /api/v1/upload`
 - **Auth:** 🔒 Admin Only
 - **Content-Type:** `multipart/form-data`
-- **Payload Field Name:** `file` (or `image` or `media`)
+- **Payload Fields:**
+  - `file` (or `image` or `media`): Binary file (required)
+  - `module`: Target module name (`blog` | `project` | `case-study` | `book` | `design` | `general`, default: `"general"`)
+  - `folderKey`: Natural language immutable identifier (e.g. `how-to-code`, default: `"misc"`)
 - **Max File Size:** `10 MB`
+- **Storage Target:** `images/${module}/${folderKey}/${filename}-${suffix}.webp`
 - **Response (200 OK):**
 
 ```json
 {
   "success": true,
-  "url": "https://xyz.public.blob.vercel-storage.com/portfolio-cover-abc123.webp",
-  "downloadUrl": "https://xyz.public.blob.vercel-storage.com/portfolio-cover-abc123.webp?download=1",
-  "pathname": "portfolio_cover.webp",
+  "url": "https://assets.abdullahalmaksud.com/images/blog/how-to-code/diagram-k123.webp",
+  "downloadUrl": "https://assets.abdullahalmaksud.com/images/blog/how-to-code/diagram-k123.webp",
+  "pathname": "images/blog/how-to-code/diagram-k123.webp",
   "contentType": "image/webp",
-  "data": { ... }
+  "module": "blog",
+  "folderKey": "how-to-code"
 }
 ```
 
@@ -985,20 +990,37 @@ Integrated with **Vercel Blob** for fast, edge-cached content delivery.
 
 - **Method / URL:** `GET /api/v1/upload`
 - **Auth:** 🔒 Admin Only
-- **Query Parameters:** `limit` (max 100), `cursor`, `prefix`
-- **Response (200 OK):** `{ "success": true, "data": { "blobs": [ ... ] } }`
+- **Query Parameters:** `prefix` (optional filter, e.g. `images/blog`)
+- **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "data": {
+      "blobs": [
+        {
+          "url": "https://assets.abdullahalmaksud.com/images/blog/how-to-code/cover-a1.webp",
+          "downloadUrl": "https://assets.abdullahalmaksud.com/images/blog/how-to-code/cover-a1.webp",
+          "pathname": "images/blog/how-to-code/cover-a1.webp",
+          "size": 142850,
+          "uploadedAt": "2026-10-31T16:00:00.000Z"
+        }
+      ],
+      "hasMore": false
+    }
+  }
+  ```
 
 ### 13.3 Get File Metadata (Head)
 
-- **Method / URL:** `GET /api/v1/upload/info?url=<blob_url>`
+- **Method / URL:** `GET /api/v1/upload/info?url=<asset_url>` (or `?path=<pathname>`)
 - **Auth:** 🔒 Admin Only
-- **Response (200 OK):** `{ "success": true, "data": { ... } }`
+- **Response (200 OK):** `{ "success": true, "data": { "url": "...", "downloadUrl": "...", "pathname": "..." } }`
 
 ### 13.4 Delete File
 
-- **Method / URL:** `DELETE /api/v1/upload?url=<blob_url>` (or `{ "url": "..." }` in body)
+- **Method / URL:** `DELETE /api/v1/upload?url=<asset_url>` (or `{ "url": "..." }` / `{ "path": "..." }` in body)
 - **Auth:** 🔒 Admin Only
-- **Response (200 OK):** `{ "success": true, "message": "File deleted successfully from Vercel Blob" }`
+- **Response (200 OK):** `{ "success": true, "message": "File deleted successfully from repository" }`
 
 ---
 

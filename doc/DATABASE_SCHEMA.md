@@ -135,6 +135,7 @@ const ProjectSchema = new Schema(
   {
     title: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
+    folderKey: { type: String, index: true },
     description: { type: String, default: "" },
     longDescription: { type: String, default: "" },
     coverImage: { type: String, default: "" },
@@ -235,6 +236,7 @@ const BlogSchema = new Schema(
   {
     title: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
+    folderKey: { type: String, index: true },
     excerpt: { type: String, default: "" },
     content: { type: Schema.Types.Mixed, default: null }, // Lexical Block State
     contentType: {
@@ -345,6 +347,7 @@ const StandaloneBookSchema = new Schema(
     titleEn: String,
     subtitle: { type: String, default: "" },
     slug: { type: String, required: true, unique: true },
+    folderKey: { type: String, index: true },
     author: { type: String, required: true },
     coverImage: { type: String, default: "" },
     cover: { type: String, default: "" },
@@ -430,6 +433,7 @@ const CaseStudySchema = new Schema(
   {
     title: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
+    folderKey: { type: String, index: true },
     excerpt: { type: String, default: "" },
     content: { type: Schema.Types.Mixed, default: null },
     contentType: {
@@ -513,6 +517,7 @@ const DesignSchema = new Schema(
 To guarantee rapid query response times under high concurrency:
 
 - **`slug: 1` (Unique):** Indexed on `projects`, `blogs`, `books`, and `casestudies`.
+- **`folderKey: 1`:** Indexed on `projects`, `blogs`, `books`, and `casestudies` for stable asset and markdown resolution.
 - **`createdAt: -1`:** Compounded with category/published filters on `projects`, `blogs`, `casestudies`, and `designs`.
 - **`key: 1` (Unique):** Indexed on `abouts` and `bookbundles`.
 - **Text / Regex search indexes:** Compound indexes on `title`, `tags`, and `stack` to accelerate search filters.

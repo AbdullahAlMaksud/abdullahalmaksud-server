@@ -1,7 +1,11 @@
 import { Hono } from "hono";
 
 import { auth } from "../../lib/auth.js";
-import { getDatabaseConnectionHelp, isAuthDatabaseConnected } from "../../lib/database.js";
+import {
+  getDatabaseConnectionHelp,
+  getLastDatabaseError,
+  isAuthDatabaseConnected,
+} from "../../lib/database.js";
 import type { AppEnv } from "../../lib/types.js";
 
 export const authRoutes = new Hono<AppEnv>();
@@ -14,7 +18,9 @@ authRoutes.on(["GET", "POST"], "/*", (c) => {
       {
         success: false,
         message: "Authentication is unavailable until MongoDB is connected.",
-        hint: getDatabaseConnectionHelp(new Error("MongoDB is not connected")),
+        hint: getDatabaseConnectionHelp(
+          getLastDatabaseError() ?? new Error("MongoDB is not connected"),
+        ),
       },
       503,
     );
