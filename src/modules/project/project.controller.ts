@@ -1,6 +1,7 @@
 import type { Context } from "hono";
 
 import type { AppEnv } from "../../lib/types.js";
+import { AssetPathValidationError, sanitizeContentBlocksInPlace } from "../../lib/asset-path.js";
 import { ProjectModel } from "./project.model.js";
 import { createProjectSchema, updateProjectSchema } from "./project.validation.js";
 import { syncMarkdownContent } from "../../lib/github.js";
@@ -175,6 +176,9 @@ export const createProject = async (c: Context<AppEnv>) => {
       return c.json({ success: false, message: "Project with this slug already exists" }, 400);
     }
 
+    sanitizeContentBlocksInPlace(parsed.data.content);
+    sanitizeContentBlocksInPlace(parsed.data.fullContent);
+
     const project = new ProjectModel(parsed.data);
     await project.save();
 
@@ -199,7 +203,8 @@ export const createProject = async (c: Context<AppEnv>) => {
 
     return c.json({ success: true, data: project }, 201);
   } catch (error) {
-    return c.json({ success: false, message: (error as Error).message }, 500);
+    const status = error instanceof AssetPathValidationError ? 400 : 500;
+    return c.json({ success: false, message: (error as Error).message }, status);
   }
 };
 
@@ -232,6 +237,9 @@ export const updateProject = async (c: Context<AppEnv>) => {
       }
     }
 
+    sanitizeContentBlocksInPlace(parsed.data.content);
+    sanitizeContentBlocksInPlace(parsed.data.fullContent);
+
     Object.assign(project, parsed.data);
     await project.save();
 
@@ -256,7 +264,8 @@ export const updateProject = async (c: Context<AppEnv>) => {
 
     return c.json({ success: true, data: project });
   } catch (error) {
-    return c.json({ success: false, message: (error as Error).message }, 500);
+    const status = error instanceof AssetPathValidationError ? 400 : 500;
+    return c.json({ success: false, message: (error as Error).message }, status);
   }
 };
 

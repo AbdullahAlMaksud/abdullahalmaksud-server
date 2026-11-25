@@ -1,6 +1,11 @@
 import type { Context } from "hono";
 
 import type { AppEnv } from "../../lib/types.js";
+import {
+  AssetPathValidationError,
+  sanitizeAssetFieldsInPlace,
+  sanitizeContentBlocksInPlace,
+} from "../../lib/asset-path.js";
 import { BookBundleModel, BookModel } from "./book.model.js";
 import { syncMarkdownContent } from "../../lib/github.js";
 
@@ -33,7 +38,17 @@ export const getBookBundle = async (c: Context<AppEnv>) => {
 
 export const updateBookBundle = async (c: Context<AppEnv>) => {
   try {
-    const body = await c.req.json();
+    const body = (await c.req.json()) as Record<string, unknown>;
+    if (body.book && typeof body.book === "object") {
+      sanitizeAssetFieldsInPlace(body.book as Record<string, unknown>, ["coverImage", "cover"]);
+    }
+    if (Array.isArray(body.books)) {
+      for (const shelfBook of body.books) {
+        if (shelfBook && typeof shelfBook === "object") {
+          sanitizeAssetFieldsInPlace(shelfBook as Record<string, unknown>, ["coverImage", "cover"]);
+        }
+      }
+    }
     const bundle = await BookBundleModel.findOneAndUpdate(
       { key: "main" },
       { $set: body },
@@ -41,7 +56,8 @@ export const updateBookBundle = async (c: Context<AppEnv>) => {
     );
     return c.json({ success: true, data: bundle });
   } catch (error) {
-    return c.json({ success: false, message: (error as Error).message }, 500);
+    const status = error instanceof AssetPathValidationError ? 400 : 500;
+    return c.json({ success: false, message: (error as Error).message }, status);
   }
 };
 
@@ -82,7 +98,9 @@ export const getBookById = async (c: Context<AppEnv>) => {
 
 export const createBook = async (c: Context<AppEnv>) => {
   try {
-    const body = await c.req.json();
+    const body = (await c.req.json()) as Record<string, unknown>;
+    sanitizeAssetFieldsInPlace(body, ["coverImage", "cover"]);
+    sanitizeContentBlocksInPlace(body.content);
     const book = new BookModel(body);
     await book.save();
 
@@ -105,14 +123,17 @@ export const createBook = async (c: Context<AppEnv>) => {
 
     return c.json({ success: true, data: book }, 201);
   } catch (error) {
-    return c.json({ success: false, message: (error as Error).message }, 500);
+    const status = error instanceof AssetPathValidationError ? 400 : 500;
+    return c.json({ success: false, message: (error as Error).message }, status);
   }
 };
 
 export const updateBook = async (c: Context<AppEnv>) => {
   try {
     const id = c.req.param("id");
-    const body = await c.req.json();
+    const body = (await c.req.json()) as Record<string, unknown>;
+    sanitizeAssetFieldsInPlace(body, ["coverImage", "cover"]);
+    sanitizeContentBlocksInPlace(body.content);
 
     const book = await BookModel.findByIdAndUpdate(id, body, { returnDocument: "after" });
     if (!book) {
@@ -138,7 +159,8 @@ export const updateBook = async (c: Context<AppEnv>) => {
 
     return c.json({ success: true, data: book });
   } catch (error) {
-    return c.json({ success: false, message: (error as Error).message }, 500);
+    const status = error instanceof AssetPathValidationError ? 400 : 500;
+    return c.json({ success: false, message: (error as Error).message }, status);
   }
 };
 

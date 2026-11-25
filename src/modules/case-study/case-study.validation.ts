@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { relativeAssetPathSchema } from "../../lib/asset-path.js";
 
 export const caseStudyResultSchema = z.object({
   metric: z.string().min(1, "Metric name is required"),
@@ -16,8 +17,8 @@ export const createCaseStudySchema = z.object({
   excerpt: z.string().default(""),
   content: z.any().optional(), // Lexical EditorState JSON, block array, or markdown string
   contentType: z.enum(["lexical", "markdown", "html", "blocks", "json"]).default("blocks"),
-  coverImage: z.string().default(""),
-  screenshots: z.array(z.string()).default([]),
+  coverImage: relativeAssetPathSchema("coverImage").default(""),
+  screenshots: z.array(relativeAssetPathSchema("screenshots")).default([]),
   projectSlug: z.string().default(""),
   tags: z.array(z.string()).default([]),
   category: z.string().default("Architecture"),

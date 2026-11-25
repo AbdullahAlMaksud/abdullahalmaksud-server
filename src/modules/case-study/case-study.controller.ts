@@ -1,6 +1,7 @@
 import type { Context } from "hono";
 
 import type { AppEnv } from "../../lib/types.js";
+import { AssetPathValidationError, sanitizeContentBlocksInPlace } from "../../lib/asset-path.js";
 import { CaseStudyModel } from "./case-study.model.js";
 import { createCaseStudySchema, updateCaseStudySchema } from "./case-study.validation.js";
 import { syncMarkdownContent } from "../../lib/github.js";
@@ -129,6 +130,8 @@ export const createCaseStudy = async (c: Context<AppEnv>) => {
       return c.json({ success: false, message: "Case study with this slug already exists" }, 400);
     }
 
+    sanitizeContentBlocksInPlace(parsed.data.content);
+
     const caseStudy = new CaseStudyModel(parsed.data);
     await caseStudy.save();
 
@@ -154,7 +157,8 @@ export const createCaseStudy = async (c: Context<AppEnv>) => {
 
     return c.json({ success: true, data: caseStudy }, 201);
   } catch (error) {
-    return c.json({ success: false, message: (error as Error).message }, 500);
+    const status = error instanceof AssetPathValidationError ? 400 : 500;
+    return c.json({ success: false, message: (error as Error).message }, status);
   }
 };
 
@@ -187,6 +191,8 @@ export const updateCaseStudy = async (c: Context<AppEnv>) => {
       }
     }
 
+    sanitizeContentBlocksInPlace(parsed.data.content);
+
     Object.assign(caseStudy, parsed.data);
     await caseStudy.save();
 
@@ -212,7 +218,8 @@ export const updateCaseStudy = async (c: Context<AppEnv>) => {
 
     return c.json({ success: true, data: caseStudy });
   } catch (error) {
-    return c.json({ success: false, message: (error as Error).message }, 500);
+    const status = error instanceof AssetPathValidationError ? 400 : 500;
+    return c.json({ success: false, message: (error as Error).message }, status);
   }
 };
 

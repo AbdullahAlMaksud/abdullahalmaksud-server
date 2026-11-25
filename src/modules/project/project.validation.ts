@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { relativeAssetPathSchema } from "../../lib/asset-path.js";
 
 export const coreFeatureSchema = z.object({
   icon: z.string().default(""),
@@ -18,12 +19,12 @@ export const createProjectSchema = z.object({
   content: z.any().optional(),
   contentType: z.enum(["blocks", "lexical", "json", "markdown", "html"]).default("blocks"),
   fullContent: z.any().optional(),
-  coverImage: z.string().default(""),
-  image: z.string().optional(), // legacy alias
-  logo: z.string().default(""),
+  coverImage: relativeAssetPathSchema("coverImage").default(""),
+  image: relativeAssetPathSchema("image").optional(), // legacy alias
+  logo: relativeAssetPathSchema("logo").default(""),
   imageBg: z.string().default("#0F131A"),
   barColor: z.string().default("#E5A93C"),
-  screenshots: z.array(z.string()).default([]),
+  screenshots: z.array(relativeAssetPathSchema("screenshots")).default([]),
   tags: z.array(z.string()).default([]),
   stack: z.array(z.string()).default([]),
   category: z.string().default(""),

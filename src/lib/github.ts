@@ -261,10 +261,35 @@ export const lexicalToMarkdown = (content: unknown): string => {
         if (typeof block === "string") return block;
         if (typeof block === "object" && block !== null) {
           const b = block as {
-            data?: { markdown?: string; text?: string; code?: string; language?: string };
+            type?: string;
+            data?: {
+              markdown?: string;
+              text?: string;
+              code?: string;
+              language?: string;
+              url?: string;
+              alt?: string;
+              caption?: string;
+              headers?: string[];
+              rows?: string[][];
+            };
             text?: string;
           };
           if (b.data?.markdown) return b.data.markdown;
+          if (b.type === "table" && b.data?.headers && b.data.headers.length > 0) {
+            const headers = b.data.headers;
+            const headerLine = `| ${headers.join(" | ")} |`;
+            const dividerLine = `| ${headers.map(() => "---").join(" | ")} |`;
+            const bodyLines = (b.data.rows || []).map(
+              (row) => `| ${headers.map((_, idx) => row?.[idx] || " ").join(" | ")} |`,
+            );
+            return [headerLine, dividerLine, ...bodyLines].join("\n");
+          }
+          if (b.type === "image" && b.data?.url) {
+            const alt = b.data.alt || b.data.caption || "";
+            const mdImage = `![${alt}](${b.data.url})`;
+            return b.data.caption ? `${mdImage}\n*${b.data.caption}*` : mdImage;
+          }
           if (b.data?.text) return b.data.text;
           if (b.data?.code) return `\`\`\`${b.data.language || ""}\n${b.data.code}\n\`\`\``;
           if (b.text) return b.text;

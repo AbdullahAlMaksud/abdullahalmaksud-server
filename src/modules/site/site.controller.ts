@@ -1,6 +1,7 @@
 import type { Context } from "hono";
 
 import { isAuthDatabaseConnected } from "../../lib/database.js";
+import { sanitizeAssetFieldsInPlace } from "../../lib/asset-path.js";
 import type { AppEnv } from "../../lib/types.js";
 import { getDefaultSiteLocale } from "./site.defaults.js";
 import { SiteLocaleModel, type SupportedLocale } from "./site.model.js";
@@ -90,6 +91,10 @@ export const updateSiteData = async (c: Context<AppEnv>) => {
 
     // Strip immutable/meta fields before updating
     const { id: _id, _id: _mongoId, __v: _v, createdAt: _c, updatedAt: _u, ...rest } = body;
+
+    if (rest.identity && typeof rest.identity === "object") {
+      sanitizeAssetFieldsInPlace(rest.identity as Record<string, unknown>, ["portraitUrl"]);
+    }
 
     const updated = await SiteLocaleModel.findOneAndUpdate(
       { locale },

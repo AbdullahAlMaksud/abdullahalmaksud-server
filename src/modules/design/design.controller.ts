@@ -1,6 +1,7 @@
 import type { Context } from "hono";
 
 import type { AppEnv } from "../../lib/types.js";
+import { AssetPathValidationError, sanitizeAssetFieldsInPlace } from "../../lib/asset-path.js";
 import { DesignModel } from "./design.model.js";
 
 export const getAllDesigns = async (c: Context<AppEnv>) => {
@@ -40,7 +41,8 @@ export const getDesignById = async (c: Context<AppEnv>) => {
 
 export const createDesign = async (c: Context<AppEnv>) => {
   try {
-    const body = await c.req.json();
+    const body = (await c.req.json()) as Record<string, unknown>;
+    sanitizeAssetFieldsInPlace(body, ["coverImage"]);
 
     const existing = await DesignModel.findOne({ id: body.id });
     if (existing) {
@@ -51,14 +53,16 @@ export const createDesign = async (c: Context<AppEnv>) => {
     await design.save();
     return c.json({ success: true, data: design }, 201);
   } catch (error) {
-    return c.json({ success: false, message: (error as Error).message }, 500);
+    const status = error instanceof AssetPathValidationError ? 400 : 500;
+    return c.json({ success: false, message: (error as Error).message }, status);
   }
 };
 
 export const updateDesign = async (c: Context<AppEnv>) => {
   try {
     const id = c.req.param("id");
-    const body = await c.req.json();
+    const body = (await c.req.json()) as Record<string, unknown>;
+    sanitizeAssetFieldsInPlace(body, ["coverImage"]);
 
     const design = await DesignModel.findOneAndUpdate({ $or: [{ id }, { _id: id }] }, body, {
       returnDocument: "after",
@@ -70,7 +74,8 @@ export const updateDesign = async (c: Context<AppEnv>) => {
 
     return c.json({ success: true, data: design });
   } catch (error) {
-    return c.json({ success: false, message: (error as Error).message }, 500);
+    const status = error instanceof AssetPathValidationError ? 400 : 500;
+    return c.json({ success: false, message: (error as Error).message }, status);
   }
 };
 

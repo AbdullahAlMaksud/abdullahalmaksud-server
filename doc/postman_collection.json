@@ -1,8 +1,8 @@
 {
   "info": {
-    "_postman_id": "abdullahalmaksud-api-collection-v7",
-    "name": "Abdullah Al Maksud API Collection (v7.0 — Enterprise Complete)",
-    "description": "সম্পূর্ণ Postman API Collection — Abdullah Al Maksud Portfolio & Admin Server\n\nTech Stack: Hono v4 / Node.js / MongoDB Atlas / BetterAuth / Resend / Vercel Blob / Zod\n\nমডিউলসমূহ: Authentication, About, Projects, Blogs, Books, Case Studies, Designs (Graphics), Contact, Dashboard, File Upload\n\nHome ও Static Data মডিউল রিমুভ করা হয়েছে।",
+    "_postman_id": "abdullahalmaksud-api-collection-v8",
+    "name": "Abdullah Al Maksud API Collection (v8.0 — Enterprise Complete)",
+    "description": "সম্পূর্ণ Postman API Collection — Abdullah Al Maksud Portfolio & Admin Server\n\nTech Stack: Hono v4 / Node.js / MongoDB Atlas / Mongoose / BetterAuth (Email OTP + Bearer) / Resend / GitHub Asset CDN / Zod\n\nমডিউলসমূহ: System & Health, Authentication, Site & Localization (EN/BN), About (EN/BN), Projects, Blogs, Books, Case Studies, Designs, Contact, Dashboard, File Upload",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -121,7 +121,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@abdullahalmaksud.com\"\n}"
+              "raw": "{\n  \"email\": \"admin@abdullahalmaksud.com\",\n  \"type\": \"sign-in\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/email-otp/send-verification-otp",
@@ -272,11 +272,136 @@
               "path": ["api", "me"]
             }
           }
+        },
+        {
+          "name": "Sign Out (POST /api/auth/sign-out)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/sign-out",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "sign-out"]
+            }
+          }
         }
       ]
     },
     {
-      "name": "3. About (CRUD)",
+      "name": "3. Site & Localization (EN / BN)",
+      "item": [
+        {
+          "name": "Get Site Config by Locale (Public)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/site?locale=en",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "site"],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "en",
+                  "description": "en | bn"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Site Locales — EN & BN (Admin)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/site/all",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "site", "all"]
+            }
+          }
+        },
+        {
+          "name": "Update Site Locale (Admin — PUT /site?locale=en)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identity\": {\n    \"name\": \"Abdullah Al Maksud\",\n    \"role\": \"Principal Architect & Writer\",\n    \"subRole\": \"Systems · Web · Books\"\n  },\n  \"sections\": {\n    \"writingsTitle\": \"Essays & Books\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/site?locale=en",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "site"],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "en",
+                  "description": "en | bn"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Site Locale by Path (Admin — PUT /site/:locale)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identity\": {\n    \"name\": \"আব্দুল্লাহ আল মাকসুদ\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/site/bn",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "site", "bn"]
+            }
+          }
+        },
+        {
+          "name": "Reset Site Config to Defaults (Admin)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/site/reset?locale=en",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "site", "reset"],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "en",
+                  "description": "en | bn | all"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. About (Bilingual EN / BN)",
       "item": [
         {
           "name": "Get About Data (Public)",
@@ -286,9 +411,16 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/about",
+              "raw": "{{baseUrl}}/api/v1/about?locale=en",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "about"]
+              "path": ["api", "v1", "about"],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "en",
+                  "description": "en | bn"
+                }
+              ]
             }
           }
         },
@@ -304,19 +436,26 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"header\": {\n    \"title\": \"আব্দুল্লাহ আল মাকসুদ\",\n    \"subtitle\": \"ফুলস্ট্যাক ডেভেলপার ও লেখক\",\n    \"description\": \"প্রযুক্তি ও সৃজনশীলতার সমন্বয়ে...\"\n  },\n  \"pillars\": [\n    { \"icon\": \"💻\", \"title\": \"Development\", \"description\": \"Full-stack web development\" }\n  ],\n  \"experience\": [\n    { \"company\": \"Example Corp\", \"role\": \"Engineer\", \"duration\": \"2023-Present\" }\n  ],\n  \"education\": [\n    { \"institution\": \"Example University\", \"degree\": \"BSc CSE\", \"year\": \"2024\" }\n  ],\n  \"skillsCategories\": [\n    { \"category\": \"Frontend\", \"skills\": [\"React\", \"Next.js\", \"TypeScript\"] }\n  ]\n}"
+              "raw": "{\n  \"header\": {\n    \"title\": \"আব্দুল্লাহ আল মাকসুদ\",\n    \"subtitle\": \"ফুলস্ট্যাক ডেভেলপার ও লেখক\",\n    \"description\": \"প্রযুক্তি ও সৃজনশীলতার সমন্বয়ে...\"\n  },\n  \"pillars\": [\n    { \"icon\": \"💻\", \"title\": \"Development\", \"description\": \"Full-stack web development\" }\n  ],\n  \"principles\": [\n    { \"title\": \"Clarity\", \"description\": \"Design with restraint and purpose.\" }\n  ],\n  \"experience\": [\n    { \"company\": \"Example Corp\", \"role\": \"Engineer\", \"duration\": \"2023-Present\" }\n  ],\n  \"education\": [\n    { \"institution\": \"Example University\", \"degree\": \"BSc CSE\", \"year\": \"2024\" }\n  ],\n  \"skillsCategories\": [\n    { \"category\": \"Frontend\", \"skills\": [\"React\", \"Next.js\", \"TypeScript\"] }\n  ]\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/about",
+              "raw": "{{baseUrl}}/api/v1/about?locale=en",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "about"]
+              "path": ["api", "v1", "about"],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "en",
+                  "description": "en | bn"
+                }
+              ]
             }
           }
         }
       ]
     },
     {
-      "name": "4. Projects (CRUD)",
+      "name": "5. Projects (CRUD)",
       "item": [
         {
           "name": "Get All Projects (Public)",
@@ -473,7 +612,7 @@
       ]
     },
     {
-      "name": "5. Blogs (CRUD)",
+      "name": "6. Blogs (CRUD)",
       "item": [
         {
           "name": "Get All Blogs (Public)",
@@ -626,7 +765,7 @@
       ]
     },
     {
-      "name": "6. Books (CRUD)",
+      "name": "7. Books (CRUD)",
       "item": [
         {
           "name": "Get Book Bundle (Public)",
@@ -790,7 +929,7 @@
       ]
     },
     {
-      "name": "7. Case Studies (CRUD)",
+      "name": "8. Case Studies (CRUD)",
       "item": [
         {
           "name": "Get All Case Studies (Public)",
@@ -919,7 +1058,7 @@
       ]
     },
     {
-      "name": "8. Designs / Graphics (CRUD)",
+      "name": "9. Designs / Graphics (CRUD)",
       "item": [
         {
           "name": "Get All Designs (Public)",
@@ -1029,7 +1168,7 @@
       ]
     },
     {
-      "name": "9. Contact / Inquiry",
+      "name": "10. Contact / Inquiry",
       "item": [
         {
           "name": "Send Contact Inquiry (POST /api/v1/contact)",
@@ -1103,7 +1242,7 @@
       ]
     },
     {
-      "name": "10. Dashboard (Admin Only)",
+      "name": "11. Dashboard (Admin Only)",
       "item": [
         {
           "name": "Get Dashboard Stats",
@@ -1141,7 +1280,7 @@
       ]
     },
     {
-      "name": "11. File Upload (Vercel Blob)",
+      "name": "12. File Upload (GitHub Asset CDN)",
       "item": [
         {
           "name": "Upload File (Admin)",
@@ -1179,23 +1318,14 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/upload?limit=50",
+              "raw": "{{baseUrl}}/api/v1/upload?prefix=images/",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "upload"],
               "query": [
                 {
-                  "key": "limit",
-                  "value": "50"
-                },
-                {
-                  "key": "cursor",
-                  "value": "",
-                  "disabled": true
-                },
-                {
                   "key": "prefix",
-                  "value": "",
-                  "disabled": true
+                  "value": "images/",
+                  "description": "Optional path prefix filter (e.g. images/blog/)"
                 }
               ]
             }
@@ -1206,13 +1336,13 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/upload/info?url=https://blob.vercel-storage.com/...",
+              "raw": "{{baseUrl}}/api/v1/upload/info?url=https://assets.abdullahalmaksud.com/images/...",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "upload", "info"],
               "query": [
                 {
                   "key": "url",
-                  "value": "https://blob.vercel-storage.com/..."
+                  "value": "https://assets.abdullahalmaksud.com/images/..."
                 }
               ]
             }
@@ -1223,13 +1353,13 @@
           "request": {
             "method": "DELETE",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/upload?url=https://blob.vercel-storage.com/...",
+              "raw": "{{baseUrl}}/api/v1/upload?url=https://assets.abdullahalmaksud.com/images/...",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "upload"],
               "query": [
                 {
                   "key": "url",
-                  "value": "https://blob.vercel-storage.com/..."
+                  "value": "https://assets.abdullahalmaksud.com/images/..."
                 }
               ]
             }

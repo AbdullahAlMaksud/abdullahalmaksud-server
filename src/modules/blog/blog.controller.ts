@@ -1,6 +1,7 @@
 import type { Context } from "hono";
 
 import type { AppEnv } from "../../lib/types.js";
+import { AssetPathValidationError, sanitizeContentBlocksInPlace } from "../../lib/asset-path.js";
 import { BlogModel } from "./blog.model.js";
 import { createBlogSchema, updateBlogSchema } from "./blog.validation.js";
 import { syncMarkdownContent } from "../../lib/github.js";
@@ -112,6 +113,8 @@ export const createBlog = async (c: Context<AppEnv>) => {
       return c.json({ success: false, message: "Blog post with this slug already exists" }, 400);
     }
 
+    sanitizeContentBlocksInPlace(parsed.data.content);
+
     const blog = new BlogModel(parsed.data);
     await blog.save();
 
@@ -135,7 +138,8 @@ export const createBlog = async (c: Context<AppEnv>) => {
 
     return c.json({ success: true, data: blog }, 201);
   } catch (error) {
-    return c.json({ success: false, message: (error as Error).message }, 500);
+    const status = error instanceof AssetPathValidationError ? 400 : 500;
+    return c.json({ success: false, message: (error as Error).message }, status);
   }
 };
 
@@ -168,6 +172,8 @@ export const updateBlog = async (c: Context<AppEnv>) => {
       }
     }
 
+    sanitizeContentBlocksInPlace(parsed.data.content);
+
     Object.assign(blog, parsed.data);
     await blog.save();
 
@@ -191,7 +197,8 @@ export const updateBlog = async (c: Context<AppEnv>) => {
 
     return c.json({ success: true, data: blog });
   } catch (error) {
-    return c.json({ success: false, message: (error as Error).message }, 500);
+    const status = error instanceof AssetPathValidationError ? 400 : 500;
+    return c.json({ success: false, message: (error as Error).message }, status);
   }
 };
 

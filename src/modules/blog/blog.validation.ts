@@ -1,9 +1,10 @@
 import { z } from "zod";
+import { relativeAssetPathSchema } from "../../lib/asset-path.js";
 
 export const authorSchema = z
   .object({
     name: z.string().default("Abdullah Al Maksud"),
-    avatar: z.string().default("/images/avatar.jpg"),
+    avatar: relativeAssetPathSchema("author avatar").default("/images/avatar.jpg"),
     bio: z.string().default("Developer, designer, writer."),
   })
   .optional();
@@ -18,8 +19,8 @@ export const createBlogSchema = z.object({
   excerpt: z.string().default(""),
   content: z.any().optional(), // Lexical editor state JSON, block array, or markdown
   contentType: z.enum(["lexical", "markdown", "html", "blocks", "json"]).default("blocks"),
-  cover: z.string().default(""),
-  coverImage: z.string().default(""),
+  cover: relativeAssetPathSchema("cover").default(""),
+  coverImage: relativeAssetPathSchema("coverImage").default(""),
   author: authorSchema,
   tags: z.array(z.string()).default([]),
   category: z.string().default("Engineering"),

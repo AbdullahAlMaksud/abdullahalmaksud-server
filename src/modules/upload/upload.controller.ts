@@ -11,14 +11,38 @@ import {
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
+const MODULE_ALIASES: Record<string, string> = {
+  book: "book",
+  books: "book",
+  blog: "blog",
+  blogs: "blog",
+  project: "project",
+  projects: "project",
+  casestudy: "casestudy",
+  "case-study": "casestudy",
+  "case-studies": "casestudy",
+  case_study: "casestudy",
+  design: "design",
+  designs: "design",
+  site: "site",
+  profile: "profile",
+  general: "general",
+};
+
 const sanitizeKey = (key?: unknown, fallback = "misc"): string => {
   if (typeof key !== "string" || !key.trim()) return fallback;
-  return key
+  const cleaned = key
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9_-]/g, "-")
     .replace(/-{2,}/g, "-")
     .replace(/^-|-$/g, "");
+  return cleaned || fallback;
+};
+
+const normalizeModule = (moduleInput?: unknown): string => {
+  const sanitized = sanitizeKey(moduleInput, "general");
+  return MODULE_ALIASES[sanitized] || sanitized;
 };
 
 export const uploadFile = async (c: Context<AppEnv>) => {
@@ -46,7 +70,7 @@ export const uploadFile = async (c: Context<AppEnv>) => {
       );
     }
 
-    const moduleName = sanitizeKey(body.module, "general");
+    const moduleName = normalizeModule(body.module);
     const folderKey = sanitizeKey(body.folderKey, "misc");
 
     // Sanitize filename to avoid unsafe characters and add short suffix to avoid edge caching collisions
@@ -75,9 +99,10 @@ export const uploadFile = async (c: Context<AppEnv>) => {
 
     return c.json({
       success: true,
+      path: targetPath,
+      pathname: targetPath,
       url: cdnUrl,
       downloadUrl: cdnUrl,
-      pathname: targetPath,
       contentType: file.type || undefined,
       module: moduleName,
       folderKey,
